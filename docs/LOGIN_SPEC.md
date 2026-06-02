@@ -1,5 +1,16 @@
 # Especificacion funcional: Login
 
+## Estado
+
+Completada el 2026-06-02.
+
+Implementacion principal:
+
+- Nucleo: `src/App.Core/AppCoreAuth.pas`, `src/App.Core/AppCoreUser.pas`, `src/App.Core/AppCoreUserRepository.pas`, `src/App.Core/AppCorePreferences.pas`.
+- UI VCL: `src/App.Win/LoginForm.pas`, `src/App.Win/LoginForm.dfm`, `src/App.Win/WindowsApp.dpr`.
+- Pruebas: `tests/App.Core.Tests/AppCoreAuthServiceTests.pas`.
+- Documentacion tecnica: `docs/LOGIN_TECH.md`.
+
 ## Objetivo
 
 Incorporar autenticacion de usuarios a la aplicacion Windows para que solo usuarios validos puedan acceder a las funcionalidades principales.

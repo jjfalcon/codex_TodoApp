@@ -1,9 +1,9 @@
 object FrmMain: TFrmMain
   Left = 192
   Top = 107
-  Width = 720
-  Height = 420
-  Caption = 'Delphi TDD App'
+  Width = 860
+  Height = 520
+  Caption = 'Delphi TDD App - FMain'
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -12,92 +12,53 @@ object FrmMain: TFrmMain
   Font.Style = []
   OldCreateOrder = False
   OnCreate = FormCreate
+  OnDestroy = FormDestroy
   PixelsPerInch = 96
   TextHeight = 13
-  object PnlTop: TPanel
+  object PnlSidebar: TPanel
     Left = 0
     Top = 0
-    Width = 704
-    Height = 56
-    Align = alTop
+    Width = 148
+    Height = 493
+    Align = alLeft
     BevelOuter = bvNone
+    Color = clBtnShadow
     TabOrder = 0
-    object EdtTitle: TEdit
+    object BtnDashboard: TButton
       Left = 12
       Top = 16
-      Width = 280
-      Height = 21
+      Width = 124
+      Height = 32
+      Caption = 'Dashboard'
       TabOrder = 0
+      OnClick = BtnDashboardClick
     end
-    object BtnAdd: TButton
-      Left = 300
-      Top = 14
-      Width = 90
-      Height = 25
-      Caption = 'Anadir'
+    object BtnTasks: TButton
+      Left = 12
+      Top = 56
+      Width = 124
+      Height = 32
+      Caption = 'Tareas'
       TabOrder = 1
-      OnClick = BtnAddClick
+      OnClick = BtnTasksClick
     end
-    object EdtSearch: TEdit
-      Left = 420
-      Top = 16
-      Width = 180
-      Height = 21
+    object BtnUsers: TButton
+      Left = 12
+      Top = 96
+      Width = 124
+      Height = 32
+      Caption = 'Usuarios'
       TabOrder = 2
-    end
-    object BtnSearch: TButton
-      Left = 608
-      Top = 14
-      Width = 90
-      Height = 25
-      Caption = 'Buscar'
-      TabOrder = 3
-      OnClick = BtnSearchClick
+      OnClick = BtnUsersClick
     end
   end
-  object LstTasks: TListBox
-    Left = 0
-    Top = 56
-    Width = 704
-    Height = 288
+  object PnlContent: TPanel
+    Left = 148
+    Top = 0
+    Width = 696
+    Height = 493
     Align = alClient
-    ItemHeight = 13
-    TabOrder = 1
-  end
-  object PnlBottom: TPanel
-    Left = 0
-    Top = 344
-    Width = 704
-    Height = 48
-    Align = alBottom
     BevelOuter = bvNone
-    TabOrder = 2
-    object BtnComplete: TButton
-      Left = 12
-      Top = 12
-      Width = 110
-      Height = 25
-      Caption = 'Completar'
-      TabOrder = 0
-      OnClick = BtnCompleteClick
-    end
-    object BtnDelete: TButton
-      Left = 132
-      Top = 12
-      Width = 90
-      Height = 25
-      Caption = 'Eliminar'
-      TabOrder = 1
-      OnClick = BtnDeleteClick
-    end
-    object BtnRefresh: TButton
-      Left = 232
-      Top = 12
-      Width = 90
-      Height = 25
-      Caption = 'Refrescar'
-      TabOrder = 2
-      OnClick = BtnRefreshClick
-    end
+    TabOrder = 1
   end
 end

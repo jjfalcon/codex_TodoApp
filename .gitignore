@@ -3,6 +3,9 @@ __history__/
 *.identcache
 *.dcu
 *.ddp
+*.cfg
+*.dof
+*.cbk
 *.map
 *.rsm
 *.stat
