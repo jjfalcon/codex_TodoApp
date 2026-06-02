@@ -61,6 +61,7 @@ begin
   Result := RequireTask(AId);
   Result.Status := tsCompleted;
   Result.CompletedAt := FClock.Now;
+  FRepository.Save(Result);
 end;
 
 procedure TTaskService.DeleteTask(const AId: string);

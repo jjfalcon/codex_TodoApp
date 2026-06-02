@@ -9,6 +9,7 @@ implementation
 uses
   SysUtils,
   AppCoreClock,
+  AppCoreTaskFileRepository,
   AppCoreTaskItem,
   AppCoreTaskRepository,
   AppCoreTaskService;
@@ -165,6 +166,77 @@ begin
   AssertEquals(2, Length(LResults), 'Search should match two tasks.');
 end;
 
+function TempTaskFileName(const AName: string): string;
+begin
+  Result := ExtractFilePath(ParamStr(0)) + AName;
+end;
+
+procedure FileRepositoryPersistsCreatedTasks;
+var
+  LFileName: string;
+  LClock: IClock;
+  LRepository: ITaskRepository;
+  LService: ITaskService;
+  LTasks: TTaskItemArray;
+begin
+  LFileName := TempTaskFileName('task_repository_created_test.json');
+  if FileExists(LFileName) then
+    DeleteFile(LFileName);
+
+  LClock := TFixedClock.Create(EncodeDate(2026, 4, 30));
+  LRepository := TFileTaskRepository.Create(LFileName);
+  LService := TTaskService.Create(LRepository, LClock);
+  LService.CreateTask('Persist me');
+
+  LService := nil;
+  LRepository := nil;
+
+  LRepository := TFileTaskRepository.Create(LFileName);
+  LTasks := LRepository.ListAll;
+
+  AssertEquals(1, Length(LTasks), 'File repository should reload stored task.');
+  AssertEquals('Persist me', LTasks[0].Title, 'Reloaded task should keep title.');
+  AssertEquals(Ord(tsPending), Ord(LTasks[0].Status), 'Reloaded task should keep pending status.');
+
+  LRepository := nil;
+  if FileExists(LFileName) then
+    DeleteFile(LFileName);
+end;
+
+procedure FileRepositoryPersistsCompletedTasks;
+var
+  LFileName: string;
+  LClock: IClock;
+  LRepository: ITaskRepository;
+  LService: ITaskService;
+  LTask: TTaskItem;
+  LTasks: TTaskItemArray;
+begin
+  LFileName := TempTaskFileName('task_repository_completed_test.json');
+  if FileExists(LFileName) then
+    DeleteFile(LFileName);
+
+  LClock := TFixedClock.Create(EncodeDate(2026, 4, 30));
+  LRepository := TFileTaskRepository.Create(LFileName);
+  LService := TTaskService.Create(LRepository, LClock);
+  LTask := LService.CreateTask('Complete me');
+  LService.CompleteTask(LTask.Id);
+
+  LService := nil;
+  LRepository := nil;
+
+  LRepository := TFileTaskRepository.Create(LFileName);
+  LTasks := LRepository.ListAll;
+
+  AssertEquals(1, Length(LTasks), 'File repository should reload completed task.');
+  AssertTrue(LTasks[0].IsCompleted, 'Reloaded task should keep completed status.');
+  AssertTrue(LTasks[0].CompletedAt = LClock.Now, 'Reloaded task should keep completed date.');
+
+  LRepository := nil;
+  if FileExists(LFileName) then
+    DeleteFile(LFileName);
+end;
+
 procedure RunTaskServiceTests(var AFailures: Integer);
 begin
   RunTest('CreateTaskStoresTrimmedPendingTask', CreateTaskStoresTrimmedPendingTask, AFailures);
@@ -172,6 +244,8 @@ begin
   RunTest('CompleteTaskMarksTaskAsCompleted', CompleteTaskMarksTaskAsCompleted, AFailures);
   RunTest('DeleteTaskRemovesTask', DeleteTaskRemovesTask, AFailures);
   RunTest('SearchTasksReturnsMatchingTitles', SearchTasksReturnsMatchingTitles, AFailures);
+  RunTest('FileRepositoryPersistsCreatedTasks', FileRepositoryPersistsCreatedTasks, AFailures);
+  RunTest('FileRepositoryPersistsCompletedTasks', FileRepositoryPersistsCompletedTasks, AFailures);
 end;
 
 end.

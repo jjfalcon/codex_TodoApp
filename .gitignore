@@ -15,6 +15,7 @@ __history__/
 *.bpl
 *.drc
 *.~*
+tasks.json
 Win32/
 Win64/
 Debug/

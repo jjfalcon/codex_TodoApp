@@ -11,6 +11,7 @@ uses
   ExtCtrls,
   Dialogs,
   AppCoreTaskItem,
+  AppCoreTaskFileRepository,
   AppCoreTaskRepository,
   AppCoreTaskService;
 
@@ -49,7 +50,7 @@ uses
 
 procedure TFrmTasks.FormCreate(Sender: TObject);
 begin
-  FService := TTaskService.Create(TInMemoryTaskRepository.Create, TSystemClock.Create);
+  FService := TTaskService.Create(TFileTaskRepository.Create(ExtractFilePath(Application.ExeName) + 'tasks.json'), TSystemClock.Create);
   RefreshList(FService.ListTasks);
 end;
 

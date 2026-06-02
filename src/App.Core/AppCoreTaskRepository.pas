@@ -13,6 +13,7 @@ type
     procedure Delete(const AId: string);
     function FindById(const AId: string): TTaskItem;
     function ListAll: TTaskItemArray;
+    procedure Save(ATask: TTaskItem);
   end;
 
   TInMemoryTaskRepository = class(TInterfacedObject, ITaskRepository)
@@ -27,6 +28,7 @@ type
     procedure Delete(const AId: string);
     function FindById(const AId: string): TTaskItem;
     function ListAll: TTaskItemArray;
+    procedure Save(ATask: TTaskItem);
   end;
 
 implementation
@@ -96,6 +98,11 @@ begin
   SetLength(Result, FItems.Count);
   for I := 0 to FItems.Count - 1 do
     Result[I] := TTaskItem(FItems[I]);
+end;
+
+procedure TInMemoryTaskRepository.Save(ATask: TTaskItem);
+begin
+  { In-memory tasks are stored by reference, so no copy is required. }
 end;
 
 end.

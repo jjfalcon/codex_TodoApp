@@ -9,6 +9,7 @@ uses
   AppCoreAuth in '..\App.Core\AppCoreAuth.pas',
   AppCoreClock in '..\App.Core\AppCoreClock.pas',
   AppCorePreferences in '..\App.Core\AppCorePreferences.pas',
+  AppCoreTaskFileRepository in '..\App.Core\AppCoreTaskFileRepository.pas',
   AppCoreTaskItem in '..\App.Core\AppCoreTaskItem.pas',
   AppCoreTaskRepository in '..\App.Core\AppCoreTaskRepository.pas',
   AppCoreTaskService in '..\App.Core\AppCoreTaskService.pas',
