@@ -6,6 +6,7 @@ uses
   LoginForm in 'LoginForm.pas' {FrmLogin},
   MainForm in 'MainForm.pas' {FrmMain},
   TaskForm in 'TaskForm.pas' {FrmTasks},
+  UserForm in 'UserForm.pas' {FrmUsers},
   AppCoreAuth in '..\App.Core\AppCoreAuth.pas',
   AppCoreClock in '..\App.Core\AppCoreClock.pas',
   AppCorePreferences in '..\App.Core\AppCorePreferences.pas',
@@ -14,7 +15,8 @@ uses
   AppCoreTaskRepository in '..\App.Core\AppCoreTaskRepository.pas',
   AppCoreTaskService in '..\App.Core\AppCoreTaskService.pas',
   AppCoreUser in '..\App.Core\AppCoreUser.pas',
-  AppCoreUserRepository in '..\App.Core\AppCoreUserRepository.pas';
+  AppCoreUserRepository in '..\App.Core\AppCoreUserRepository.pas',
+  AppCoreUserService in '..\App.Core\AppCoreUserService.pas';
 
 begin
   Application.Initialize;
@@ -25,6 +27,8 @@ begin
     begin
       Application.CreateForm(TFrmMain, FrmMain);
       FrmMain.UserRole := FrmLogin.LoggedInRole;
+      FrmMain.ConfigureServices(FrmLogin.UserRepository, FrmLogin.SessionService,
+        TSystemClock.Create, FrmLogin.PasswordHasher, FrmLogin.LoggedInUserId);
       FrmLogin.Free;
       FrmLogin := nil;
       Application.Run;

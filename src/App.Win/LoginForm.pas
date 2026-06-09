@@ -9,9 +9,11 @@ uses
   Forms,
   StdCtrls,
   AppCoreAuth,
+  AppCoreClock,
   AppCorePreferences,
   AppCoreUser,
-  AppCoreUserRepository;
+  AppCoreUserRepository,
+  AppCoreUserService;
 
 type
   TFrmLogin = class(TForm)
@@ -27,7 +29,11 @@ type
   private
     FAuth: IAuthService;
     FPreferences: ILoginPreferencesRepository;
+    FUsers: IUserRepository;
+    FSession: ISessionService;
+    FHasher: IPasswordHasher;
     FLoggedInRole: TUserRole;
+    FLoggedInUserId: string;
 
     procedure BuildAuthServices;
     procedure AddUser(const ARepository: TInMemoryUserRepository; const AHasher: IPasswordHasher;
@@ -35,6 +41,10 @@ type
       AFailedAttempts: Integer; ALocked: Boolean);
   public
     property LoggedInRole: TUserRole read FLoggedInRole;
+    property LoggedInUserId: string read FLoggedInUserId;
+    property UserRepository: IUserRepository read FUsers;
+    property SessionService: ISessionService read FSession;
+    property PasswordHasher: IPasswordHasher read FHasher;
   end;
 
 var
@@ -43,9 +53,6 @@ var
 implementation
 
 {$R *.dfm}
-
-uses
-  AppCoreClock;
 
 procedure TFrmLogin.AddUser(const ARepository: TInMemoryUserRepository;
   const AHasher: IPasswordHasher; const AUsername, APassword,
@@ -58,6 +65,7 @@ begin
   LSalt := AUsername + '-salt';
   LUser := TUser.Create(AUsername, AUsername, ADisplayName,
     AHasher.HashPassword(APassword, LSalt), LSalt, AActive, ARole);
+  LUser.Email := AUsername + '@example.com';
   LUser.FailedAttempts := AFailedAttempts;
   LUser.Locked := ALocked;
   ARepository.Add(LUser);
@@ -71,6 +79,7 @@ begin
   try
     LUser := FAuth.Login(EdtUsername.Text, EdtPassword.Text);
     FLoggedInRole := LUser.Role;
+    FLoggedInUserId := LUser.Id;
     ModalResult := mrOk;
   except
     on E: ELoginValidationError do
@@ -87,28 +96,28 @@ end;
 procedure TFrmLogin.BuildAuthServices;
 var
   LRepository: TInMemoryUserRepository;
-  LUsers: IUserRepository;
-  LSession: ISessionService;
-  LHasher: IPasswordHasher;
+  LUserService: TUserService;
 begin
-  LHasher := TBasicPasswordHasher.Create;
+  FHasher := TBasicPasswordHasher.Create;
   LRepository := TInMemoryUserRepository.Create;
-  LUsers := LRepository;
-  LSession := TSessionService.Create(TSystemClock.Create, 15);
+  FUsers := LRepository;
+  FSession := TSessionService.Create(TSystemClock.Create, 15);
   FPreferences := TInMemoryLoginPreferencesRepository.Create;
 
-  AddUser(LRepository, LHasher, 'admin', 'admin123', 'Administrador', True, urAdmin, 0, False);
-  AddUser(LRepository, LHasher, 'user', 'user123', 'Usuario normal', True, urNormal, 0, False);
-  AddUser(LRepository, LHasher, 'disabled', 'disabled123', 'Usuario inactivo', False, urNormal, 0, False);
-  AddUser(LRepository, LHasher, 'locked', 'locked123', 'Usuario bloqueado', True, urNormal, 3, True);
+  LUserService := TUserService.Create(FUsers, TSystemClock.Create, FHasher);
+  LUserService.EnsureDefaultAdmin;
+  AddUser(LRepository, FHasher, 'user', 'user123', 'Usuario normal', True, urNormal, 0, False);
+  AddUser(LRepository, FHasher, 'disabled', 'disabled123', 'Usuario inactivo', False, urNormal, 0, False);
+  AddUser(LRepository, FHasher, 'locked', 'locked123', 'Usuario bloqueado', True, urNormal, 3, True);
 
-  FAuth := TAuthService.Create(LUsers, LSession, FPreferences, LHasher);
+  FAuth := TAuthService.Create(FUsers, FSession, FPreferences, FHasher);
 end;
 
 procedure TFrmLogin.FormCreate(Sender: TObject);
 begin
   BuildAuthServices;
   FLoggedInRole := urNormal;
+  FLoggedInUserId := '';
   EdtUsername.Text := FPreferences.LastUsername;
   EdtPassword.PasswordChar := '*';
   LblMessage.Caption := '';

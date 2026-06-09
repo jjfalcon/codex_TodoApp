@@ -10,7 +10,10 @@ uses
   StdCtrls,
   ExtCtrls,
   Graphics,
-  AppCoreUser;
+  AppCoreAuth,
+  AppCoreClock,
+  AppCoreUser,
+  AppCoreUserRepository;
 
 type
   TNavigationOption = (noDashboard, noTasks, noUsers);
@@ -30,6 +33,11 @@ type
     FActiveOption: TNavigationOption;
     FCurrentForm: TForm;
     FUserRole: TUserRole;
+    FCurrentUserId: string;
+    FUsers: IUserRepository;
+    FSession: ISessionService;
+    FClock: IClock;
+    FHasher: IPasswordHasher;
 
     procedure ClearContent;
     procedure EmbedForm(AForm: TForm);
@@ -39,6 +47,9 @@ type
     procedure SetUserRole(AValue: TUserRole);
     procedure UpdatePermissions;
   public
+    procedure ConfigureServices(const AUsers: IUserRepository;
+      const ASession: ISessionService; const AClock: IClock;
+      const AHasher: IPasswordHasher; const ACurrentUserId: string);
     property UserRole: TUserRole read FUserRole write SetUserRole;
   end;
 
@@ -50,7 +61,8 @@ implementation
 {$R *.dfm}
 
 uses
-  TaskForm;
+  TaskForm,
+  UserForm;
 
 procedure TFrmMain.BtnDashboardClick(Sender: TObject);
 begin
@@ -70,6 +82,17 @@ end;
 procedure TFrmMain.ClearContent;
 begin
   FreeAndNil(FCurrentForm);
+end;
+
+procedure TFrmMain.ConfigureServices(const AUsers: IUserRepository;
+  const ASession: ISessionService; const AClock: IClock;
+  const AHasher: IPasswordHasher; const ACurrentUserId: string);
+begin
+  FUsers := AUsers;
+  FSession := ASession;
+  FClock := AClock;
+  FHasher := AHasher;
+  FCurrentUserId := ACurrentUserId;
 end;
 
 function TFrmMain.CreatePlaceholderForm(const ATitle, AMessage: string): TForm;
@@ -134,7 +157,10 @@ begin
     noTasks:
       EmbedForm(TFrmTasks.Create(Self));
     noUsers:
-      EmbedForm(CreatePlaceholderForm('Usuarios', 'Administracion de usuarios.'));
+      begin
+        EmbedForm(TFrmUsers.Create(Self));
+        TFrmUsers(FCurrentForm).Configure(FUsers, FClock, FHasher, FCurrentUserId);
+      end;
   end;
 
   FActiveOption := AOption;

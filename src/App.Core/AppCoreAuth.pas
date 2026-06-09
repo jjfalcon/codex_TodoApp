@@ -14,6 +14,7 @@ type
   EAuthenticationError = class(Exception);
   EInactiveUserError = class(Exception);
   EUserLockedError = class(Exception);
+  EDeletedUserError = class(Exception);
   ESessionRequiredError = class(Exception);
   ESessionExpiredError = class(Exception);
   EAccessDeniedError = class(Exception);
@@ -49,6 +50,7 @@ type
     FClock: IClock;
     FTimeoutMinutes: Integer;
     FCurrentUser: TUser;
+    FCurrentRole: TUserRole;
     FStartedAt: TDateTime;
     FLastActivityAt: TDateTime;
     FActive: Boolean;
@@ -135,6 +137,7 @@ begin
   FClock := AClock;
   FTimeoutMinutes := ATimeoutMinutes;
   FCurrentUser := nil;
+  FCurrentRole := urNormal;
   FStartedAt := 0;
   FLastActivityAt := 0;
   FActive := False;
@@ -143,7 +146,7 @@ end;
 function TSessionService.CurrentRole: TUserRole;
 begin
   RequireActiveSession;
-  Result := FCurrentUser.Role;
+  Result := FCurrentRole;
 end;
 
 function TSessionService.CurrentUser: TUser;
@@ -158,6 +161,7 @@ begin
   begin
     FActive := False;
     FCurrentUser := nil;
+    FCurrentRole := urNormal;
     raise ESessionExpiredError.Create('La sesion ha expirado por inactividad.');
   end;
 end;
@@ -168,6 +172,7 @@ begin
   begin
     FActive := False;
     FCurrentUser := nil;
+    FCurrentRole := urNormal;
   end;
 
   Result := FActive;
@@ -187,6 +192,7 @@ end;
 procedure TSessionService.Logout;
 begin
   FCurrentUser := nil;
+  FCurrentRole := urNormal;
   FStartedAt := 0;
   FLastActivityAt := 0;
   FActive := False;
@@ -211,6 +217,7 @@ end;
 procedure TSessionService.StartSession(AUser: TUser);
 begin
   FCurrentUser := AUser;
+  FCurrentRole := AUser.Role;
   FStartedAt := FClock.Now;
   FLastActivityAt := FStartedAt;
   FActive := True;
@@ -241,6 +248,9 @@ begin
   if LUser = nil then
     raise EAuthenticationError.Create('Usuario o contrasena incorrectos.');
 
+  if LUser.Deleted then
+    raise EDeletedUserError.Create('El usuario esta eliminado.');
+
   if not LUser.Active then
     raise EInactiveUserError.Create('El usuario no esta activo.');
 
@@ -254,8 +264,9 @@ begin
   end;
 
   LUser.FailedAttempts := 0;
-  FUsers.Save(LUser);
   FSessions.StartSession(LUser);
+  LUser.LastLoginAt := FSessions.LastActivityAt;
+  FUsers.Save(LUser);
   Result := LUser;
 end;
 
