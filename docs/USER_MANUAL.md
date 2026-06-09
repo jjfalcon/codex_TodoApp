@@ -137,7 +137,7 @@ Si cambia el rol de un usuario, el cambio se aplica a partir del siguiente login
 
 ## Administrador inicial
 
-En una instalacion nueva existe un administrador inicial:
+En una instalacion nueva existe un administrador inicial (se crea solo la primera vez que arranca la aplicacion):
 
 | Usuario | Contrasena | Rol |
 | --- | --- | --- |
@@ -191,8 +191,7 @@ La cuenta fue eliminada logicamente y no puede reactivarse.
 
 En esta version:
 
-- Los usuarios se guardan en memoria durante la ejecucion.
-- Los cambios no sobreviven al cierre de la aplicacion.
+- Los usuarios se guardan en `users.json` en el mismo directorio que el ejecutable.
 - No hay doble factor.
 - No hay recuperacion de contrasena.
 - No hay auditoria visible de cambios administrativos.

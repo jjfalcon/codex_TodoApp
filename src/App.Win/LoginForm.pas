@@ -12,6 +12,7 @@ uses
   AppCoreClock,
   AppCorePreferences,
   AppCoreUser,
+  AppCoreUserFileRepository,
   AppCoreUserRepository,
   AppCoreUserService;
 
@@ -36,9 +37,6 @@ type
     FLoggedInUserId: string;
 
     procedure BuildAuthServices;
-    procedure AddUser(const ARepository: TInMemoryUserRepository; const AHasher: IPasswordHasher;
-      const AUsername, APassword, ADisplayName: string; AActive: Boolean; ARole: TUserRole;
-      AFailedAttempts: Integer; ALocked: Boolean);
   public
     property LoggedInRole: TUserRole read FLoggedInRole;
     property LoggedInUserId: string read FLoggedInUserId;
@@ -53,23 +51,6 @@ var
 implementation
 
 {$R *.dfm}
-
-procedure TFrmLogin.AddUser(const ARepository: TInMemoryUserRepository;
-  const AHasher: IPasswordHasher; const AUsername, APassword,
-  ADisplayName: string; AActive: Boolean; ARole: TUserRole;
-  AFailedAttempts: Integer; ALocked: Boolean);
-var
-  LUser: TUser;
-  LSalt: string;
-begin
-  LSalt := AUsername + '-salt';
-  LUser := TUser.Create(AUsername, AUsername, ADisplayName,
-    AHasher.HashPassword(APassword, LSalt), LSalt, AActive, ARole);
-  LUser.Email := AUsername + '@example.com';
-  LUser.FailedAttempts := AFailedAttempts;
-  LUser.Locked := ALocked;
-  ARepository.Add(LUser);
-end;
 
 procedure TFrmLogin.BtnLoginClick(Sender: TObject);
 var
@@ -95,20 +76,15 @@ end;
 
 procedure TFrmLogin.BuildAuthServices;
 var
-  LRepository: TInMemoryUserRepository;
   LUserService: TUserService;
 begin
   FHasher := TBasicPasswordHasher.Create;
-  LRepository := TInMemoryUserRepository.Create;
-  FUsers := LRepository;
+  FUsers := TFileUserRepository.Create(ExtractFilePath(Application.ExeName) + 'users.json');
   FSession := TSessionService.Create(TSystemClock.Create, 15);
   FPreferences := TInMemoryLoginPreferencesRepository.Create;
 
   LUserService := TUserService.Create(FUsers, TSystemClock.Create, FHasher);
   LUserService.EnsureDefaultAdmin;
-  AddUser(LRepository, FHasher, 'user', 'user123', 'Usuario normal', True, urNormal, 0, False);
-  AddUser(LRepository, FHasher, 'disabled', 'disabled123', 'Usuario inactivo', False, urNormal, 0, False);
-  AddUser(LRepository, FHasher, 'locked', 'locked123', 'Usuario bloqueado', True, urNormal, 3, True);
 
   FAuth := TAuthService.Create(FUsers, FSession, FPreferences, FHasher);
 end;

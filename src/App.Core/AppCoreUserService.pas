@@ -69,12 +69,26 @@ end;
 
 constructor TUserService.Create(const AUsers: IUserRepository; const AClock: IClock;
   const AHasher: IPasswordHasher);
+var
+  I: Integer;
+  LUser: TUser;
+  LIdNum: Integer;
 begin
   inherited Create;
   FUsers := AUsers;
   FClock := AClock;
   FHasher := AHasher;
   FNextId := 1;
+  for I := 0 to FUsers.All.Count - 1 do
+  begin
+    LUser := TUser(FUsers.All[I]);
+    if Copy(LUser.Id, 1, 5) = 'user-' then
+    begin
+      LIdNum := StrToIntDef(Copy(LUser.Id, 6, MaxInt), 0);
+      if LIdNum >= FNextId then
+        FNextId := LIdNum + 1;
+    end;
+  end;
 end;
 
 function TUserService.ActiveAdminCountExcept(const AExceptUserId: string): Integer;

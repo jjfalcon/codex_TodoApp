@@ -16,6 +16,7 @@ __history__/
 *.drc
 *.~*
 tasks.json
+users.json
 Win32/
 Win64/
 Debug/

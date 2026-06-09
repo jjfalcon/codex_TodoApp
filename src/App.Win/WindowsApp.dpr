@@ -11,12 +11,14 @@ uses
   AppCoreAbout in '..\App.Core\AppCoreAbout.pas',
   AppCoreAuth in '..\App.Core\AppCoreAuth.pas',
   AppCoreClock in '..\App.Core\AppCoreClock.pas',
+  AppCoreJsonUtils in '..\App.Core\AppCoreJsonUtils.pas',
   AppCorePreferences in '..\App.Core\AppCorePreferences.pas',
   AppCoreTaskFileRepository in '..\App.Core\AppCoreTaskFileRepository.pas',
   AppCoreTaskItem in '..\App.Core\AppCoreTaskItem.pas',
   AppCoreTaskRepository in '..\App.Core\AppCoreTaskRepository.pas',
   AppCoreTaskService in '..\App.Core\AppCoreTaskService.pas',
   AppCoreUser in '..\App.Core\AppCoreUser.pas',
+  AppCoreUserFileRepository in '..\App.Core\AppCoreUserFileRepository.pas',
   AppCoreUserRepository in '..\App.Core\AppCoreUserRepository.pas',
   AppCoreUserService in '..\App.Core\AppCoreUserService.pas';
 

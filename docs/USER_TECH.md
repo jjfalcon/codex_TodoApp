@@ -47,11 +47,39 @@ Operaciones:
 - `FindByEmail`
 - `Save`
 
-Implementacion actual:
+Implementaciones:
 
-- `TInMemoryUserRepository`
+- `TInMemoryUserRepository` — persistencia en memoria, usada en tests.
+- `TFileUserRepository` — persistencia en archivo JSON, usada en produccion.
 
-El repositorio en memoria guarda usuarios por referencia y se usa para TDD y para el arranque actual de desarrollo.
+### `AppCoreUserFileRepository.pas`
+
+Implementa `IUserRepository` con persistencia en archivo JSON.
+
+- El constructor recibe la ruta del archivo y carga los usuarios existentes.
+- `Save` reescribe el archivo completo en cada llamada.
+- El formato JSON almacena todos los campos de `TUser`: id, username, displayName, email, passwordHash, salt, active, deleted, role, failedAttempts, locked, createdAt, lastLoginAt.
+- Los roles se serializan como `"admin"` / `"normal"`.
+- Compatible con `ExtractJsonObjects`, `EscapeJson`, `BoolToJson`, `DateTimeToJson` y `NullOrDateTimeToJson` de `AppCoreJsonUtils`.
+
+Archivo generado: `users.json` en el directorio del ejecutable.
+
+### `AppCoreJsonUtils.pas`
+
+Unidad compartida de utilidades JSON, usada por `TFileTaskRepository` y `TFileUserRepository`.
+
+| Funcion | Proposito |
+|---|---|
+| `FindFrom` | Busqueda con offset |
+| `EscapeJson` / `UnescapeJson` | Escapado de strings |
+| `ExtractJsonString` | Leer string por clave |
+| `ExtractJsonDate` | Leer fecha ISO |
+| `ExtractJsonBool` | Leer booleano |
+| `ExtractJsonInteger` | Leer entero |
+| `ExtractJsonObjects` | Parsear array JSON a lista de objetos |
+| `DateTimeToJson` | Serializar fecha a ISO |
+| `NullOrDateTimeToJson` | Serializar fecha opcional |
+| `BoolToJson` | Serializar booleano |
 
 ### `AppCoreUserService.pas`
 
@@ -133,7 +161,9 @@ Construye los servicios de autenticacion y expone a `FMain`:
 - `LoggedInUserId`
 - `LoggedInRole`
 
-En una instalacion de desarrollo crea el administrador inicial con:
+Usa `TFileUserRepository` con `users.json` en el directorio del ejecutable.
+
+Al arrancar por primera vez el administrador inicial se crea automaticamente via `TUserService.EnsureDefaultAdmin`:
 
 - Usuario: `admin`
 - Contrasena: `admin`
@@ -199,6 +229,8 @@ Escenarios principales cubiertos:
 - Usuarios eliminados ocultos por defecto.
 - Filtro especifico de usuarios eliminados.
 - Actualizacion de `LastLoginAt`.
+- Persistencia en archivo: guardar y recargar usuarios (`FilePersistence_saves_and_loads_users`).
+- Persistencia en archivo: verificar todos los campos (`FilePersistence_persists_multiple_fields`).
 
 ## Comandos de Verificacion
 
@@ -223,8 +255,6 @@ dcc32 "-U..\App.Core" WindowsApp.dpr
 
 ## Limitaciones Actuales
 
-- La persistencia de usuarios es en memoria.
-- Los usuarios creados desde `FUser` no sobreviven al cierre de la aplicacion.
 - No existe base de datos real.
 - No hay auditoria administrativa.
 - No hay doble factor ni recuperacion de contrasena.
@@ -233,7 +263,6 @@ dcc32 "-U..\App.Core" WindowsApp.dpr
 
 ## Evolucion Recomendada
 
-- Implementar un repositorio persistente de usuarios.
 - Sustituir `TBasicPasswordHasher` por un algoritmo seguro de produccion.
 - Anadir auditoria administrativa si el producto lo requiere.
 - Anadir recuperacion de contrasena usando el email.

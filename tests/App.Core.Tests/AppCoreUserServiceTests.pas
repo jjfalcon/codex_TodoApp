@@ -11,8 +11,10 @@ uses
   SysUtils,
   AppCoreAuth,
   AppCoreClock,
+  AppCoreJsonUtils,
   AppCorePreferences,
   AppCoreUser,
+  AppCoreUserFileRepository,
   AppCoreUserRepository,
   AppCoreUserService;
 
@@ -477,6 +479,216 @@ begin
     'Login should update last login date.');
 end;
 
+procedure FilePersistenceSavesAndLoadsUsers;
+const
+  LTestFileName = 'test_users_file.json';
+var
+  LRepository: TFileUserRepository;
+  LHasher: IPasswordHasher;
+  LUser: TUser;
+  LSalt: string;
+begin
+  DeleteFile(LTestFileName);
+  try
+    LHasher := TBasicPasswordHasher.Create;
+    LSalt := 'admin-salt';
+    LRepository := TFileUserRepository.Create(LTestFileName);
+    try
+      LUser := TUser.Create('admin', 'admin', 'Administrador',
+        LHasher.HashPassword('admin', LSalt), LSalt, True, urAdmin, 'admin@example.com', Now);
+      LRepository.Save(LUser);
+
+      AssertTrue(FileExists(LTestFileName), 'File should exist after saving.');
+    finally
+      LRepository.Free;
+    end;
+
+    LRepository := TFileUserRepository.Create(LTestFileName);
+    try
+      AssertEquals(1, LRepository.All.Count, 'Should load 1 user from file.');
+      AssertEquals('admin', LRepository.FindById('admin').Username,
+        'Username should match after reload.');
+    finally
+      LRepository.Free;
+    end;
+  finally
+    DeleteFile(LTestFileName);
+  end;
+end;
+
+procedure FilePersistencePersistsMultipleFields;
+const
+  LTestFileName = 'test_users_fields.json';
+var
+  LRepository: TFileUserRepository;
+  LHasher: IPasswordHasher;
+  LUser: TUser;
+  LSalt: string;
+  LNow: TDateTime;
+begin
+  DeleteFile(LTestFileName);
+  try
+    LHasher := TBasicPasswordHasher.Create;
+    LSalt := 'user-salt';
+    LNow := EncodeDate(2026, 6, 9) + EncodeTime(10, 30, 0, 0);
+    LRepository := TFileUserRepository.Create(LTestFileName);
+    try
+      LUser := TUser.Create('user1', 'user1', 'User One',
+        LHasher.HashPassword('pass', LSalt), LSalt, True, urNormal,
+        'user1@example.com', LNow);
+      LUser.Deleted := False;
+      LUser.FailedAttempts := 2;
+      LUser.Locked := False;
+      LUser.LastLoginAt := LNow + 1;
+      LRepository.Save(LUser);
+    finally
+      LRepository.Free;
+    end;
+
+    LRepository := TFileUserRepository.Create(LTestFileName);
+    try
+      LUser := LRepository.FindById('user1');
+      AssertEquals('user1', LUser.Username, 'Username should persist.');
+      AssertEquals('User One', LUser.DisplayName, 'DisplayName should persist.');
+      AssertEquals('user1@example.com', LUser.Email, 'Email should persist.');
+      AssertTrue(LUser.Active, 'Active should persist.');
+      AssertFalse(LUser.Deleted, 'Deleted should persist.');
+      AssertEquals(Ord(urNormal), Ord(LUser.Role), 'Role should persist.');
+      AssertEquals(2, LUser.FailedAttempts, 'FailedAttempts should persist.');
+      AssertFalse(LUser.Locked, 'Locked should persist.');
+      AssertTrue(LUser.LastLoginAt > 0, 'LastLoginAt should persist.');
+    finally
+      LRepository.Free;
+    end;
+  finally
+    DeleteFile(LTestFileName);
+  end;
+end;
+
+procedure FilePersistenceRoundTripsPasswordHashAndSalt;
+const
+  LTestFileName = 'test_users_hash.json';
+var
+  LRepository: TFileUserRepository;
+  LHasher: IPasswordHasher;
+  LUser: TUser;
+  LSalt: string;
+  LHash: string;
+begin
+  DeleteFile(LTestFileName);
+  try
+    LHasher := TBasicPasswordHasher.Create;
+    LSalt := 'jjfalcon-salt';
+    LHash := LHasher.HashPassword('jjfalcon', LSalt);
+    LRepository := TFileUserRepository.Create(LTestFileName);
+    try
+      LUser := TUser.Create('user-1', 'jjfalcon', 'jjfalcon',
+        LHash, LSalt, True, urNormal, 'jjfalcon@example.com', Now);
+      LRepository.Save(LUser);
+    finally
+      LRepository.Free;
+    end;
+
+    LRepository := TFileUserRepository.Create(LTestFileName);
+    try
+      AssertEquals(1, LRepository.All.Count, 'Should load 1 user.');
+      LUser := LRepository.FindByUsername('jjfalcon');
+      AssertTrue(LUser <> nil, 'User jjfalcon should exist after reload.');
+      AssertEquals(LSalt, LUser.Salt, 'Salt should persist through file round-trip.');
+      AssertEquals(LHash, LUser.PasswordHash, 'PasswordHash should persist through file round-trip.');
+      AssertTrue(LHasher.VerifyPassword('jjfalcon', LUser.Salt, LUser.PasswordHash),
+        'Password verification should succeed after file round-trip.');
+    finally
+      LRepository.Free;
+    end;
+  finally
+    DeleteFile(LTestFileName);
+  end;
+end;
+
+procedure LoginSucceedsAfterFilePersistenceCreateUser;
+const
+  LTestFileName = 'test_users_login.json';
+var
+  LRepository: IUserRepository;
+  LHasher: IPasswordHasher;
+  LClock: IClock;
+  LService: TUserService;
+  LSession: ISessionService;
+  LAuth: IAuthService;
+  LAdmin: TUser;
+  LUser: TUser;
+begin
+  LService := nil;
+  DeleteFile(LTestFileName);
+  try
+    LHasher := TBasicPasswordHasher.Create;
+    LClock := TFixedClock.Create(EncodeDate(2026, 6, 9));
+    LRepository := TFileUserRepository.Create(LTestFileName);
+    LService := TUserService.Create(LRepository, LClock, LHasher);
+
+    LAdmin := LService.EnsureDefaultAdmin;
+
+    LUser := LService.CreateUser(LAdmin.Id, 'jjfalcon', 'jjfalcon',
+      'jjfalcon@example.com', 'jjfalcon', urNormal);
+
+    AssertTrue(LUser <> nil, 'User should be created.');
+    AssertEquals('jjfalcon', LUser.Username, 'Username should match.');
+
+    LSession := TSessionService.Create(LClock, 15);
+    LAuth := TAuthService.Create(LRepository, LSession,
+      TInMemoryLoginPreferencesRepository.Create, LHasher);
+
+    LAuth.Login('jjfalcon', 'jjfalcon');
+    AssertTrue(LSession.IsActive, 'Login should succeed after file persistence create user.');
+  finally
+    LService.Free;
+    DeleteFile(LTestFileName);
+  end;
+end;
+
+procedure LoginSucceedsAfterFileReload;
+const
+  LTestFileName = 'test_users_reload.json';
+var
+  LRepository: IUserRepository;
+  LHasher: IPasswordHasher;
+  LClock: IClock;
+  LService: TUserService;
+  LSession: ISessionService;
+  LAuth: IAuthService;
+  LAdmin: TUser;
+  LUser: TUser;
+begin
+  LService := nil;
+  DeleteFile(LTestFileName);
+  try
+    LHasher := TBasicPasswordHasher.Create;
+    LClock := TFixedClock.Create(EncodeDate(2026, 6, 9));
+    LRepository := TFileUserRepository.Create(LTestFileName);
+    LService := TUserService.Create(LRepository, LClock, LHasher);
+
+    LAdmin := LService.EnsureDefaultAdmin;
+    LUser := LService.CreateUser(LAdmin.Id, 'jjfalcon', 'User',
+      'jjfalcon@example.com', 'jjfalcon', urNormal);
+    AssertTrue(LUser <> nil, 'User should be created.');
+  finally
+    LService.Free;
+  end;
+
+  LRepository := TFileUserRepository.Create(LTestFileName);
+  try
+    LSession := TSessionService.Create(LClock, 15);
+    LAuth := TAuthService.Create(LRepository, LSession,
+      TInMemoryLoginPreferencesRepository.Create, LHasher);
+
+    LAuth.Login('jjfalcon', 'jjfalcon');
+    AssertTrue(LSession.IsActive, 'Login should succeed after file reload.');
+  finally
+    DeleteFile(LTestFileName);
+  end;
+end;
+
 procedure RunUserServiceTests(var AFailures: Integer);
 begin
   RunTest('UserManagement_creates_default_admin_on_new_installation', UserManagementCreatesDefaultAdminOnNewInstallation, AFailures);
@@ -497,6 +709,11 @@ begin
   RunTest('ListUsers_excludes_deleted_users_by_default', ListUsersExcludesDeletedUsersByDefault, AFailures);
   RunTest('FilterUsers_returns_deleted_users_when_requested', FilterUsersReturnsDeletedUsersWhenRequested, AFailures);
   RunTest('Login_updates_user_last_login_at', LoginUpdatesUserLastLoginAt, AFailures);
+  RunTest('FilePersistence_saves_and_loads_users', FilePersistenceSavesAndLoadsUsers, AFailures);
+  RunTest('FilePersistence_persists_multiple_fields', FilePersistencePersistsMultipleFields, AFailures);
+  RunTest('FilePersistence_round_trips_password_hash_and_salt', FilePersistenceRoundTripsPasswordHashAndSalt, AFailures);
+  RunTest('Login_succeeds_after_file_persistence_create_user', LoginSucceedsAfterFilePersistenceCreateUser, AFailures);
+  RunTest('Login_succeeds_after_file_reload', LoginSucceedsAfterFileReload, AFailures);
 end;
 
 end.
