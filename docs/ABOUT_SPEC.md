@@ -1,30 +1,46 @@
 # Especificacion funcional: Formulario Acerca de
 
+## Estado
+
+Completada el 2026-06-09.
+
+Implementacion principal:
+
+- Nucleo: `src/App.Core/AppCoreAbout.pas`.
+- UI VCL: `src/App.Win/AboutForm.pas`, `src/App.Win/AboutForm.dfm`.
+- Pruebas: `tests/App.Core.Tests/AppCoreAboutServiceTests.pas`.
+- Integracion: `src/App.Win/MainForm.pas` (boton `Acerca de` en la barra lateral).
+
 ## Objetivo
 
 Incorporar un formulario `Acerca de` que muestre informacion basica de la aplicacion, version, titularidad y datos tecnicos utiles para soporte.
 
 Esta especificacion define el comportamiento esperado. No describe todavia detalles de implementacion ni estructura de codigo.
 
-## Alcance inicial
+## Alcance inicial implementado
 
-La primera version del formulario debe permitir:
+La version actual permite:
 
 - Mostrar el nombre de la aplicacion.
 - Mostrar la version de la aplicacion.
 - Mostrar una descripcion breve del producto.
 - Mostrar informacion de copyright o titularidad.
 - Mostrar informacion tecnica basica.
-- Cerrar el formulario desde un boton visible.
-- Abrirse desde el menu principal de la aplicacion.
+- Cerrar el formulario desde el boton `Aceptar`.
+- Abrirse desde la barra lateral de `FMain` mediante el boton `Acerca de`.
+- Mostrar `No disponible` para datos tecnicos faltantes.
+- Sanitizar informacion sensible en la configuracion de conexion.
+- Obtener la informacion desde un servicio testeable (`IAboutService`).
 
-Queda fuera del alcance inicial:
+Queda fuera del alcance actual:
 
 - Actualizacion automatica de la aplicacion.
 - Consulta online de nuevas versiones.
 - Licenciamiento avanzado.
 - Envio automatico de informacion a soporte.
 - Pantalla de creditos extensa.
+- Logo de la aplicacion.
+- Disponibilidad antes del login.
 
 ## Conceptos
 
@@ -125,9 +141,7 @@ Los textos definitivos pueden ajustarse en la implementacion, pero el formulario
 - Dado que el formulario esta abierto, cuando el usuario lo cierra, entonces no debe modificarse la sesion activa.
 - Dado que existe informacion sensible en la configuracion, cuando se muestra el formulario, entonces esa informacion no debe aparecer.
 
-## Escenarios TDD propuestos
-
-Los primeros tests deben cubrir el nucleo, sin formularios VCL:
+## Escenarios TDD implementados
 
 - `AboutInfo_returns_application_name`
 - `AboutInfo_returns_application_version`
@@ -137,16 +151,18 @@ Los primeros tests deben cubrir el nucleo, sin formularios VCL:
 - `AboutInfo_does_not_expose_sensitive_connection_data`
 - `AboutInfo_can_be_loaded_without_active_business_changes`
 
-## Diseno esperado para TDD
+## Diseno tecnico implementado
 
-La funcionalidad debe poder probarse sin abrir ventanas.
+La funcionalidad se prueba sin abrir ventanas VCL.
 
-Componentes conceptuales:
+Componentes implementados:
 
-- Proveedor de informacion de aplicacion.
-- Proveedor de informacion tecnica.
-- Servicio de datos `Acerca de`.
-- Sanitizador de informacion sensible.
+- `TAboutInfo`: registro con todos los campos de informacion.
+- `IAboutInfoProvider`: contrato para obtener informacion de la aplicacion.
+- `TDefaultAboutInfoProvider`: proveedor que obtiene datos reales del sistema.
+- `IAboutService`: contrato del servicio de datos `Acerca de`.
+- `TAboutService`: servicio que obtiene, sanitiza y completa datos faltantes con `No disponible`.
+- `TFrmAbout`: formulario VCL modal que muestra la informacion recibida.
 
 La UI solo debe:
 
@@ -169,6 +185,16 @@ Informacion tecnica:
 - Sistema operativo: valor detectado o simulado en pruebas.
 - Version del ejecutable: `1.0.0`
 - Base de datos: `No disponible` en la primera version si aun no existe conexion real.
+
+## Decisiones confirmadas
+
+- La funcionalidad se prueba sin abrir ventanas VCL.
+- La UI solo consume datos del servicio, no los genera.
+- La informacion se obtiene desde `IAboutService`.
+- Los datos sensibles se sanitizan en el nucleo.
+- Los datos opcionales faltantes muestran `No disponible`.
+- El formulario se abre desde la barra lateral de `FMain` como ventana modal.
+- Cualquier usuario autenticado puede abrir el formulario `Acerca de`.
 
 ## Preguntas pendientes
 

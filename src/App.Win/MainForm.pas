@@ -23,12 +23,14 @@ type
     BtnDashboard: TButton;
     BtnTasks: TButton;
     BtnUsers: TButton;
+    BtnAbout: TButton;
     PnlContent: TPanel;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure BtnDashboardClick(Sender: TObject);
     procedure BtnTasksClick(Sender: TObject);
     procedure BtnUsersClick(Sender: TObject);
+    procedure BtnAboutClick(Sender: TObject);
   private
     FActiveOption: TNavigationOption;
     FCurrentForm: TForm;
@@ -61,6 +63,7 @@ implementation
 {$R *.dfm}
 
 uses
+  AboutForm,
   TaskForm,
   UserForm;
 
@@ -77,6 +80,18 @@ end;
 procedure TFrmMain.BtnUsersClick(Sender: TObject);
 begin
   LoadOption(noUsers);
+end;
+
+procedure TFrmMain.BtnAboutClick(Sender: TObject);
+var
+  LForm: TFrmAbout;
+begin
+  LForm := TFrmAbout.Create(Self);
+  try
+    LForm.ShowModal;
+  finally
+    LForm.Free;
+  end;
 end;
 
 procedure TFrmMain.ClearContent;

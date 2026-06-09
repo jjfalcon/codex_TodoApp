@@ -3,10 +3,12 @@ program WindowsApp;
 uses
   Controls,
   Forms,
+  AboutForm in 'AboutForm.pas' {FrmAbout},
   LoginForm in 'LoginForm.pas' {FrmLogin},
   MainForm in 'MainForm.pas' {FrmMain},
   TaskForm in 'TaskForm.pas' {FrmTasks},
   UserForm in 'UserForm.pas' {FrmUsers},
+  AppCoreAbout in '..\App.Core\AppCoreAbout.pas',
   AppCoreAuth in '..\App.Core\AppCoreAuth.pas',
   AppCoreClock in '..\App.Core\AppCoreClock.pas',
   AppCorePreferences in '..\App.Core\AppCorePreferences.pas',

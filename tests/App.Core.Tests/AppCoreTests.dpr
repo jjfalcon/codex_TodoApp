@@ -4,9 +4,11 @@ program AppCoreTests;
 
 uses
   SysUtils,
+  AppCoreAboutServiceTests in 'AppCoreAboutServiceTests.pas',
   AppCoreAuthServiceTests in 'AppCoreAuthServiceTests.pas',
   AppCoreTaskServiceTests in 'AppCoreTaskServiceTests.pas',
   AppCoreUserServiceTests in 'AppCoreUserServiceTests.pas',
+  AppCoreAbout in '..\..\src\App.Core\AppCoreAbout.pas',
   AppCoreAuth in '..\..\src\App.Core\AppCoreAuth.pas',
   AppCoreClock in '..\..\src\App.Core\AppCoreClock.pas',
   AppCorePreferences in '..\..\src\App.Core\AppCorePreferences.pas',
@@ -24,6 +26,7 @@ begin
   Failures := 0;
 
   try
+    RunAboutServiceTests(Failures);
     RunAuthServiceTests(Failures);
     RunUserServiceTests(Failures);
     RunTaskServiceTests(Failures);
@@ -32,6 +35,7 @@ begin
       Writeln('All tests passed.')
     else
       Writeln(IntToStr(Failures) + ' test(s) failed.');
+    Readln;
     if Failures <> 0 then
       Halt(1);
   except

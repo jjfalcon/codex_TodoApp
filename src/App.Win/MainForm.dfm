@@ -51,6 +51,15 @@ object FrmMain: TFrmMain
       TabOrder = 2
       OnClick = BtnUsersClick
     end
+    object BtnAbout: TButton
+      Left = 12
+      Top = 448
+      Width = 124
+      Height = 32
+      Caption = 'Acerca de'
+      TabOrder = 3
+      OnClick = BtnAboutClick
+    end
   end
   object PnlContent: TPanel
     Left = 148
