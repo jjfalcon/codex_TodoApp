@@ -12,6 +12,7 @@ uses
   Graphics,
   AppCoreAuth,
   AppCoreClock,
+  AppCoreRepositoryFactory,
   AppCoreUser,
   AppCoreUserRepository;
 
@@ -36,7 +37,7 @@ type
     FCurrentForm: TForm;
     FUserRole: TUserRole;
     FCurrentUserId: string;
-    FUsers: IUserRepository;
+    FFactory: IRepositoryFactory;
     FSession: ISessionService;
     FClock: IClock;
     FHasher: IPasswordHasher;
@@ -49,7 +50,7 @@ type
     procedure SetUserRole(AValue: TUserRole);
     procedure UpdatePermissions;
   public
-    procedure ConfigureServices(const AUsers: IUserRepository;
+    procedure ConfigureServices(const AFactory: IRepositoryFactory;
       const ASession: ISessionService; const AClock: IClock;
       const AHasher: IPasswordHasher; const ACurrentUserId: string);
     property UserRole: TUserRole read FUserRole write SetUserRole;
@@ -99,11 +100,11 @@ begin
   FreeAndNil(FCurrentForm);
 end;
 
-procedure TFrmMain.ConfigureServices(const AUsers: IUserRepository;
+procedure TFrmMain.ConfigureServices(const AFactory: IRepositoryFactory;
   const ASession: ISessionService; const AClock: IClock;
   const AHasher: IPasswordHasher; const ACurrentUserId: string);
 begin
-  FUsers := AUsers;
+  FFactory := AFactory;
   FSession := ASession;
   FClock := AClock;
   FHasher := AHasher;
@@ -170,11 +171,14 @@ begin
     noDashboard:
       EmbedForm(CreatePlaceholderForm('Dashboard', 'Panel principal de la aplicacion.'));
     noTasks:
-      EmbedForm(TFrmTasks.Create(Self));
+      begin
+        EmbedForm(TFrmTasks.Create(Self));
+        TFrmTasks(FCurrentForm).Configure(FFactory);
+      end;
     noUsers:
       begin
         EmbedForm(TFrmUsers.Create(Self));
-        TFrmUsers(FCurrentForm).Configure(FUsers, FClock, FHasher, FCurrentUserId);
+        TFrmUsers(FCurrentForm).Configure(FFactory.CreateUserRepository, FClock, FHasher, FCurrentUserId);
       end;
   end;
 

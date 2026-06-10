@@ -11,8 +11,8 @@ uses
   AppCoreAuth,
   AppCoreClock,
   AppCorePreferences,
+  AppCoreRepositoryFactory,
   AppCoreUser,
-  AppCoreUserFileRepository,
   AppCoreUserRepository,
   AppCoreUserService;
 
@@ -30,17 +30,14 @@ type
   private
     FAuth: IAuthService;
     FPreferences: ILoginPreferencesRepository;
-    FUsers: IUserRepository;
     FSession: ISessionService;
     FHasher: IPasswordHasher;
     FLoggedInRole: TUserRole;
     FLoggedInUserId: string;
-
-    procedure BuildAuthServices;
   public
+    procedure Configure(const AFactory: IRepositoryFactory);
     property LoggedInRole: TUserRole read FLoggedInRole;
     property LoggedInUserId: string read FLoggedInUserId;
-    property UserRepository: IUserRepository read FUsers;
     property SessionService: ISessionService read FSession;
     property PasswordHasher: IPasswordHasher read FHasher;
   end;
@@ -74,27 +71,28 @@ begin
   end;
 end;
 
-procedure TFrmLogin.BuildAuthServices;
+procedure TFrmLogin.Configure(const AFactory: IRepositoryFactory);
 var
   LUserService: TUserService;
+  LUsers: IUserRepository;
 begin
   FHasher := TBasicPasswordHasher.Create;
-  FUsers := TFileUserRepository.Create(ExtractFilePath(Application.ExeName) + 'users.json');
+  LUsers := AFactory.CreateUserRepository;
   FSession := TSessionService.Create(TSystemClock.Create, 15);
-  FPreferences := TInMemoryLoginPreferencesRepository.Create;
+  FPreferences := AFactory.CreateLoginPreferencesRepository;
 
-  LUserService := TUserService.Create(FUsers, TSystemClock.Create, FHasher);
+  LUserService := TUserService.Create(LUsers, TSystemClock.Create, FHasher);
   LUserService.EnsureDefaultAdmin;
 
-  FAuth := TAuthService.Create(FUsers, FSession, FPreferences, FHasher);
+  FAuth := TAuthService.Create(LUsers, FSession, FPreferences, FHasher);
+
+  EdtUsername.Text := FPreferences.LastUsername;
 end;
 
 procedure TFrmLogin.FormCreate(Sender: TObject);
 begin
-  BuildAuthServices;
   FLoggedInRole := urNormal;
   FLoggedInUserId := '';
-  EdtUsername.Text := FPreferences.LastUsername;
   EdtPassword.PasswordChar := '*';
   LblMessage.Caption := '';
 end;

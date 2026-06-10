@@ -2,8 +2,8 @@
 
 ## Estadísticas del proyecto
 - Commits: 6
-- Tests: 59 (todos pasan)
-- Archivos fuente: ~25
+- Tests: 67 (todos pasan)
+- Archivos fuente: ~33
 - Documentación: 14 docs en docs/
 
 ---
@@ -136,3 +136,28 @@
 ### Documentación
 - USER_TECH.md actualizado: secciones AppCoreUserFileRepository y AppCoreJsonUtils
 - USER_MANUAL.md actualizado: persistencia apunta a users.json, nota sobre admin solo al primer inicio
+
+---
+
+## 8. Sesión 8 - 2026-06-10: Refactor persistencia — Factory pattern + configuración
+
+### Core (nuevo)
+- `AppCoreConfiguration.pas` (NUEVO): `TAppConfiguration` lee `app.config` (INI) con backend, dataPath y connectionString
+- `AppCoreRepositoryFactory.pas` (NUEVO): interfaz `IRepositoryFactory` + `TJsonRepositoryFactory` que crea repos según backend configurado
+- `AppCorePreferencesFileRepository.pas` (NUEVO): `TFileLoginPreferencesRepository` persiste último usuario en `app.config` sección `[Login]` (antes se perdía al cerrar la app)
+
+### VCL
+- `app.config` (NUEVO): archivo INI con `[Persistence] Backend=json`, `DataPath=.`
+- `WindowsApp.dpr` (MODIFICADO): actúa como composition root — lee config, crea factory según backend, inyecta en forms
+- `LoginForm.pas` (MODIFICADO): recibe `IRepositoryFactory` via `Configure()` en lugar de crear repos directamente
+- `MainForm.pas` (MODIFICADO): recibe `IRepositoryFactory` y lo reenvía a TaskForm/UserForm
+- `TaskForm.pas` (MODIFICADO): recibe `IRepositoryFactory` via `Configure()`, elimina dependencia directa a `TFileTaskRepository`
+
+### Tests
+- 11 tests nuevos: configuración INI (4), factory (4), preferencias con archivo (4)
+- 67 tests en total, todos OK, 0 errores
+
+### Notas
+- Para cambiar de backend (ej. MySQL) solo hace falta: crear `TMySQLRepositoryFactory`, registrarlo en el DPR, cambiar `app.config`
+- `UserForm.pas` no se modificó — ya recibía `IUserRepository` por inyección
+- Las preferencias de login se guardan en `app.config` sección `[Login]`, mismo archivo que la configuración general

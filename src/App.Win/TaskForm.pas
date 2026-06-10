@@ -10,9 +10,8 @@ uses
   StdCtrls,
   ExtCtrls,
   Dialogs,
+  AppCoreRepositoryFactory,
   AppCoreTaskItem,
-  AppCoreTaskFileRepository,
-  AppCoreTaskRepository,
   AppCoreTaskService;
 
 type
@@ -39,6 +38,8 @@ type
 
     procedure RefreshList(const ATasks: TTaskItemArray);
     function SelectedTask: TTaskItem;
+  public
+    procedure Configure(const AFactory: IRepositoryFactory);
   end;
 
 implementation
@@ -48,10 +49,15 @@ implementation
 uses
   AppCoreClock;
 
+procedure TFrmTasks.Configure(const AFactory: IRepositoryFactory);
+begin
+  FService := TTaskService.Create(AFactory.CreateTaskRepository, TSystemClock.Create);
+  RefreshList(FService.ListTasks);
+end;
+
 procedure TFrmTasks.FormCreate(Sender: TObject);
 begin
-  FService := TTaskService.Create(TFileTaskRepository.Create(ExtractFilePath(Application.ExeName) + 'tasks.json'), TSystemClock.Create);
-  RefreshList(FService.ListTasks);
+  FService := nil;
 end;
 
 procedure TFrmTasks.BtnAddClick(Sender: TObject);
@@ -78,6 +84,10 @@ end;
 procedure TFrmTasks.BtnDeleteClick(Sender: TObject);
 begin
   if LstTasks.ItemIndex < 0 then
+    Exit;
+
+  if MessageDlg('Esta seguro de que desea eliminar esta tarea?',
+    mtConfirmation, [mbYes, mbNo], 0) <> mrYes then
     Exit;
 
   FService.DeleteTask(SelectedTask.Id);

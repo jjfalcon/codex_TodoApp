@@ -4,15 +4,22 @@ program AppCoreTests;
 
 uses
   SysUtils,
+  IniFiles,
   AppCoreAboutServiceTests in 'AppCoreAboutServiceTests.pas',
   AppCoreAuthServiceTests in 'AppCoreAuthServiceTests.pas',
+  AppCoreConfigurationTests in 'AppCoreConfigurationTests.pas',
+  AppCorePreferencesFileRepositoryTests in 'AppCorePreferencesFileRepositoryTests.pas',
+  AppCoreRepositoryFactoryTests in 'AppCoreRepositoryFactoryTests.pas',
   AppCoreTaskServiceTests in 'AppCoreTaskServiceTests.pas',
   AppCoreUserServiceTests in 'AppCoreUserServiceTests.pas',
   AppCoreAbout in '..\..\src\App.Core\AppCoreAbout.pas',
   AppCoreAuth in '..\..\src\App.Core\AppCoreAuth.pas',
   AppCoreClock in '..\..\src\App.Core\AppCoreClock.pas',
+  AppCoreConfiguration in '..\..\src\App.Core\AppCoreConfiguration.pas',
   AppCoreJsonUtils in '..\..\src\App.Core\AppCoreJsonUtils.pas',
   AppCorePreferences in '..\..\src\App.Core\AppCorePreferences.pas',
+  AppCorePreferencesFileRepository in '..\..\src\App.Core\AppCorePreferencesFileRepository.pas',
+  AppCoreRepositoryFactory in '..\..\src\App.Core\AppCoreRepositoryFactory.pas',
   AppCoreTaskFileRepository in '..\..\src\App.Core\AppCoreTaskFileRepository.pas',
   AppCoreTaskItem in '..\..\src\App.Core\AppCoreTaskItem.pas',
   AppCoreTaskRepository in '..\..\src\App.Core\AppCoreTaskRepository.pas',
@@ -32,6 +39,9 @@ begin
     RunAuthServiceTests(Failures);
     RunUserServiceTests(Failures);
     RunTaskServiceTests(Failures);
+    RunConfigurationTests(Failures);
+    RunRepositoryFactoryTests(Failures);
+    RunPreferencesFileRepositoryTests(Failures);
 
     if Failures = 0 then
       Writeln('All tests passed.')

@@ -3,6 +3,7 @@ program WindowsApp;
 uses
   Controls,
   Forms,
+  SysUtils,
   AboutForm in 'AboutForm.pas' {FrmAbout},
   LoginForm in 'LoginForm.pas' {FrmLogin},
   MainForm in 'MainForm.pas' {FrmMain},
@@ -11,8 +12,11 @@ uses
   AppCoreAbout in '..\App.Core\AppCoreAbout.pas',
   AppCoreAuth in '..\App.Core\AppCoreAuth.pas',
   AppCoreClock in '..\App.Core\AppCoreClock.pas',
+  AppCoreConfiguration in '..\App.Core\AppCoreConfiguration.pas',
+  AppCorePreferencesFileRepository in '..\App.Core\AppCorePreferencesFileRepository.pas',
   AppCoreJsonUtils in '..\App.Core\AppCoreJsonUtils.pas',
   AppCorePreferences in '..\App.Core\AppCorePreferences.pas',
+  AppCoreRepositoryFactory in '..\App.Core\AppCoreRepositoryFactory.pas',
   AppCoreTaskFileRepository in '..\App.Core\AppCoreTaskFileRepository.pas',
   AppCoreTaskItem in '..\App.Core\AppCoreTaskItem.pas',
   AppCoreTaskRepository in '..\App.Core\AppCoreTaskRepository.pas',
@@ -22,16 +26,33 @@ uses
   AppCoreUserRepository in '..\App.Core\AppCoreUserRepository.pas',
   AppCoreUserService in '..\App.Core\AppCoreUserService.pas';
 
+var
+  LConfig: TAppConfiguration;
+  LFactory: IRepositoryFactory;
 begin
   Application.Initialize;
   Application.Title := 'Delphi TDD App';
+
+  LConfig := TAppConfiguration.Create(
+    ExtractFilePath(Application.ExeName) + 'app.config');
+  try
+    if LConfig.Backend = 'json' then
+      LFactory := TJsonRepositoryFactory.Create(LConfig.DataPath)
+    else
+      LFactory := TJsonRepositoryFactory.Create(LConfig.DataPath);
+  finally
+    LConfig.Free;
+  end;
+
   FrmLogin := TFrmLogin.Create(Application);
   try
+    FrmLogin.Configure(LFactory);
+
     if FrmLogin.ShowModal = mrOk then
     begin
       Application.CreateForm(TFrmMain, FrmMain);
       FrmMain.UserRole := FrmLogin.LoggedInRole;
-      FrmMain.ConfigureServices(FrmLogin.UserRepository, FrmLogin.SessionService,
+      FrmMain.ConfigureServices(LFactory, FrmLogin.SessionService,
         TSystemClock.Create, FrmLogin.PasswordHasher, FrmLogin.LoggedInUserId);
       FrmLogin.Free;
       FrmLogin := nil;

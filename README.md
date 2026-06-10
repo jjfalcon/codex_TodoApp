@@ -9,6 +9,7 @@ Esta preparada para compilar con Delphi 7, usando un runner de pruebas propio pa
 - `src/App.Win`: aplicacion VCL Windows, fina y conectada al nucleo.
 - `tests/App.Core.Tests`: pruebas del nucleo ejecutables por consola.
 - `docs/TDD.md`: forma de trabajo recomendada.
+- `docs/SESIONES.md`: documentacion técnica de las sesiones.
 
 ## Primer flujo TDD
 
