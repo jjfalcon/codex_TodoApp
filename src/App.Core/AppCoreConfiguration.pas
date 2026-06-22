@@ -24,16 +24,18 @@ implementation
 constructor TAppConfiguration.Create(const AFileName: string);
 var
   LIni: TIniFile;
+  LFileName: string;
 begin
   inherited Create;
   FBackend := 'json';
   FDataPath := '.';
   FConnectionString := '';
 
-  if not FileExists(AFileName) then
+  LFileName := ExpandFileName(AFileName);
+  if not FileExists(LFileName) then
     Exit;
 
-  LIni := TIniFile.Create(AFileName);
+  LIni := TIniFile.Create(LFileName);
   try
     FBackend := LowerCase(LIni.ReadString('Persistence', 'Backend', 'json'));
     FDataPath := LIni.ReadString('Persistence', 'DataPath', '.');

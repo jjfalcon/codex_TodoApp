@@ -100,5 +100,14 @@ object FrmTasks: TFrmTasks
       TabOrder = 2
       OnClick = BtnRefreshClick
     end
+    object BtnPending: TButton
+      Left = 332
+      Top = 12
+      Width = 90
+      Height = 25
+      Caption = 'Pendientes'
+      TabOrder = 3
+      OnClick = BtnPendingClick
+    end
   end
 end

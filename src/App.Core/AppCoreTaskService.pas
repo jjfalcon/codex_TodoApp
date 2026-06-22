@@ -18,6 +18,7 @@ type
     function CompleteTask(const AId: string): TTaskItem;
     procedure DeleteTask(const AId: string);
     function ListTasks: TTaskItemArray;
+    function ListPendingTasks: TTaskItemArray;
     function SearchTasks(const AQuery: string): TTaskItemArray;
   end;
 
@@ -36,6 +37,7 @@ type
     function CompleteTask(const AId: string): TTaskItem;
     procedure DeleteTask(const AId: string);
     function ListTasks: TTaskItemArray;
+    function ListPendingTasks: TTaskItemArray;
     function SearchTasks(const AQuery: string): TTaskItemArray;
   end;
 
@@ -79,6 +81,26 @@ end;
 function TTaskService.ListTasks: TTaskItemArray;
 begin
   Result := FRepository.ListAll;
+end;
+
+function TTaskService.ListPendingTasks: TTaskItemArray;
+var
+  LAll: TTaskItemArray;
+  I: Integer;
+  LCount: Integer;
+begin
+  LAll := ListTasks;
+  SetLength(Result, Length(LAll));
+  LCount := 0;
+
+  for I := 0 to Length(LAll) - 1 do
+    if LAll[I].Status = tsPending then
+    begin
+      Result[LCount] := LAll[I];
+      Inc(LCount);
+    end;
+
+  SetLength(Result, LCount);
 end;
 
 function TTaskService.NewId: string;

@@ -166,6 +166,29 @@ begin
   AssertEquals(2, Length(LResults), 'Search should match two tasks.');
 end;
 
+procedure ListPendingTasksReturnsOnlyPendingTasks;
+var
+  LClock: IClock;
+  LRepository: ITaskRepository;
+  LService: ITaskService;
+  LTask: TTaskItem;
+  LResults: TTaskItemArray;
+begin
+  LClock := TFixedClock.Create(EncodeDate(2026, 4, 30));
+  LRepository := TInMemoryTaskRepository.Create;
+  LService := TTaskService.Create(LRepository, LClock);
+
+  LTask := LService.CreateTask('Done task');
+  LService.CreateTask('Pending task');
+  LService.CompleteTask(LTask.Id);
+
+  LResults := LService.ListPendingTasks;
+
+  AssertEquals(1, Length(LResults), 'Only pending tasks should be returned.');
+  AssertEquals('Pending task', LResults[0].Title, 'Completed tasks should be excluded.');
+  AssertEquals(Ord(tsPending), Ord(LResults[0].Status), 'Returned task should be pending.');
+end;
+
 function TempTaskFileName(const AName: string): string;
 begin
   Result := ExtractFilePath(ParamStr(0)) + AName;
@@ -244,6 +267,7 @@ begin
   RunTest('CompleteTaskMarksTaskAsCompleted', CompleteTaskMarksTaskAsCompleted, AFailures);
   RunTest('DeleteTaskRemovesTask', DeleteTaskRemovesTask, AFailures);
   RunTest('SearchTasksReturnsMatchingTitles', SearchTasksReturnsMatchingTitles, AFailures);
+  RunTest('ListPendingTasksReturnsOnlyPendingTasks', ListPendingTasksReturnsOnlyPendingTasks, AFailures);
   RunTest('FileRepositoryPersistsCreatedTasks', FileRepositoryPersistsCreatedTasks, AFailures);
   RunTest('FileRepositoryPersistsCompletedTasks', FileRepositoryPersistsCompletedTasks, AFailures);
 end;

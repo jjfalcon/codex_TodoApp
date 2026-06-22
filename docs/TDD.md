@@ -37,3 +37,27 @@ procedure Cannot_create_task_with_empty_title;
 ```
 
 Luego se implementa la regla en `App.Core`, y solo despues se conecta desde `App.Win`.
+
+## Cobertura
+
+La herramienta recomendada para este proyecto es DelphiCodeCoverage.
+
+Requisitos:
+
+- `dcc32` disponible en el `PATH`.
+- `CodeCoverage.exe` de DelphiCodeCoverage disponible en el `PATH`.
+
+Ejecucion:
+
+```bat
+cd tests\App.Core.Tests
+coverage.bat
+```
+
+El script compila `AppCoreTests.dpr` con mapa detallado (`-GD`), ejecuta `AppCoreTests.exe` mediante DelphiCodeCoverage y deja el informe en:
+
+```text
+tests\App.Core.Tests\coverage\
+```
+
+El informe HTML principal es `CodeCoverage_summary.html`. El XML `CodeCoverage_summary.xml` puede usarse despues para integracion continua si se anade CI.

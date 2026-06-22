@@ -17,6 +17,8 @@ __history__/
 *.~*
 tasks.json
 users.json
+tests/App.Core.Tests/coverage/
+tests/App.Core.Tests/test_app_config.ini
 Win32/
 Win64/
 Debug/

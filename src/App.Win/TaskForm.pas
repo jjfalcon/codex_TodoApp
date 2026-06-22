@@ -26,12 +26,14 @@ type
     BtnComplete: TButton;
     BtnDelete: TButton;
     BtnRefresh: TButton;
+    BtnPending: TButton;
     procedure FormCreate(Sender: TObject);
     procedure BtnAddClick(Sender: TObject);
     procedure BtnCompleteClick(Sender: TObject);
     procedure BtnDeleteClick(Sender: TObject);
     procedure BtnRefreshClick(Sender: TObject);
     procedure BtnSearchClick(Sender: TObject);
+    procedure BtnPendingClick(Sender: TObject);
   private
     FService: ITaskService;
     FCurrentTasks: TTaskItemArray;
@@ -98,6 +100,12 @@ procedure TFrmTasks.BtnRefreshClick(Sender: TObject);
 begin
   EdtSearch.Clear;
   RefreshList(FService.ListTasks);
+end;
+
+procedure TFrmTasks.BtnPendingClick(Sender: TObject);
+begin
+  EdtSearch.Clear;
+  RefreshList(FService.ListPendingTasks);
 end;
 
 procedure TFrmTasks.BtnSearchClick(Sender: TObject);
