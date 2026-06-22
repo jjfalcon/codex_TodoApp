@@ -29,6 +29,22 @@
 - Verificacion: `AppCoreTests.exe` termina con `All tests passed`.
 - Verificacion adicional: `coverage.bat` termina correctamente con todos los tests en verde.
 
+### Lote inicial de mutation testing manual
+
+- Se probaron 4 mutantes acotados en `AppCoreTaskService.pas` y `AppCoreConfiguration.pas`.
+- Resultado: 4 mutantes muertos, 0 supervivientes.
+- Los tests relevantes detectados fueron `CreateTaskStoresTrimmedPendingTask`, `ListPendingTasksReturnsOnlyPendingTasks`, `SearchTasksReturnsMatchingTitles`, `Reads_dataPath` y `Reads_connectionString`.
+- Se documento el detalle en `docs/MUTATION_TESTING.md`.
+- Verificacion final: tras restaurar las mutaciones temporales, `AppCoreTests.exe` termina con `All tests passed`.
+
+### Segundo lote de mutation testing manual
+
+- Se probaron 7 mutantes en `AppCoreAuth.pas` y `AppCoreUserService.pas`.
+- Resultado: 6 mutantes muertos y 1 superviviente.
+- Los tests relevantes detectados fueron `Login_increments_failed_attempts_for_wrong_password`, `Login_locks_user_after_three_consecutive_failures`, `Login_rejects_inactive_user`, `Login_rejects_locked_user_even_with_valid_password`, `UpdateUser_rejects_self_modification` y `DeleteUser_rejects_reactivation`.
+- Superviviente: la proteccion de ultimo administrador activo no esta cubierta por la suite actual.
+- Verificacion final: tras restaurar las mutaciones temporales, `AppCoreTests.exe` termina con `All tests passed`.
+
 ## Pendientes
 
 ### Mejorar cobertura de `AppCoreUserService`
@@ -54,3 +70,15 @@
 - El resumen global y por fichero es util.
 - Algunos nombres internos de clases/metodos aparecen truncados en el XML/HTML.
 - No bloquea la medicion de lineas, pero conviene revisarlo si se quiere usar el informe para analisis fino por metodo.
+
+### Ampliar mutation testing a autenticacion y usuarios
+
+- Probar mutantes en filtros y busqueda de `AppCoreUserService.pas`.
+- Probar mutantes en persistencia de campos criticos de `AppCoreUserFileRepository.pas`.
+- Registrar supervivientes y convertirlos en nuevos tests TDD.
+
+### Cubrir regla de ultimo administrador activo
+
+- El mutante M011 sobrevivio al desactivar `AssertCanRemoveAdminAccess`.
+- Agregar tests que verifiquen que no se puede desactivar, bloquear, eliminar ni degradar el ultimo administrador activo.
+- Los tests deberian esperar `ELastAdminError`.
