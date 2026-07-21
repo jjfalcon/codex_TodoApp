@@ -18,6 +18,7 @@ __history__/
 tasks.json
 users.json
 .tools/*
+!.tools/autoit-v3.zip
 !.tools/autoit/
 !.tools/autoit/**
 autoit-v3.zip
