@@ -13,6 +13,7 @@
 ### Integracion de DelphiCodeCoverage
 
 - Se agrego `tests/App.Core.Tests/coverage.bat`.
+- Se versiono `CodeCoverage.exe` en `.tools\delphi-code-coverage\`.
 - El script compila `AppCoreTests.dpr` con mapa detallado (`-GD`).
 - Ejecuta `CodeCoverage.exe` contra el runner de tests.
 - Genera informe HTML/XML en `tests/App.Core.Tests/coverage/`.

@@ -21,6 +21,8 @@ users.json
 !.tools/autoit-v3.zip
 !.tools/autoit/
 !.tools/autoit/**
+!.tools/delphi-code-coverage/
+!.tools/delphi-code-coverage/**
 autoit-v3.zip
 tests/App.Core.Tests/coverage/
 tests/App.Core.Tests/test_app_config.ini

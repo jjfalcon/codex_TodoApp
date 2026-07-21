@@ -45,7 +45,7 @@ La herramienta recomendada para este proyecto es DelphiCodeCoverage.
 Requisitos:
 
 - `dcc32` disponible en el `PATH`.
-- `CodeCoverage.exe` de DelphiCodeCoverage disponible en el `PATH`.
+- `CodeCoverage.exe` versionado en `.tools\delphi-code-coverage\`.
 
 Ejecucion:
 
@@ -54,7 +54,7 @@ cd tests\App.Core.Tests
 coverage.bat
 ```
 
-El script compila `AppCoreTests.dpr` con mapa detallado (`-GD`), ejecuta `AppCoreTests.exe` mediante DelphiCodeCoverage y deja el informe en:
+El script compila `AppCoreTests.dpr` con mapa detallado (`-GD`), ejecuta `AppCoreTests.exe` mediante DelphiCodeCoverage desde `.tools\delphi-code-coverage\` y deja el informe en:
 
 ```text
 tests\App.Core.Tests\coverage\
