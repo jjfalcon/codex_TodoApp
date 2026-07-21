@@ -17,8 +17,11 @@ __history__/
 *.~*
 tasks.json
 users.json
+.tools/
+autoit-v3.zip
 tests/App.Core.Tests/coverage/
 tests/App.Core.Tests/test_app_config.ini
+tests/App.Win.E2E/runtime/
 Win32/
 Win64/
 Debug/

@@ -56,6 +56,16 @@
 - Superviviente: la proteccion de ultimo administrador activo no esta cubierta por la suite actual.
 - Verificacion final: tras restaurar las mutaciones temporales, `AppCoreTests.exe` termina con `All tests passed`.
 
+### Smoke E2E con AutoIt
+
+- Se instalo AutoIt portable en `.tools\autoit\install`.
+- Se agrego `tests\App.Win.E2E\smoke_login.au3`.
+- Se agrego `tests\App.Win.E2E\run-smoke-login.bat`.
+- El runner compila `WindowsApp.dpr`, prepara un runtime aislado, lanza la app, hace login con `admin/admin` y verifica la ventana principal.
+- Se documento el flujo en `docs\E2E_AUTOIT.md`.
+- Se ignoraron `.tools/`, `autoit-v3.zip` y `tests/App.Win.E2E/runtime/`.
+- Verificacion: `run-smoke-login.bat` termina con `Smoke login passed.`
+
 ## Pendientes
 
 ### Mejorar cobertura de `AppCoreUserService`
@@ -93,3 +103,9 @@
 - El mutante M011 sobrevivio al desactivar `AssertCanRemoveAdminAccess`.
 - Agregar tests que verifiquen que no se puede desactivar, bloquear, eliminar ni degradar el ultimo administrador activo.
 - Los tests deberian esperar `ELastAdminError`.
+
+### Ampliar E2E con AutoIt
+
+- Agregar un flujo E2E de alta de tarea desde la pantalla `Tareas`.
+- Agregar un flujo E2E de completar tarea y comprobar prefijo `[x]`.
+- Agregar diagnosticos con captura o listado de controles cuando falle una ventana.
