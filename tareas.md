@@ -63,7 +63,8 @@
 - Se agrego `tests\App.Win.E2E\run-smoke-login.bat`.
 - El runner compila `WindowsApp.dpr`, prepara un runtime aislado, lanza la app, hace login con `admin/admin` y verifica la ventana principal.
 - Se documento el flujo en `docs\E2E_AUTOIT.md`.
-- Se ignoraron `.tools/`, `autoit-v3.zip` y `tests/App.Win.E2E/runtime/`.
+- Se versiono `.tools\autoit\` para que el test no dependa de una instalacion global.
+- Se ignoraron `autoit-v3.zip` y `tests/App.Win.E2E/runtime/`.
 - Verificacion: `run-smoke-login.bat` termina con `Smoke login passed.`
 
 ## Pendientes

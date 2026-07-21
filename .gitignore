@@ -17,7 +17,9 @@ __history__/
 *.~*
 tasks.json
 users.json
-.tools/
+.tools/*
+!.tools/autoit/
+!.tools/autoit/**
 autoit-v3.zip
 tests/App.Core.Tests/coverage/
 tests/App.Core.Tests/test_app_config.ini

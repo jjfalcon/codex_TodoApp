@@ -12,7 +12,7 @@ Se usa AutoIt portable, extraido en:
 .tools\autoit\install\
 ```
 
-La carpeta `.tools/` esta ignorada por Git. Para una maquina nueva, descargar la version portable oficial de AutoIt y extraerla dejando disponible:
+La carpeta `.tools\autoit\` esta versionada para que el smoke test pueda ejecutarse sin instalacion global. Si se quiere actualizar AutoIt, descargar la version portable oficial y reemplazar el contenido dejando disponible:
 
 ```text
 .tools\autoit\install\AutoIt3.exe
@@ -41,5 +41,6 @@ El test devuelve `0` si pasa y un codigo distinto de cero si falla.
 ## Notas
 
 - El runtime esta ignorado por Git.
+- El ZIP de descarga `autoit-v3.zip` esta ignorado por Git.
 - El login crea el administrador por defecto si no existe `users.json`.
 - Este primer test es deliberadamente pequeno: sirve como prueba de vida del stack E2E antes de ampliar cobertura funcional.
