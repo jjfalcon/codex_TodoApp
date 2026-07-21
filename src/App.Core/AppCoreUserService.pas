@@ -152,10 +152,10 @@ var
   LUser: TUser;
 begin
   AssertAdminActor(AActorUserId);
-  AssertNotSelf(AActorUserId, AUserId);
   LUser := FindRequired(AUserId);
   AssertUserIsEditable(LUser);
   AssertCanRemoveAdminAccess(LUser);
+  AssertNotSelf(AActorUserId, AUserId);
   LUser.Locked := True;
   FUsers.Save(LUser);
 end;
@@ -199,10 +199,10 @@ var
   LUser: TUser;
 begin
   AssertAdminActor(AActorUserId);
-  AssertNotSelf(AActorUserId, AUserId);
   LUser := FindRequired(AUserId);
   AssertUserIsEditable(LUser);
   AssertCanRemoveAdminAccess(LUser);
+  AssertNotSelf(AActorUserId, AUserId);
   LUser.Active := False;
   FUsers.Save(LUser);
 end;
@@ -213,13 +213,13 @@ var
   LUser: TUser;
 begin
   AssertAdminActor(AActorUserId);
-  AssertNotSelf(AActorUserId, AUserId);
   if not AConfirmed then
     raise EDeleteConfirmationRequiredError.Create('Esta seguro de que desea eliminar este usuario?');
 
   LUser := FindRequired(AUserId);
   AssertUserIsEditable(LUser);
   AssertCanRemoveAdminAccess(LUser);
+  AssertNotSelf(AActorUserId, AUserId);
   LUser.Deleted := True;
   FUsers.Save(LUser);
 end;
@@ -325,12 +325,13 @@ var
   LEmail: string;
 begin
   AssertAdminActor(AActorUserId);
-  AssertNotSelf(AActorUserId, AUserId);
   LUser := FindRequired(AUserId);
   AssertUserIsEditable(LUser);
 
   if ((not AActive) or ALocked or (ARole <> urAdmin)) then
     AssertCanRemoveAdminAccess(LUser);
+
+  AssertNotSelf(AActorUserId, AUserId);
 
   LUsername := Trim(AUsername);
   LDisplayName := Trim(ADisplayName);

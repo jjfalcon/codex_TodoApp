@@ -68,6 +68,14 @@
 - Se ignoraron `autoit-v3.zip` y `tests/App.Win.E2E/runtime/`.
 - Verificacion: `run-smoke-login.bat` termina con `Smoke login passed.`
 
+### Cobertura de regla de ultimo administrador activo
+
+- Se registraron y ampliaron tests en `AppCoreUserServiceTests.pas`.
+- Se cubre que no se puede desactivar, bloquear, eliminar ni degradar el ultimo administrador activo.
+- Los cuatro casos esperan `ELastAdminError`.
+- Se ajusto el orden de validaciones en `TUserService` para priorizar la regla de administrador minimo en operaciones que retirarian acceso administrativo.
+- Verificacion: `AppCoreTests.exe` termina con `All tests passed`.
+
 ## Pendientes
 
 ### Mejorar cobertura de `AppCoreUserService`
@@ -99,12 +107,6 @@
 - Probar mutantes en filtros y busqueda de `AppCoreUserService.pas`.
 - Probar mutantes en persistencia de campos criticos de `AppCoreUserFileRepository.pas`.
 - Registrar supervivientes y convertirlos en nuevos tests TDD.
-
-### Cubrir regla de ultimo administrador activo
-
-- El mutante M011 sobrevivio al desactivar `AssertCanRemoveAdminAccess`.
-- Agregar tests que verifiquen que no se puede desactivar, bloquear, eliminar ni degradar el ultimo administrador activo.
-- Los tests deberian esperar `ELastAdminError`.
 
 ### Ampliar E2E con AutoIt
 

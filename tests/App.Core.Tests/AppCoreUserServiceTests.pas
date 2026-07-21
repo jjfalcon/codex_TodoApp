@@ -396,7 +396,62 @@ begin
   BuildUserServices(LRepository, LService, LHasher, LClock);
   LService.DeleteUser('admin', 'manager', True);
   try
-    LService.DeactivateUser('manager', 'admin');
+    LService.DeactivateUser('admin', 'admin');
+  except
+    on E: ELastAdminError do
+      Exit;
+  end;
+  raise Exception.Create('Expected ELastAdminError.');
+end;
+
+procedure UserManagementPreventsBlockingLastActiveAdmin;
+var
+  LRepository: TInMemoryUserRepository;
+  LService: TUserService;
+  LHasher: IPasswordHasher;
+  LClock: IClock;
+begin
+  BuildUserServices(LRepository, LService, LHasher, LClock);
+  LService.DeleteUser('admin', 'manager', True);
+  try
+    LService.BlockUser('admin', 'admin');
+  except
+    on E: ELastAdminError do
+      Exit;
+  end;
+  raise Exception.Create('Expected ELastAdminError.');
+end;
+
+procedure UserManagementPreventsDeletingLastActiveAdmin;
+var
+  LRepository: TInMemoryUserRepository;
+  LService: TUserService;
+  LHasher: IPasswordHasher;
+  LClock: IClock;
+begin
+  BuildUserServices(LRepository, LService, LHasher, LClock);
+  LService.DeleteUser('admin', 'manager', True);
+  try
+    LService.DeleteUser('admin', 'admin', True);
+  except
+    on E: ELastAdminError do
+      Exit;
+  end;
+  raise Exception.Create('Expected ELastAdminError.');
+end;
+
+procedure UserManagementPreventsDowngradingLastActiveAdmin;
+var
+  LRepository: TInMemoryUserRepository;
+  LService: TUserService;
+  LHasher: IPasswordHasher;
+  LClock: IClock;
+begin
+  BuildUserServices(LRepository, LService, LHasher, LClock);
+  LService.DeleteUser('admin', 'manager', True);
+  try
+    LService.UpdateUser('admin', 'admin', 'admin', 'Administrador',
+      'admin@example.com', True, urNormal, False);
   except
     on E: ELastAdminError do
       Exit;
@@ -705,6 +760,10 @@ begin
   RunTest('DeleteUser_rejects_reactivation', DeleteUserRejectsReactivation, AFailures);
   RunTest('DeleteUser_does_not_close_current_session', DeleteUserDoesNotCloseCurrentSession, AFailures);
   RunTest('ChangeRole_updates_permissions_on_next_login', ChangeRoleUpdatesPermissionsOnNextLogin, AFailures);
+  RunTest('UserManagement_prevents_deactivating_last_active_admin', UserManagementPreventsRemovingLastActiveAdmin, AFailures);
+  RunTest('UserManagement_prevents_blocking_last_active_admin', UserManagementPreventsBlockingLastActiveAdmin, AFailures);
+  RunTest('UserManagement_prevents_deleting_last_active_admin', UserManagementPreventsDeletingLastActiveAdmin, AFailures);
+  RunTest('UserManagement_prevents_downgrading_last_active_admin', UserManagementPreventsDowngradingLastActiveAdmin, AFailures);
   RunTest('SearchUsers_matches_username_display_name_and_email', SearchUsersMatchesUsernameDisplayNameAndEmail, AFailures);
   RunTest('ListUsers_excludes_deleted_users_by_default', ListUsersExcludesDeletedUsersByDefault, AFailures);
   RunTest('FilterUsers_returns_deleted_users_when_requested', FilterUsersReturnsDeletedUsersWhenRequested, AFailures);
