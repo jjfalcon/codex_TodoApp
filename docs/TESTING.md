@@ -146,7 +146,15 @@ Estado documentado:
 - Validado desde artefactos limpios el 2026-07-22.
 - Umbral minimo Core: 90%.
 - Cobertura global Core actual: 93%, 931 de 991 lineas cubiertas.
-- `AppCoreUserService.pas`: 100%, 177 de 177 lineas cubiertas.
+- `AppCoreUserService.pas`: 98,5% en el HTML por fichero, 196 de 199 lineas con codigo generado cubiertas.
+
+Limitaciones conocidas del informe:
+
+- El resumen global y los informes HTML por fichero son la fuente principal para cobertura de lineas.
+- El HTML por fichero conserva numeros de linea y marca cada linea como cubierta, no cubierta o sin codigo generado.
+- Los nodos `class` y `method` del XML/HTML pueden mostrar nombres truncados o sufijos de nombres, por ejemplo `oadFromFile`, `teUser` o `ser`.
+- Esa limitacion no bloquea el umbral ni la medicion por fichero/linea, pero no debe usarse para tomar decisiones finas por metodo.
+- Para analisis por metodo, usar el HTML del fichero junto con el codigo fuente y el nombre de los tests; si hace falta validacion fuerte de una regla, preferir `mutationTest`.
 
 ## coverageTest Forms VCL
 

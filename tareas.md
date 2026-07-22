@@ -2,12 +2,6 @@
 
 ## Pendientes
 
-### Revisar detalle del informe generado por Delphi 7
-
-- El resumen global y por fichero es util.
-- Algunos nombres internos de clases/metodos aparecen truncados en el XML/HTML.
-- No bloquea la medicion de lineas, pero conviene revisarlo si se quiere usar el informe para analisis fino por metodo.
-
 ### Agregar auditoria de localizacion
 
 - Crear un runner o test estricto para validar `src\App.Win\languages.csv`.
@@ -32,10 +26,21 @@
 
 ## Realizadas
 
+### Revision del detalle del informe de DelphiCodeCoverage
+
+- Se revisaron `CodeCoverage_summary.xml` y los HTML por fichero generados por DelphiCodeCoverage.
+- El resumen global y los HTML por fichero son validos para cobertura de lineas y umbrales.
+- Los HTML por fichero conservan numeros de linea y estados `covered`, `notcovered` y `nocodegen`.
+- Los nodos `class` y `method` del XML/HTML muestran nombres internos truncados o sufijos en Delphi 7.
+- Ejemplos observados: `oadFromFile`, `teUser`, `ser`.
+- Conclusion: no usar esos nombres truncados como fuente fiable para analisis por metodo.
+- Para detalle fino, usar el HTML por fichero junto con el codigo fuente, lineas no cubiertas y tests asociados.
+- Se documento la limitacion en `docs\TESTING.md` y `docs\TDD.md`.
+
 ### Cobertura de `AppCoreUserService` y umbral minimo Core
 
 - Se agregaron unit tests para permisos de actor administrador, usuario inexistente, campos obligatorios, contraseña vacia, actualizacion manteniendo usuario/email, activar, desactivar, bloquear, desbloquear y filtros por estado.
-- `AppCoreUserService.pas` queda con 100% de cobertura de lineas, 177 de 177 lineas cubiertas.
+- `AppCoreUserService.pas` queda con 98,5% de cobertura en el HTML por fichero, 196 de 199 lineas con codigo generado cubiertas.
 - Se agrego umbral minimo del 90% a `tests\App.Core.Tests\coverage.bat`.
 - El coverageTest Core falla si `CodeCoverage_summary.xml` reporta menos del 90% cubierto.
 - Verificacion: `AppCoreTests.exe` termina con `All tests passed`.

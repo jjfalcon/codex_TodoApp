@@ -91,6 +91,8 @@ Validacion limpia realizada el 2026-07-22:
 
 El coverageTest Core aplica un umbral minimo del 90% sobre `CodeCoverage_summary.xml`. Si la cobertura global del nucleo baja de ese valor, `coverage.bat` termina con error.
 
+Para revisar detalle, usar principalmente los HTML por fichero generados en `coverage\`. DelphiCodeCoverage puede mostrar nombres internos de clase/metodo truncados en XML/HTML con Delphi 7; esos nombres son orientativos. La decision fina debe hacerse con numeros de linea del HTML por fichero, codigo fuente y tests asociados.
+
 Para forms VCL:
 
 ```bat
