@@ -8,6 +8,7 @@ implementation
 
 uses
   SysUtils,
+  Windows,
   Controls,
   Forms,
   LoginForm,
@@ -152,6 +153,57 @@ begin
   end;
 end;
 
+procedure LoginFormTabMovesThroughFieldsInOrder;
+var
+  LAuth: IAuthService;
+  LForm: TFrmLogin;
+begin
+  LAuth := TFakeAuthService.Create;
+  LForm := CreateLoginForm(LAuth);
+  try
+    LForm.Show;
+    Application.ProcessMessages;
+    LForm.ActiveControl := LForm.EdtUsername;
+
+    LForm.Perform(CM_DIALOGKEY, VK_TAB, 0);
+    AssertTrue(LForm.ActiveControl = LForm.EdtPassword, 'TAB from username should focus password.');
+
+    LForm.Perform(CM_DIALOGKEY, VK_TAB, 0);
+    AssertTrue(LForm.ActiveControl = LForm.BtnLogin, 'TAB from password should focus login button.');
+
+    LForm.Perform(CM_DIALOGKEY, VK_TAB, 0);
+    AssertTrue(LForm.ActiveControl = LForm.BtnCancel, 'TAB from login button should focus cancel button.');
+  finally
+    LForm.Free;
+  end;
+end;
+
+procedure LoginFormEnterTriggersDefaultLoginButton;
+var
+  LFakeAuth: TFakeAuthService;
+  LAuth: IAuthService;
+  LForm: TFrmLogin;
+begin
+  LFakeAuth := TFakeAuthService.Create;
+  LAuth := LFakeAuth;
+  LForm := CreateLoginForm(LAuth);
+  try
+    LForm.Show;
+    Application.ProcessMessages;
+
+    LForm.EdtUsername.Text := 'admin';
+    LForm.EdtPassword.Text := 'admin123';
+    LForm.ActiveControl := LForm.EdtPassword;
+
+    LForm.Perform(CM_DIALOGKEY, VK_RETURN, 0);
+
+    AssertEquals(1, LFakeAuth.LoginCalls, 'ENTER should trigger the default login button.');
+    AssertEquals(mrOk, LForm.ModalResult, 'ENTER login should close form with OK.');
+  finally
+    LForm.Free;
+  end;
+end;
+
 procedure LoginFormCallsAuthOnAccept;
 var
   LFakeAuth: TFakeAuthService;
@@ -205,6 +257,8 @@ begin
   RunTest('LoginForm_sets_initial_focus_to_username', LoginFormSetsInitialFocusToUsername, AFailures);
   RunTest('LoginForm_masks_password_input', LoginFormMasksPasswordInput, AFailures);
   RunTest('LoginForm_has_expected_tab_order', LoginFormHasExpectedTabOrder, AFailures);
+  RunTest('LoginForm_tab_moves_through_fields_in_order', LoginFormTabMovesThroughFieldsInOrder, AFailures);
+  RunTest('LoginForm_enter_triggers_default_login_button', LoginFormEnterTriggersDefaultLoginButton, AFailures);
   RunTest('LoginForm_calls_auth_on_accept', LoginFormCallsAuthOnAccept, AFailures);
   RunTest('LoginForm_shows_error_when_login_fails', LoginFormShowsErrorWhenLoginFails, AFailures);
 end;

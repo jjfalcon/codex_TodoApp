@@ -6,7 +6,6 @@
 
 - visual. formulario verificado con captura
 - visual. texto cargado desde lenguaje seleccionado
-- unit. Enter/CR en campos y boton por defecto
 
 ### Mejorar cobertura de `AppCoreUserService`
 
@@ -54,6 +53,13 @@
 - Se documento coverage de forms con DelphiCodeCoverage.
 - Verificacion: `tests\App.Win.Tests\coverage.bat` termina con `All tests passed`.
 - Resultado actual: `LoginForm.pas` queda en 86% de cobertura, 20 de 23 lineas cubiertas.
+
+### Navegacion por teclado en formulario login
+
+- Se agrego prueba unitaria para comprobar el recorrido con `TAB`: usuario, password, entrar, cancelar.
+- Se agrego prueba unitaria para comprobar que `CR` ejecuta el boton por defecto `Entrar`.
+- Se simulan teclas mediante `CM_DIALOGKEY` sobre `TFrmLogin`.
+- Verificacion: `tests\App.Win.Tests\run-tests.bat` termina con `All tests passed`.
 
 ### Tests unitarios de formulario login
 

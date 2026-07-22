@@ -1,10 +1,10 @@
 # Resumen de sesiones - TodoApp
 
-## Estadísticas del proyecto
-- Commits: 6
-- Tests: 67 (todos pasan)
-- Archivos fuente: ~33
-- Documentación: 14 docs en docs/
+## Estadisticas del proyecto
+- Commits: 22
+- Tests: 83 (78 core + 5 App.Win, todos pasan)
+- Archivos fuente: ~32
+- Documentacion: 18 docs en docs/
 
 ---
 
@@ -212,5 +212,80 @@ Commits relevantes:
 - Validar DelphiCodeCoverage en entorno limpio.
 - Ampliar mutationTest con filtros/busqueda de usuarios y persistencia critica de `AppCoreUserFileRepository`.
 - Ampliar e2eTest con alta y completado de tareas, mas diagnosticos de fallo.
+
+---
+
+## 10. Sesion 10 - 2026-07-22: Tests unitarios de forms VCL y coverage de App.Win
+
+Commits relevantes:
+
+- `1b0479a` Incluir tests unitarios de App.Win
+- `f0a982d` Documentar tests unitarios de forms VCL
+
+### Objetivo
+
+- Cambiar el enfoque de `LoginForm` desde checks visuales/E2E detallados hacia unit tests de formulario.
+- Mantener el E2E como smoke de integracion real de la aplicacion.
+- Dejar documentado un patron repetible para testear futuros forms VCL de la misma manera.
+
+### App.Win
+
+- `LoginForm.pas` recibio `ConfigureForTests(const AAuth: IAuthService)`.
+- El formulario permite inyectar un fake de autenticacion sin crear repositorios reales.
+- `FormCreate` fija `ActiveControl := EdtUsername` para asegurar foco inicial observable.
+- La logica de negocio sigue fuera de la UI; el form solo llama a `IAuthService`.
+
+### unitTest Forms VCL
+
+- Se agrego `tests\App.Win.Tests\AppWinTests.dpr`.
+- Se agrego `tests\App.Win.Tests\LoginFormTests.pas`.
+- Se agrego `tests\App.Win.Tests\run-tests.bat`.
+- Los tests instancian `TFrmLogin` directamente con `TFrmLogin.Create(nil)`.
+- Se usa `TFakeAuthService` para aislar el formulario del nucleo real.
+- Se invoca `BtnLoginClick(nil)` para simular la accion de aceptar.
+
+Cobertura funcional de los tests:
+
+- Foco inicial en usuario.
+- Password enmascarado con `PasswordChar`.
+- Orden de tabulacion: usuario, password, entrar, cancelar.
+- Llamada al servicio de autenticacion inyectado.
+- Captura de usuario, password, rol e id autenticado.
+- Error de autenticacion visualizado en `LblMessage`.
+- `ModalResult` correcto en exito y fallo.
+
+### coverageTest Forms VCL
+
+- Se agrego `tests\App.Win.Tests\coverage.bat`.
+- El script compila `AppWinTests.dpr` con mapa detallado (`-GD`).
+- Ejecuta DelphiCodeCoverage contra `AppWinTests.exe`.
+- Genera HTML/XML en `tests\App.Win.Tests\coverage\`.
+- Resultado verificado: `LoginForm.pas` queda en 86%, 20 de 23 lineas cubiertas.
+
+### Documentacion
+
+- `docs\TESTING.md` distingue ahora `unitTest Core`, `unitTest Forms VCL`, `coverageTest Core` y `coverageTest Forms VCL`.
+- `docs\TDD.md` documenta el patron recomendado para forms VCL.
+- `tareas.md` registra como realizadas la suite unitaria de login form y la documentacion del patron.
+
+### Verificaciones ejecutadas
+
+- `tests\App.Win.Tests\run-tests.bat`: `All tests passed`.
+- `tests\App.Win.Tests\coverage.bat`: `All tests passed`, 86%, 20/23 lineas.
+- `tests\App.Core.Tests\coverage.bat`: `All tests passed`, 92%, 819/886 lineas.
+- `tests\App.Win.E2E\run-smoke-login.bat`: `Smoke login passed`.
+
+### GitHub
+
+- Commit `1b0479a` subido a `origin/master`.
+- Commit `f0a982d` subido a `origin/master`.
+- El arbol quedo limpio tras cada push.
+
+### Pendientes derivados
+
+- Agregar test unitario de Enter/CR y boton por defecto en `LoginForm`.
+- Cubrir textos cargados desde lenguaje seleccionado.
+- Mantener una verificacion visual con captura para el login.
+- Ampliar `tests\App.Win.Tests\coverage.bat` con nuevas unidades en `-u` cuando se agreguen tests de otros forms.
 
 ---
