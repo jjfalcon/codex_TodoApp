@@ -170,6 +170,7 @@ begin
   LActualFile := LActualDir + 'LoginForm.bmp';
   LDiffFile := LDiffDir + 'LoginForm.diff.bmp';
   LLocalizationFile := ExtractFilePath(ParamStr(0)) + '..\..\src\App.Win\languages.csv';
+  SysUtils.DeleteFile(LDiffFile);
 
   LForm := TFrmLogin.Create(nil);
   try
