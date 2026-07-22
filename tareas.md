@@ -2,12 +2,6 @@
 
 ## Pendientes
 
-### Ampliar E2E con AutoIt
-
-- Agregar un flujo E2E de alta de tarea desde la pantalla `Tareas`.
-- Agregar un flujo E2E de completar tarea y comprobar prefijo `[x]`.
-- Agregar diagnosticos con captura o listado de controles cuando falle una ventana.
-
 ### Especificar preferencias de usuario
 
 - Definir una spec de preferencias de usuario.
@@ -21,6 +15,18 @@
 - Separar reglas de negocio en `src\App.Core` y mantener la UI como capa fina.
 
 ## Realizadas
+
+### Ampliacion de E2E con AutoIt
+
+- Se amplio `tests\App.Win.E2E\smoke_login.au3`.
+- El flujo hace login con `admin` / `admin`.
+- Abre la pantalla `Tareas`.
+- Crea una tarea con titulo unico.
+- Verifica que la tarea aparece pendiente con prefijo `[ ]`.
+- Completa la tarea y verifica el prefijo `[x]`.
+- Se agregaron diagnosticos con listado de ventanas, clases y controles cuando falla una asercion E2E.
+- Se guarda una captura del fallo en `tests\App.Win.E2E\runtime\diagnostics\failure.png`.
+- Verificacion: `tests\App.Win.E2E\run-smoke-login.bat` termina con `Smoke login and task CRUD flow passed`.
 
 ### Ampliacion de mutation testing en autenticacion y usuarios
 

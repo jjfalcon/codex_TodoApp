@@ -343,7 +343,14 @@ Que cubre ahora:
 - Prepara un runtime aislado.
 - Abre la aplicacion VCL.
 - Hace login con `admin` / `admin`.
-- Verifica que aparece la ventana principal `Delphi TDD App - FMain`.
+- Verifica que aparece la ventana principal.
+- Abre `Tareas`.
+- Crea una tarea.
+- Verifica el prefijo pendiente `[ ]`.
+- Completa la tarea.
+- Verifica el prefijo completado `[x]`.
+- Emite diagnosticos con ventanas, clases y controles cuando falla.
+- Guarda captura de pantalla del fallo en `tests\App.Win.E2E\runtime\diagnostics\failure.png`.
 
 Ejecucion:
 
@@ -355,8 +362,8 @@ run-smoke-login.bat
 Uso esperado:
 
 - Smoke de integracion UI Windows.
-- Validar que la app arranca y el flujo basico de login funciona.
-- Ampliar despues con flujos de tareas y diagnosticos de fallo.
+- Validar que la app arranca, el login funciona y la pantalla `Tareas` esta conectada al nucleo.
+- Detectar roturas de wiring entre UI, servicios y persistencia de tareas.
 
 ## Politica recomendada
 

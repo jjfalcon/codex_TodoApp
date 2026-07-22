@@ -20,7 +20,7 @@ La carpeta `.tools\autoit\` esta versionada para que el smoke test pueda ejecuta
 .tools\autoit\install\AutoIt3.exe
 ```
 
-## Smoke test de login
+## Smoke test de login y tareas
 
 Ejecutar:
 
@@ -36,7 +36,14 @@ El runner:
 - Copia `WindowsApp.exe` y `app.config` al runtime.
 - Ejecuta `smoke_login.au3` con AutoIt.
 - Usa credenciales `admin` / `admin`.
-- Verifica que aparece la ventana principal `Delphi TDD App - FMain`.
+- Verifica que aparece la ventana principal.
+- Abre la pantalla `Tareas`.
+- Crea una tarea con titulo unico.
+- Verifica que aparece como pendiente con prefijo `[ ]`.
+- Completa la tarea.
+- Verifica que aparece como completada con prefijo `[x]`.
+- Emite diagnosticos con listado de ventanas, clases y controles si falla.
+- Guarda una captura de pantalla en `tests\App.Win.E2E\runtime\diagnostics\failure.png` si falla.
 
 El test devuelve `0` si pasa y un codigo distinto de cero si falla.
 
@@ -45,4 +52,4 @@ El test devuelve `0` si pasa y un codigo distinto de cero si falla.
 - El runtime esta ignorado por Git.
 - El ZIP de descarga `autoit-v3.zip` esta ignorado por Git.
 - El login crea el administrador por defecto si no existe `users.json`.
-- Este primer test es deliberadamente pequeno: sirve como prueba de vida del stack E2E antes de ampliar cobertura funcional.
+- El test usa un runtime aislado para que `users.json`, `tasks.json` y `app.config` no contaminen el entorno de desarrollo.
