@@ -4,7 +4,7 @@
 
 La gestion de usuarios esta implementada con reglas de negocio en `App.Core` y una pantalla VCL fina en `App.Win`.
 
-El nucleo concentra validaciones, roles, bloqueo, eliminacion logica, cambio de contrasena, busqueda y filtros. La pantalla `FUser` se incrusta dentro de `FMain` mediante la opcion `Usuarios`, visible solo para administradores.
+El nucleo concentra validaciones, roles, bloqueo, eliminacion logica, cambio de contraseña, busqueda y filtros. La pantalla `FUser` se incrusta dentro de `FMain` mediante la opcion `Usuarios`, visible solo para administradores.
 
 La persistencia queda aislada tras `IUserRepository`. La implementacion actual usa memoria, compartida por login y gestion de usuarios durante la ejecucion de la aplicacion.
 
@@ -93,9 +93,9 @@ Responsabilidades:
 - Activar y desactivar usuarios.
 - Bloquear y desbloquear usuarios.
 - Eliminar usuarios de forma logica.
-- Cambiar contrasenas.
+- Cambiar contraseñas.
 - Validar email con formato tipo `ejemplo@mail.com`.
-- Validar contrasenas de mas de 4 caracteres.
+- Validar contraseñas de mas de 4 caracteres.
 - Impedir autogestion administrativa.
 - Impedir que no quede ningun administrador activo disponible.
 - Listar, buscar y filtrar usuarios.
@@ -120,7 +120,7 @@ Integraciones relevantes:
 - Mantiene un snapshot del rol en `TSessionService` al iniciar sesion.
 - Los cambios de rol afectan a partir del siguiente login.
 - Los cambios de estado activo, bloqueo y eliminacion logica afectan al siguiente login.
-- El cambio de contrasena afecta al siguiente intento de login.
+- El cambio de contraseña afecta al siguiente intento de login.
 
 ### `UserForm.pas`
 
@@ -133,7 +133,7 @@ Responsabilidades:
 - Mostrar usuarios eliminados solo al activar `Mostrar eliminados`.
 - Crear usuarios.
 - Guardar cambios de usuario seleccionado.
-- Cambiar contrasena.
+- Cambiar contraseña.
 - Desbloquear usuarios.
 - Eliminar logicamente con confirmacion.
 - Mostrar mensajes de validacion procedentes del nucleo.
@@ -142,7 +142,7 @@ La pantalla recibe desde `FMain`:
 
 - Repositorio de usuarios.
 - Reloj.
-- Hasher de contrasenas.
+- Hasher de contraseñas.
 - Id del usuario autenticado.
 
 ### `MainForm.pas`
@@ -166,15 +166,15 @@ Usa `TFileUserRepository` con `users.json` en el directorio del ejecutable.
 Al arrancar por primera vez el administrador inicial se crea automaticamente via `TUserService.EnsureDefaultAdmin`:
 
 - Usuario: `admin`
-- Contrasena: `admin`
+- Contraseña: `admin`
 
 ## Reglas Principales
 
 ### Creacion
 
-- Usuario, nombre visible, email y contrasena son obligatorios.
+- Usuario, nombre visible, email y contraseña son obligatorios.
 - El email debe tener formato valido.
-- La contrasena debe tener mas de 4 caracteres.
+- La contraseña debe tener mas de 4 caracteres.
 - Usuario y email no pueden duplicarse.
 - El usuario nuevo queda activo, no bloqueado, no eliminado y sin fallos.
 - `CreatedAt` se obtiene desde `IClock`.
@@ -184,7 +184,7 @@ Al arrancar por primera vez el administrador inicial se crea automaticamente via
 
 - Se pueden modificar nombre de usuario, nombre visible, email, estado activo, rol y bloqueo.
 - No se puede modificar el usuario autenticado desde `FUser`.
-- No se puede editar, activar, desbloquear ni cambiar contrasena de un usuario eliminado.
+- No se puede editar, activar, desbloquear ni cambiar contraseña de un usuario eliminado.
 - No se modifica `CreatedAt`.
 
 ### Eliminacion Logica
@@ -214,11 +214,11 @@ Escenarios principales cubiertos:
 - Creacion de administrador inicial.
 - Creacion de usuario activo, no bloqueado y no eliminado.
 - Validacion de email.
-- Validacion de contrasena corta.
+- Validacion de contraseña corta.
 - Rechazo de usuario duplicado.
 - Rechazo de email duplicado.
 - Rechazo de autogestion administrativa.
-- Cambio de contrasena.
+- Cambio de contraseña.
 - Eliminacion logica.
 - Confirmacion requerida para eliminar.
 - Login rechazado para usuario eliminado.
@@ -248,7 +248,7 @@ dcc32 "-U..\App.Core" WindowsApp.dpr
 - La UI no contiene reglas de negocio.
 - La persistencia queda detras de `IUserRepository`.
 - Login y gestion de usuarios comparten el mismo repositorio logico.
-- La contrasena se gestiona mediante `IPasswordHasher`.
+- La contraseña se gestiona mediante `IPasswordHasher`.
 - El hasher actual es una implementacion de desarrollo; para produccion debe sustituirse por un hash seguro con salt.
 - La sesion guarda el rol en el momento del login para que los cambios de rol no alteren sesiones ya abiertas.
 - No se registra auditoria de cambios administrativos en esta version.
@@ -257,7 +257,7 @@ dcc32 "-U..\App.Core" WindowsApp.dpr
 
 - No existe base de datos real.
 - No hay auditoria administrativa.
-- No hay doble factor ni recuperacion de contrasena.
+- No hay doble factor ni recuperacion de contraseña.
 - No hay logout visual desde `FMain`.
 - La UI de `FUser` es funcional y basica.
 
@@ -265,6 +265,6 @@ dcc32 "-U..\App.Core" WindowsApp.dpr
 
 - Sustituir `TBasicPasswordHasher` por un algoritmo seguro de produccion.
 - Anadir auditoria administrativa si el producto lo requiere.
-- Anadir recuperacion de contrasena usando el email.
+- Anadir recuperacion de contraseña usando el email.
 - Mejorar filtros visuales por activo, inactivo y bloqueado.
 - Gestionar reapertura de login ante expiracion de sesion durante interacciones VCL.

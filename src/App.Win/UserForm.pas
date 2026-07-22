@@ -115,7 +115,7 @@ begin
     if FSelectedUserId = '' then
       Exit;
     FService.ChangePassword(FCurrentUserId, FSelectedUserId, EdtPassword.Text);
-    LblMessage.Caption := 'Contrasena actualizada correctamente.';
+    LblMessage.Caption := 'Contraseña actualizada correctamente.';
     EdtPassword.Text := '';
   except
     on E: Exception do

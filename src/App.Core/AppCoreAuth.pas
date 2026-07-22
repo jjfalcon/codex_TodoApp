@@ -246,7 +246,7 @@ begin
 
   LUser := FUsers.FindByUsername(LUsername);
   if LUser = nil then
-    raise EAuthenticationError.Create('Usuario o contrasena incorrectos.');
+    raise EAuthenticationError.Create('Usuario o contraseña incorrectos.');
 
   if LUser.Deleted then
     raise EDeletedUserError.Create('El usuario esta eliminado.');
@@ -260,7 +260,7 @@ begin
   if not FHasher.VerifyPassword(APassword, LUser.Salt, LUser.PasswordHash) then
   begin
     RegisterWrongPassword(LUser);
-    raise EAuthenticationError.Create('Usuario o contrasena incorrectos.');
+    raise EAuthenticationError.Create('Usuario o contraseña incorrectos.');
   end;
 
   LUser.FailedAttempts := 0;
@@ -295,7 +295,7 @@ begin
     raise ELoginValidationError.Create('El usuario es obligatorio.');
 
   if Trim(APassword) = '' then
-    raise ELoginValidationError.Create('La contrasena es obligatoria.');
+    raise ELoginValidationError.Create('La contraseña es obligatoria.');
 end;
 
 constructor TPermissionService.Create(const ASessions: ISessionService);

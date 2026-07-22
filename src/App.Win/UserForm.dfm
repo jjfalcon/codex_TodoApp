@@ -41,7 +41,7 @@ object FrmUsers: TFrmUsers
     Top = 192
     Width = 57
     Height = 13
-    Caption = 'Contrasena'
+    Caption = 'Contraseña'
   end
   object LblMessage: TLabel
     Left = 272
@@ -162,7 +162,7 @@ object FrmUsers: TFrmUsers
     Top = 256
     Width = 120
     Height = 29
-    Caption = 'Cambiar contrasena'
+    Caption = 'Cambiar contraseña'
     TabOrder = 13
     OnClick = BtnPasswordClick
   end

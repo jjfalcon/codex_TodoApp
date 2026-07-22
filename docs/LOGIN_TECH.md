@@ -4,7 +4,7 @@
 
 El login esta implementado con reglas de negocio en `App.Core` y una pantalla VCL fina en `App.Win`.
 
-La UI recoge usuario y contrasena, invoca el servicio de autenticacion y solo abre `FMain` cuando el nucleo crea una sesion valida. Las reglas de validacion, bloqueo, sesion, roles, permisos y ultimo usuario usado quedan fuera de la UI y estan cubiertas por pruebas de consola.
+La UI recoge usuario y contraseña, invoca el servicio de autenticacion y solo abre `FMain` cuando el nucleo crea una sesion valida. Las reglas de validacion, bloqueo, sesion, roles, permisos y ultimo usuario usado quedan fuera de la UI y estan cubiertas por pruebas de consola.
 
 ## Componentes
 
@@ -46,7 +46,7 @@ Implementacion actual:
 
 - `TInMemoryLoginPreferencesRepository`
 
-La contrasena no se guarda.
+La contraseña no se guarda.
 
 ### `AppCoreAuth.pas`
 
@@ -55,7 +55,7 @@ Contiene los servicios principales:
 - `TAuthService`: valida credenciales, autentica usuarios, incrementa fallos, bloquea usuarios y crea sesion.
 - `TSessionService`: mantiene la sesion activa, usuario actual, rol, ultima actividad y expiracion por inactividad.
 - `TPermissionService`: centraliza la comprobacion de acceso autenticado o administrador.
-- `TBasicPasswordHasher`: encapsula hash y verificacion de contrasena.
+- `TBasicPasswordHasher`: encapsula hash y verificacion de contraseña.
 
 Excepciones de dominio:
 
@@ -91,8 +91,8 @@ Archivos:
 
 Responsabilidades:
 
-- Mostrar campos `Usuario` y `Contrasena`.
-- Ocultar la contrasena mediante `PasswordChar`.
+- Mostrar campos `Usuario` y `Contraseña`.
+- Ocultar la contraseña mediante `PasswordChar`.
 - Crear usuarios de desarrollo en memoria.
 - Llamar a `IAuthService.Login`.
 - Mostrar mensajes de error procedentes del nucleo.
@@ -108,7 +108,7 @@ Formato:
 key,es,en
 FrmLogin.Caption,Login,Login
 FrmLogin.LblUsername.Caption,Usuario,Username
-FrmLogin.LblPassword.Caption,Contrasena,Password
+FrmLogin.LblPassword.Caption,Contraseña,Password
 FrmLogin.BtnLogin.Caption,Entrar,Sign in
 FrmLogin.BtnCancel.Caption,Cancelar,Cancel
 ```
@@ -173,13 +173,13 @@ Archivo:
 Escenarios cubiertos:
 
 - Usuario obligatorio.
-- Contrasena obligatoria.
+- Contraseña obligatoria.
 - Usuario inexistente.
-- Contrasena incorrecta.
+- Contraseña incorrecta.
 - Usuario inactivo.
 - Incremento de fallos.
 - Bloqueo al tercer fallo.
-- Usuario bloqueado rechazado aunque la contrasena sea correcta.
+- Usuario bloqueado rechazado aunque la contraseña sea correcta.
 - Reinicio de fallos tras login correcto.
 - Campos vacios no cuentan como fallo.
 - Usuario desconocido no crea contador.
@@ -218,7 +218,7 @@ dcc32 "-U..\App.Core" WindowsApp.dpr
 ## Pendiente fuera de esta entrega
 
 - Persistencia real en base de datos para usuarios, bloqueos y preferencias.
-- Hash de contrasena seguro de produccion.
+- Hash de contraseña seguro de produccion.
 - Flujo administrativo de desbloqueo.
 - Logout visual desde `FMain`.
 - Reapertura automatica del login cuando la sesion expire durante interaccion con pantallas VCL.

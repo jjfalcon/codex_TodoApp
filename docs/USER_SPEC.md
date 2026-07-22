@@ -4,7 +4,7 @@
 
 Incorporar una pantalla `FUser` para administrar los usuarios de la aplicacion Windows desde `FMain`.
 
-La gestion de usuarios debe permitir mantener las identidades que utiliza el login, incluyendo estado, rol, bloqueo, contrasena y datos de contacto. El nucleo debe conservar las reglas de negocio y la UI VCL solo debe invocar servicios testeables.
+La gestion de usuarios debe permitir mantener las identidades que utiliza el login, incluyendo estado, rol, bloqueo, contraseña y datos de contacto. El nucleo debe conservar las reglas de negocio y la UI VCL solo debe invocar servicios testeables.
 
 Esta especificacion define el comportamiento esperado. No describe todavia detalles de implementacion ni estructura exacta de codigo.
 
@@ -20,12 +20,12 @@ La primera version de gestion de usuarios debe permitir:
 - Activar y desactivar usuarios.
 - Bloquear y desbloquear usuarios.
 - Eliminar usuarios de forma logica mediante una accion visible distinta de desactivar y bloquear.
-- Cambiar la contrasena de un usuario.
+- Cambiar la contraseña de un usuario.
 - Cambiar el rol entre administrador y usuario normal.
 - Listar todos los usuarios existentes.
 - Buscar usuarios por nombre de usuario, nombre visible o email.
 - Filtrar usuarios por activos, inactivos o bloqueados.
-- Crear por defecto un administrador inicial `admin` con contrasena `admin` en una instalacion nueva.
+- Crear por defecto un administrador inicial `admin` con contraseña `admin` en una instalacion nueva.
 - Persistir los usuarios mediante un repositorio abstracto independiente.
 - Compartir el mismo repositorio logico de usuarios con el login.
 - Registrar fecha de creacion y fecha de ultimo login.
@@ -35,7 +35,7 @@ Queda fuera del alcance inicial:
 - Borrar fisicamente usuarios.
 - Gestionar roles avanzados distintos de administrador y usuario normal.
 - Implementar doble factor.
-- Implementar recuperacion de contrasena.
+- Implementar recuperacion de contraseña.
 - Enviar emails.
 - Auditar historico completo de cambios.
 - Gestionar permisos granulares por funcionalidad.
@@ -60,7 +60,7 @@ Datos minimos:
 - Indicador de bloqueo por fallos.
 - Fecha de creacion.
 - Fecha de ultimo login.
-- Hash de contrasena y datos necesarios para validarla de forma segura.
+- Hash de contraseña y datos necesarios para validarla de forma segura.
 
 ### Rol
 
@@ -85,7 +85,7 @@ La persistencia real se concretara mas adelante. Para TDD se podran usar reposit
 
 Componente de negocio que valida operaciones de administracion y coordina el repositorio.
 
-Debe concentrar las reglas de creacion, edicion, cambios de estado, cambios de rol, bloqueo, desbloqueo, eliminacion logica, cambio de contrasena, busqueda y filtrado.
+Debe concentrar las reglas de creacion, edicion, cambios de estado, cambios de rol, bloqueo, desbloqueo, eliminacion logica, cambio de contraseña, busqueda y filtrado.
 
 ### Administrador inicial
 
@@ -113,10 +113,10 @@ Debe actuar como una vista fina: muestra datos, recoge entradas del administrado
 ### Administrador inicial
 
 - Si el sistema se inicializa sin ningun usuario administrador activo, debe poder crear un administrador inicial.
-- En una instalacion nueva, el administrador inicial debe crearse por defecto con usuario `admin` y contrasena `admin`.
+- En una instalacion nueva, el administrador inicial debe crearse por defecto con usuario `admin` y contraseña `admin`.
 - El administrador inicial debe estar activo, no bloqueado y tener rol administrador.
 - La creacion del administrador inicial debe ocurrir de forma controlada y testeable.
-- El administrador inicial debe cumplir las mismas reglas de usuario y contrasena que el resto de usuarios.
+- El administrador inicial debe cumplir las mismas reglas de usuario y contraseña que el resto de usuarios.
 
 ### Creacion de usuarios
 
@@ -124,8 +124,8 @@ Debe actuar como una vista fina: muestra datos, recoge entradas del administrado
 - El nombre visible es obligatorio.
 - El email es obligatorio.
 - El email debe tener un formato valido del estilo `ejemplo@mail.com`.
-- La contrasena es obligatoria.
-- La contrasena debe tener mas de 4 caracteres.
+- La contraseña es obligatoria.
+- La contraseña debe tener mas de 4 caracteres.
 - El rol es obligatorio y debe ser administrador o usuario normal.
 - Los espacios al inicio y al final del nombre de usuario, nombre visible y email no deben guardarse.
 - No se deben permitir nombres de usuario duplicados.
@@ -134,13 +134,13 @@ Debe actuar como una vista fina: muestra datos, recoge entradas del administrado
 - Todo usuario nuevo debe crearse como no eliminado.
 - Todo usuario nuevo debe registrar fecha de creacion usando un reloj inyectable.
 - La fecha de ultimo login de un usuario nuevo debe quedar vacia hasta su primer login correcto.
-- La contrasena no debe guardarse en texto claro.
+- La contraseña no debe guardarse en texto claro.
 
 ### Edicion de usuarios
 
 - Debe permitirse modificar nombre visible, email, estado activo, rol y bloqueo.
-- Debe permitirse cambiar la contrasena mediante una operacion explicita.
-- No debe permitirse editar, activar, desbloquear ni cambiar la contrasena de un usuario eliminado.
+- Debe permitirse cambiar la contraseña mediante una operacion explicita.
+- No debe permitirse editar, activar, desbloquear ni cambiar la contraseña de un usuario eliminado.
 - No debe permitirse dejar vacios nombre de usuario, nombre visible o email.
 - No debe permitirse guardar un email con formato invalido.
 - No debe permitirse cambiar a un nombre de usuario ya usado por otro usuario.
@@ -152,7 +152,7 @@ Debe actuar como una vista fina: muestra datos, recoge entradas del administrado
 ### Autogestion administrativa
 
 - Un administrador no puede modificarse a si mismo desde `FUser`.
-- La restriccion aplica a cambios de rol, activacion, desactivacion, bloqueo, desbloqueo, contrasena y datos principales.
+- La restriccion aplica a cambios de rol, activacion, desactivacion, bloqueo, desbloqueo, contraseña y datos principales.
 - Los cambios sobre un administrador deben realizarlos otros administradores.
 - El nucleo debe validar esta regla aunque la UI oculte o deshabilite acciones sobre el usuario actual.
 
@@ -186,15 +186,15 @@ Debe actuar como una vista fina: muestra datos, recoge entradas del administrado
 - Si el usuario eliminado tiene una sesion activa, la sesion ya creada no debe cerrarse solo por esa eliminacion; el cambio aplica a partir del siguiente login.
 - La aplicacion debe evitar que la eliminacion logica deje el sistema sin ningun administrador activo disponible.
 
-### Contrasena
+### Contraseña
 
-- Un administrador puede cambiar la contrasena de otro usuario.
-- La nueva contrasena debe tener mas de 4 caracteres.
-- Una contrasena vacia o formada solo por espacios debe rechazarse.
-- La contrasena no debe mostrarse en texto claro salvo durante la entrada controlada del campo.
-- La contrasena no debe guardarse en logs, mensajes de error ni preferencias.
-- La contrasena debe persistirse usando hash seguro con salt cuando exista persistencia real.
-- Cambiar la contrasena debe afectar inmediatamente al login.
+- Un administrador puede cambiar la contraseña de otro usuario.
+- La nueva contraseña debe tener mas de 4 caracteres.
+- Una contraseña vacia o formada solo por espacios debe rechazarse.
+- La contraseña no debe mostrarse en texto claro salvo durante la entrada controlada del campo.
+- La contraseña no debe guardarse en logs, mensajes de error ni preferencias.
+- La contraseña debe persistirse usando hash seguro con salt cuando exista persistencia real.
+- Cambiar la contraseña debe afectar inmediatamente al login.
 
 ### Roles
 
@@ -207,7 +207,7 @@ Debe actuar como una vista fina: muestra datos, recoge entradas del administrado
 
 ### Confirmaciones y auditoria
 
-- La aplicacion no debe pedir confirmacion antes de desactivar, bloquear, desbloquear, cambiar rol o cambiar contrasena.
+- La aplicacion no debe pedir confirmacion antes de desactivar, bloquear, desbloquear, cambiar rol o cambiar contraseña.
 - La accion visible de eliminar usuario debe pedir confirmacion antes de ejecutarse.
 - La eliminacion de usuario no debe borrar fisicamente el registro; debe tratarse como baja logica para mantener historial.
 - Por ahora no se registra auditoria de cambios administrativos.
@@ -233,7 +233,7 @@ Debe actuar como una vista fina: muestra datos, recoge entradas del administrado
 - Si `FUser` bloquea un usuario, la sesion activa de ese usuario no cambia y el siguiente login debe fallar por usuario bloqueado.
 - Si `FUser` desbloquea un usuario, el login debe volver a permitir credenciales validas.
 - Si `FUser` elimina logicamente un usuario, la sesion activa de ese usuario no cambia y el siguiente login debe fallar por usuario eliminado.
-- Si `FUser` cambia una contrasena, el login debe rechazar la contrasena anterior y aceptar la nueva.
+- Si `FUser` cambia una contraseña, el login debe rechazar la contraseña anterior y aceptar la nueva.
 - Si `FUser` cambia un rol, el login debe reflejar el rol actualizado en la siguiente sesion creada para ese usuario.
 - Tras un login correcto, debe actualizarse la fecha de ultimo login del usuario autenticado.
 
@@ -243,7 +243,7 @@ Debe actuar como una vista fina: muestra datos, recoge entradas del administrado
 - La implementacion productiva podra usar base de datos u otro mecanismo persistente manteniendo el mismo contrato.
 - Para TDD se debe poder usar un repositorio en memoria.
 - Los usuarios, roles, estados, bloqueos, eliminacion logica, fallos consecutivos, email, fecha de creacion y fecha de ultimo login deben persistirse.
-- La contrasena no debe persistirse en texto claro.
+- La contraseña no debe persistirse en texto claro.
 
 ## Flujo de usuario
 
@@ -266,7 +266,7 @@ Debe actuar como una vista fina: muestra datos, recoge entradas del administrado
 ### Crear usuario
 
 1. El administrador abre `FUser`.
-2. Introduce nombre de usuario, nombre visible, email, rol y contrasena.
+2. Introduce nombre de usuario, nombre visible, email, rol y contraseña.
 3. La aplicacion valida los campos.
 4. Si los datos son validos, crea el usuario activo y no bloqueado.
 5. La lista de usuarios se refresca.
@@ -279,14 +279,14 @@ Debe actuar como una vista fina: muestra datos, recoge entradas del administrado
 4. Si los datos son validos, guarda los cambios.
 5. La lista de usuarios se refresca.
 
-### Cambiar contrasena
+### Cambiar contraseña
 
 1. El administrador selecciona un usuario distinto de si mismo.
-2. Solicita cambiar contrasena.
-3. Introduce la nueva contrasena.
+2. Solicita cambiar contraseña.
+3. Introduce la nueva contraseña.
 4. La aplicacion valida que tenga mas de 4 caracteres.
-5. La aplicacion guarda la nueva contrasena de forma segura.
-6. El login acepta la nueva contrasena en futuros intentos.
+5. La aplicacion guarda la nueva contraseña de forma segura.
+6. El login acepta la nueva contraseña en futuros intentos.
 
 ### Desactivar usuario
 
@@ -330,8 +330,8 @@ Los textos definitivos pueden ajustarse en la implementacion, pero deben respeta
 - Nombre visible obligatorio: `El nombre visible es obligatorio.`
 - Email obligatorio: `El email es obligatorio.`
 - Email invalido: `El email no tiene un formato valido.`
-- Contrasena obligatoria: `La contrasena es obligatoria.`
-- Contrasena corta: `La contrasena debe tener mas de 4 caracteres.`
+- Contraseña obligatoria: `La contraseña es obligatoria.`
+- Contraseña corta: `La contraseña debe tener mas de 4 caracteres.`
 - Usuario duplicado: `Ya existe un usuario con ese nombre.`
 - Email duplicado: `Ya existe un usuario con ese email.`
 - Usuario no encontrado: `El usuario no existe.`
@@ -343,7 +343,7 @@ Los textos definitivos pueden ajustarse en la implementacion, pero deben respeta
 - Sin administrador disponible: `Debe existir al menos un administrador activo.`
 - Usuario creado: `Usuario creado correctamente.`
 - Usuario actualizado: `Usuario actualizado correctamente.`
-- Contrasena actualizada: `Contrasena actualizada correctamente.`
+- Contraseña actualizada: `Contraseña actualizada correctamente.`
 
 ## Criterios de aceptacion
 
@@ -351,13 +351,13 @@ Los textos definitivos pueden ajustarse en la implementacion, pero deben respeta
 - Dado un usuario normal autenticado, cuando intenta acceder a `Usuarios`, entonces se deniega el acceso.
 - Dado un usuario normal autenticado, cuando se muestra `FMain`, entonces la opcion `Usuarios` permanece oculta.
 - Dado un administrador autenticado, cuando selecciona `Usuarios`, entonces `FMain` incrusta `FUser` en la zona central.
-- Dado que es una instalacion nueva, cuando se inicializa el sistema, entonces se crea un administrador inicial `admin` con contrasena `admin`.
+- Dado que es una instalacion nueva, cuando se inicializa el sistema, entonces se crea un administrador inicial `admin` con contraseña `admin`.
 - Dado datos validos de usuario, cuando se crea el usuario, entonces queda activo, no bloqueado, no eliminado y con fallos consecutivos a cero.
 - Dado un usuario nuevo, cuando se crea, entonces registra fecha de creacion desde el reloj configurado.
 - Dado un usuario nuevo, cuando se crea, entonces su fecha de ultimo login queda vacia.
 - Dado un nombre de usuario vacio, cuando se crea o edita un usuario, entonces se rechaza la operacion.
 - Dado un email con formato invalido, cuando se crea o edita un usuario, entonces se rechaza la operacion.
-- Dado una contrasena de 4 caracteres o menos, cuando se crea un usuario o se cambia su contrasena, entonces se rechaza la operacion.
+- Dado una contraseña de 4 caracteres o menos, cuando se crea un usuario o se cambia su contraseña, entonces se rechaza la operacion.
 - Dado un nombre de usuario ya usado por otro usuario, cuando se crea o edita un usuario, entonces se rechaza la operacion.
 - Dado un email ya usado por otro usuario, cuando se crea o edita un usuario, entonces se rechaza la operacion.
 - Dado un administrador, cuando intenta modificarse a si mismo desde `FUser`, entonces la operacion se rechaza.
@@ -367,8 +367,8 @@ Los textos definitivos pueden ajustarse en la implementacion, pero deben respeta
 - Dado un usuario bloqueado, cuando un administrador lo desbloquea, entonces su contador de fallos consecutivos vuelve a cero.
 - Dado un usuario activo con sesion activa, cuando un administrador lo bloquea, entonces la sesion actual no se cierra solo por ese cambio.
 - Dado un usuario bloqueado, cuando intenta iniciar sesion de nuevo, entonces se rechaza el login.
-- Dado un usuario, cuando un administrador cambia su contrasena, entonces el login rechaza la contrasena anterior.
-- Dado un usuario, cuando un administrador cambia su contrasena, entonces el login acepta la nueva contrasena.
+- Dado un usuario, cuando un administrador cambia su contraseña, entonces el login rechaza la contraseña anterior.
+- Dado un usuario, cuando un administrador cambia su contraseña, entonces el login acepta la nueva contraseña.
 - Dado un usuario, cuando un administrador cambia su rol, entonces los permisos reflejan el nuevo rol a partir del siguiente login.
 - Dado que solo existe un administrador activo, cuando se intenta desactivarlo, bloquearlo o degradarlo a usuario normal, entonces se rechaza la operacion.
 - Dado varios usuarios, cuando se busca por nombre de usuario, nombre visible o email, entonces se devuelven las coincidencias.
@@ -442,7 +442,7 @@ Componentes conceptuales:
 - Repositorio de usuarios.
 - Servicio de permisos.
 - Servicio de autenticacion compatible con el mismo repositorio.
-- Politica de contrasena.
+- Politica de contraseña.
 - Politica de administrador minimo.
 - Politica de autogestion administrativa.
 - Politica de eliminacion logica.
@@ -465,7 +465,7 @@ La UI solo debe:
 Administrador inicial:
 
 - Usuario: `admin`
-- Contrasena: `admin`
+- Contraseña: `admin`
 - Nombre visible: `Administrador`
 - Email: `admin@example.local`
 - Estado: activo
@@ -477,7 +477,7 @@ Administrador inicial:
 Usuario normal:
 
 - Usuario: `user`
-- Contrasena: `user123`
+- Contraseña: `user123`
 - Nombre visible: `Usuario normal`
 - Email: `user@example.local`
 - Estado: activo
@@ -489,7 +489,7 @@ Usuario normal:
 Usuario inactivo:
 
 - Usuario: `disabled`
-- Contrasena: `disabled123`
+- Contraseña: `disabled123`
 - Nombre visible: `Usuario inactivo`
 - Email: `disabled@example.local`
 - Estado: inactivo
@@ -501,7 +501,7 @@ Usuario inactivo:
 Usuario bloqueado:
 
 - Usuario: `locked`
-- Contrasena: `locked123`
+- Contraseña: `locked123`
 - Nombre visible: `Usuario bloqueado`
 - Email: `locked@example.local`
 - Estado: activo
@@ -520,20 +520,20 @@ Estos datos son solo para desarrollo y pruebas. No deben considerarse credencial
 - `FUser` se integrara dentro de `FMain` mediante la opcion `Usuarios`.
 - Solo administradores pueden acceder a `FUser`.
 - La opcion `Usuarios` se oculta para usuarios normales.
-- El alcance incluye crear, editar, activar, desactivar, bloquear, desbloquear, eliminar logicamente y cambiar contrasenas.
+- El alcance incluye crear, editar, activar, desactivar, bloquear, desbloquear, eliminar logicamente y cambiar contraseñas.
 - Los usuarios no se borran fisicamente para mantener historial.
 - Debe existir una accion visible de eliminacion logica distinta de desactivar o bloquear.
 - Un usuario eliminado no puede volver a activarse.
-- Un administrador puede cambiar contrasenas de otros usuarios.
-- La contrasena debe tener mas de 4 caracteres.
+- Un administrador puede cambiar contraseñas de otros usuarios.
+- La contraseña debe tener mas de 4 caracteres.
 - El email debe validarse con formato del estilo `ejemplo@mail.com`.
 - Un administrador no puede modificarse a si mismo desde `FUser`.
-- En una instalacion nueva se crea por defecto el administrador inicial `admin` con contrasena `admin`.
+- En una instalacion nueva se crea por defecto el administrador inicial `admin` con contraseña `admin`.
 - Por ahora solo existen roles administrador y usuario normal.
 - El usuario incluye email, fecha de creacion y fecha de ultimo login.
 - `FUser` debe permitir busqueda y filtros.
 - Los usuarios eliminados no se muestran por defecto; solo aparecen al activar el filtro especifico de eliminados.
-- Los cambios de `FUser` deben ser compatibles con `LOGIN_SPEC`: estado activo, bloqueo, eliminacion logica y rol afectan a partir del siguiente login, y contrasena afecta al siguiente intento de login.
+- Los cambios de `FUser` deben ser compatibles con `LOGIN_SPEC`: estado activo, bloqueo, eliminacion logica y rol afectan a partir del siguiente login, y contraseña afecta al siguiente intento de login.
 - El cambio de rol de un usuario se tiene en cuenta a partir del siguiente login.
 - El cambio de estado activo o bloqueado de un usuario con sesion activa solo tiene efecto a partir del siguiente login.
 - El repositorio de usuarios se define de forma abstracta.

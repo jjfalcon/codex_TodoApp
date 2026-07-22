@@ -4,7 +4,7 @@
 
 La pantalla `Usuarios` permite a un administrador gestionar las cuentas de acceso a la aplicacion.
 
-Desde esta pantalla se pueden crear usuarios, editar sus datos, cambiar contrasenas, activar o desactivar cuentas, desbloquear usuarios y eliminar usuarios de forma logica.
+Desde esta pantalla se pueden crear usuarios, editar sus datos, cambiar contraseñas, activar o desactivar cuentas, desbloquear usuarios y eliminar usuarios de forma logica.
 
 ## Acceder a Usuarios
 
@@ -21,7 +21,7 @@ Los usuarios normales no ven la opcion `Usuarios`.
    - `Usuario`
    - `Nombre visible`
    - `Email`
-   - `Contrasena`
+   - `Contraseña`
    - Rol
 2. Marque `Activo` si la cuenta debe poder iniciar sesion.
 3. Pulse `Crear`.
@@ -36,7 +36,7 @@ Los siguientes campos son obligatorios:
 - Usuario.
 - Nombre visible.
 - Email.
-- Contrasena.
+- Contraseña.
 
 El email debe tener un formato similar a:
 
@@ -44,7 +44,7 @@ El email debe tener un formato similar a:
 ejemplo@mail.com
 ```
 
-La contrasena debe tener mas de 4 caracteres.
+La contraseña debe tener mas de 4 caracteres.
 
 ## Editar un usuario
 
@@ -54,13 +54,13 @@ La contrasena debe tener mas de 4 caracteres.
 
 No puede modificarse a si mismo desde esta pantalla. Los cambios sobre un administrador deben realizarlos otros administradores.
 
-## Cambiar contrasena
+## Cambiar contraseña
 
 1. Seleccione un usuario.
-2. Escriba la nueva contrasena.
-3. Pulse `Cambiar contrasena`.
+2. Escriba la nueva contraseña.
+3. Pulse `Cambiar contraseña`.
 
-La nueva contrasena sera valida para el siguiente intento de login.
+La nueva contraseña sera valida para el siguiente intento de login.
 
 ## Activar o desactivar
 
@@ -101,7 +101,7 @@ Para eliminar:
 2. Pulse `Eliminar`.
 3. Confirme la operacion.
 
-La aplicacion no pide confirmacion para desactivar, bloquear, desbloquear, cambiar rol o cambiar contrasena. Solo pide confirmacion al eliminar.
+La aplicacion no pide confirmacion para desactivar, bloquear, desbloquear, cambiar rol o cambiar contraseña. Solo pide confirmacion al eliminar.
 
 ## Buscar usuarios
 
@@ -139,7 +139,7 @@ Si cambia el rol de un usuario, el cambio se aplica a partir del siguiente login
 
 En una instalacion nueva existe un administrador inicial (se crea solo la primera vez que arranca la aplicacion):
 
-| Usuario | Contrasena | Rol |
+| Usuario | Contraseña | Rol |
 | --- | --- | --- |
 | `admin` | `admin` | Administrador |
 
@@ -163,9 +163,9 @@ Debe indicar un email.
 
 Revise que el email tenga un formato similar a `ejemplo@mail.com`.
 
-### `La contrasena debe tener mas de 4 caracteres.`
+### `La contraseña debe tener mas de 4 caracteres.`
 
-Use una contrasena mas larga.
+Use una contraseña mas larga.
 
 ### `Ya existe un usuario con ese nombre.`
 
@@ -193,13 +193,13 @@ En esta version:
 
 - Los usuarios se guardan en `users.json` en el mismo directorio que el ejecutable.
 - No hay doble factor.
-- No hay recuperacion de contrasena.
+- No hay recuperacion de contraseña.
 - No hay auditoria visible de cambios administrativos.
 - No hay envio de emails.
 
 ## Recomendaciones
 
-- Cambie la contrasena del administrador inicial en instalaciones reales.
+- Cambie la contraseña del administrador inicial en instalaciones reales.
 - Mantenga al menos dos administradores activos para evitar bloqueos operativos.
-- Use emails reales si se va a implementar recuperacion de contrasena o doble factor.
+- Use emails reales si se va a implementar recuperacion de contraseña o doble factor.
 - Elimine logicamente solo cuentas que no deban volver a usarse.

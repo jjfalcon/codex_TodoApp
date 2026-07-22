@@ -55,7 +55,7 @@ begin
     LFile.Add('key,es,en');
     LFile.Add('FrmLogin.Caption,Login,Login');
     LFile.Add('FrmLogin.LblUsername.Caption,Usuario,Username');
-    LFile.Add('FrmLogin.LblPassword.Caption,Contrasena,Password');
+    LFile.Add('FrmLogin.LblPassword.Caption,Contraseña,Password');
     LFile.Add('FrmLogin.BtnLogin.Caption,Entrar,Sign in');
     LFile.Add('FrmLogin.BtnCancel.Caption,Cancelar,Cancel');
     LFile.Add('OtherForm.Caption,Otro,Other');

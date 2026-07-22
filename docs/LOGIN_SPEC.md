@@ -21,7 +21,7 @@ Esta especificacion define el comportamiento esperado. No describe todavia detal
 
 La primera version del login debe permitir:
 
-- Iniciar sesion con usuario y contrasena.
+- Iniciar sesion con usuario y contraseña.
 - Validar campos obligatorios.
 - Rechazar credenciales incorrectas.
 - Bloquear el login tras 3 fallos consecutivos.
@@ -35,8 +35,8 @@ La primera version del login debe permitir:
 Queda fuera del alcance inicial:
 
 - Registro de nuevos usuarios.
-- Recuperacion de contrasena.
-- Cambio de contrasena.
+- Recuperacion de contraseña.
+- Cambio de contraseña.
 - Roles y permisos avanzados mas alla de administrador y usuario normal.
 - Autenticacion contra servicios externos.
 
@@ -63,7 +63,7 @@ Datos proporcionados por el usuario para autenticarse.
 Campos:
 
 - Usuario.
-- Contrasena.
+- Contraseña.
 
 ### Sesion
 
@@ -89,37 +89,37 @@ Roles iniciales:
 
 Preferencia local de la instalacion que guarda el ultimo nombre de usuario utilizado en un intento de login.
 
-No debe guardar la contrasena.
+No debe guardar la contraseña.
 
 ## Reglas de negocio
 
 ### Validacion de campos
 
 - El nombre de usuario es obligatorio.
-- La contrasena es obligatoria.
+- La contraseña es obligatoria.
 - Los espacios al inicio y al final del nombre de usuario no deben afectar a la autenticacion.
-- Una contrasena formada solo por espacios debe considerarse vacia.
+- Una contraseña formada solo por espacios debe considerarse vacia.
 
 ### Autenticacion
 
 - Si el usuario no existe, el login debe fallar.
-- Si la contrasena no coincide, el login debe fallar.
+- Si la contraseña no coincide, el login debe fallar.
 - Si el usuario existe pero esta inactivo, el login debe fallar.
-- Si el usuario esta bloqueado por fallos consecutivos, el login debe fallar aunque la contrasena sea correcta.
+- Si el usuario esta bloqueado por fallos consecutivos, el login debe fallar aunque la contraseña sea correcta.
 - Si las credenciales son validas y el usuario esta activo, el login debe crear una sesion activa.
 - Si las credenciales son validas, el contador de fallos consecutivos del usuario debe volver a cero.
-- El mensaje de error para usuario inexistente o contrasena incorrecta debe ser generico para no revelar informacion sensible.
+- El mensaje de error para usuario inexistente o contraseña incorrecta debe ser generico para no revelar informacion sensible.
 
 ### Bloqueo por fallos consecutivos
 
-- Cada intento con contrasena incorrecta para un usuario existente y activo debe incrementar su contador de fallos consecutivos.
+- Cada intento con contraseña incorrecta para un usuario existente y activo debe incrementar su contador de fallos consecutivos.
 - Al llegar a 3 fallos consecutivos, el usuario debe quedar bloqueado.
 - Un usuario bloqueado no puede iniciar sesion aunque proporcione credenciales correctas.
 - El bloqueo debe aplicarse por usuario, no globalmente a toda la aplicacion.
 - Un login correcto antes de llegar al tercer fallo debe reiniciar el contador de fallos a cero.
 - Los intentos con usuario inexistente deben fallar, pero no deben crear usuarios ni contadores nuevos.
 - Los intentos con campos obligatorios vacios no deben contar como fallo de autenticacion.
-- Los intentos contra un usuario inactivo no deben contar como fallo de contrasena.
+- Los intentos contra un usuario inactivo no deben contar como fallo de contraseña.
 - En esta primera version, el desbloqueo queda fuera del flujo normal de usuario y se considera una accion administrativa o de mantenimiento.
 
 ### Sesion activa
@@ -163,7 +163,7 @@ No debe guardar la contrasena.
 
 - Los usuarios, roles, estados, bloqueos y fallos consecutivos deben guardarse en base de datos.
 - La aplicacion debe obtener los usuarios desde un repositorio conectado a base de datos.
-- La contrasena no debe guardarse en texto claro.
+- La contraseña no debe guardarse en texto claro.
 - El nucleo debe depender de una interfaz de repositorio, no de detalles concretos de la base de datos.
 - Para TDD se podra seguir usando un repositorio en memoria en las pruebas unitarias.
 
@@ -171,17 +171,17 @@ No debe guardar la contrasena.
 
 - La aplicacion debe recordar el ultimo nombre de usuario usado.
 - Al abrir la pantalla de login, el campo usuario debe aparecer precargado con ese valor si existe.
-- La contrasena nunca debe recordarse.
+- La contraseña nunca debe recordarse.
 - El ultimo usuario usado debe actualizarse al intentar iniciar sesion, tanto si el login tiene exito como si falla por credenciales invalidas.
 - Los intentos con usuario vacio no deben borrar el ultimo usuario recordado.
 
 ### Seguridad inicial
 
-- La contrasena no debe mostrarse en texto claro en la interfaz.
-- La contrasena no debe guardarse en logs ni mensajes de error.
-- La contrasena no debe guardarse recordada en preferencias locales.
-- En base de datos, la contrasena debe almacenarse usando un hash seguro con salt.
-- Los errores de autenticacion no deben indicar si fallo el usuario o la contrasena.
+- La contraseña no debe mostrarse en texto claro en la interfaz.
+- La contraseña no debe guardarse en logs ni mensajes de error.
+- La contraseña no debe guardarse recordada en preferencias locales.
+- En base de datos, la contraseña debe almacenarse usando un hash seguro con salt.
+- Los errores de autenticacion no deben indicar si fallo el usuario o la contraseña.
 - La comparacion de credenciales debe quedar encapsulada fuera de la UI.
 
 ## Flujo de usuario
@@ -194,7 +194,7 @@ No debe guardar la contrasena.
 
 ### Login correcto
 
-1. El usuario introduce nombre de usuario y contrasena.
+1. El usuario introduce nombre de usuario y contraseña.
 2. El sistema valida que ambos campos tengan contenido.
 3. El sistema verifica las credenciales.
 4. El sistema crea una sesion activa.
@@ -206,7 +206,7 @@ No debe guardar la contrasena.
 
 1. El usuario introduce credenciales no validas.
 2. El sistema rechaza el intento.
-3. Si el usuario existe, esta activo y la contrasena es incorrecta, el sistema incrementa el contador de fallos consecutivos.
+3. Si el usuario existe, esta activo y la contraseña es incorrecta, el sistema incrementa el contador de fallos consecutivos.
 4. Si el contador alcanza 3 fallos consecutivos, el usuario queda bloqueado.
 5. La aplicacion muestra un mensaje generico de error.
 6. La sesion permanece inactiva.
@@ -215,7 +215,7 @@ No debe guardar la contrasena.
 ### Usuario bloqueado
 
 1. El usuario introduce credenciales de una cuenta bloqueada.
-2. El sistema rechaza el intento sin validar la contrasena como login correcto.
+2. El sistema rechaza el intento sin validar la contraseña como login correcto.
 3. La aplicacion informa que la cuenta esta bloqueada.
 4. La sesion permanece inactiva.
 
@@ -239,8 +239,8 @@ No debe guardar la contrasena.
 Los textos definitivos pueden ajustarse en la implementacion, pero deben respetar esta intencion:
 
 - Usuario obligatorio: `El usuario es obligatorio.`
-- Contrasena obligatoria: `La contrasena es obligatoria.`
-- Credenciales invalidas: `Usuario o contrasena incorrectos.`
+- Contraseña obligatoria: `La contraseña es obligatoria.`
+- Credenciales invalidas: `Usuario o contraseña incorrectos.`
 - Usuario inactivo: `El usuario no esta activo.`
 - Usuario bloqueado: `El usuario esta bloqueado por demasiados intentos fallidos.`
 - Sesion expirada: `La sesion ha expirado por inactividad.`
@@ -252,9 +252,9 @@ Los textos definitivos pueden ajustarse en la implementacion, pero deben respeta
 - Dado un usuario activo con credenciales validas, cuando inicia sesion, entonces se crea una sesion activa.
 - Dado un usuario activo con credenciales validas, cuando inicia sesion, entonces la sesion incluye su rol.
 - Dado un usuario inexistente, cuando intenta iniciar sesion, entonces se rechaza el acceso.
-- Dado una contrasena incorrecta, cuando intenta iniciar sesion, entonces se rechaza el acceso.
-- Dado un usuario activo, cuando falla la contrasena una vez, entonces su contador de fallos consecutivos aumenta a 1.
-- Dado un usuario activo con 2 fallos consecutivos, cuando falla la contrasena otra vez, entonces el usuario queda bloqueado.
+- Dado una contraseña incorrecta, cuando intenta iniciar sesion, entonces se rechaza el acceso.
+- Dado un usuario activo, cuando falla la contraseña una vez, entonces su contador de fallos consecutivos aumenta a 1.
+- Dado un usuario activo con 2 fallos consecutivos, cuando falla la contraseña otra vez, entonces el usuario queda bloqueado.
 - Dado un usuario bloqueado, cuando intenta iniciar sesion con credenciales correctas, entonces se rechaza el acceso.
 - Dado un usuario activo con fallos acumulados menores que 3, cuando inicia sesion correctamente, entonces el contador de fallos vuelve a 0.
 - Dado un usuario inactivo, cuando intenta iniciar sesion, entonces se rechaza el acceso.
@@ -265,7 +265,7 @@ Los textos definitivos pueden ajustarse en la implementacion, pero deben respeta
 - Dado un administrador autenticado, cuando intenta acceder a una funcionalidad de administrador, entonces el acceso se permite.
 - Dado que la sesion esta inactiva, cuando se intenta acceder a una funcionalidad protegida, entonces el acceso se bloquea.
 - Dado un nombre de usuario con espacios laterales, cuando las credenciales son validas, entonces el login debe funcionar igual que sin esos espacios.
-- Dado una contrasena vacia o formada solo por espacios, cuando se intenta iniciar sesion, entonces se informa que la contrasena es obligatoria.
+- Dado una contraseña vacia o formada solo por espacios, cuando se intenta iniciar sesion, entonces se informa que la contraseña es obligatoria.
 - Dado que existe un ultimo usuario usado, cuando se abre el login, entonces el campo usuario se precarga con ese valor.
 - Dado un intento de login con usuario no vacio, cuando termina el intento, entonces se actualiza el ultimo usuario usado.
 - Dado un intento de login con usuario vacio, cuando termina la validacion, entonces no se borra el ultimo usuario usado.
@@ -317,7 +317,7 @@ Componentes conceptuales:
 
 La UI solo debe:
 
-- Recoger usuario y contrasena.
+- Recoger usuario y contraseña.
 - Llamar al servicio de autenticacion.
 - Mostrar mensajes de error.
 - Navegar a la pantalla principal cuando exista sesion activa.
@@ -338,7 +338,7 @@ La implementacion productiva debera sustituir el repositorio en memoria por una 
 Usuario activo:
 
 - Usuario: `admin`
-- Contrasena: `admin123`
+- Contraseña: `admin123`
 - Nombre visible: `Administrador`
 - Estado: activo
 - Rol: administrador
@@ -348,7 +348,7 @@ Usuario activo:
 Usuario normal:
 
 - Usuario: `user`
-- Contrasena: `user123`
+- Contraseña: `user123`
 - Nombre visible: `Usuario normal`
 - Estado: activo
 - Rol: usuario normal
@@ -358,7 +358,7 @@ Usuario normal:
 Usuario inactivo:
 
 - Usuario: `disabled`
-- Contrasena: `disabled123`
+- Contraseña: `disabled123`
 - Nombre visible: `Usuario inactivo`
 - Estado: inactivo
 - Rol: usuario normal
@@ -368,7 +368,7 @@ Usuario inactivo:
 Usuario bloqueado:
 
 - Usuario: `locked`
-- Contrasena: `locked123`
+- Contraseña: `locked123`
 - Nombre visible: `Usuario bloqueado`
 - Estado: activo
 - Rol: usuario normal

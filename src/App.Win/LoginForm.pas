@@ -92,7 +92,7 @@ begin
   begin
     Caption := 'Login';
     LblUsername.Caption := 'Usuario';
-    LblPassword.Caption := 'Contrasena';
+    LblPassword.Caption := 'Contraseña';
     BtnLogin.Caption := 'Entrar';
     BtnCancel.Caption := 'Cancelar';
   end;

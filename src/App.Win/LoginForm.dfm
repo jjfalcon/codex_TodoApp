@@ -28,7 +28,7 @@ object FrmLogin: TFrmLogin
     Top = 72
     Width = 61
     Height = 13
-    Caption = 'Contrasena'
+    Caption = 'Contraseña'
   end
   object LblMessage: TLabel
     Left = 24

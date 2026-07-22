@@ -88,7 +88,7 @@ Ventana modal que presenta la informacion de aplicacion y tecnica de forma solo 
 - El nombre de la aplicacion es obligatorio.
 - La version de la aplicacion es obligatoria.
 - Si algun dato tecnico no esta disponible, debe mostrarse un valor claro como `No disponible`.
-- No debe mostrarse informacion sensible como contrasenas, hashes, tokens, cadenas completas de conexion con credenciales o datos personales de usuarios.
+- No debe mostrarse informacion sensible como contraseñas, hashes, tokens, cadenas completas de conexion con credenciales o datos personales de usuarios.
 - La informacion debe poder obtenerse desde un servicio o proveedor testeable, no directamente desde la UI.
 
 ### Acceso

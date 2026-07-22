@@ -226,7 +226,7 @@ begin
   try
     AssertEquals('Login', LForm.Caption, 'Login form should load default title.');
     AssertEquals('Usuario', LForm.LblUsername.Caption, 'Login form should load default username label.');
-    AssertEquals('Contrasena', LForm.LblPassword.Caption, 'Login form should load default password label.');
+    AssertEquals('Contraseña', LForm.LblPassword.Caption, 'Login form should load default password label.');
     AssertEquals('Entrar', LForm.BtnLogin.Caption, 'Login form should load default login button.');
     AssertEquals('Cancelar', LForm.BtnCancel.Caption, 'Login form should load default cancel button.');
   finally
@@ -344,7 +344,7 @@ var
   LForm: TFrmLogin;
 begin
   LFakeAuth := TFakeAuthService.Create;
-  LFakeAuth.FailWith(EAuthenticationError.Create('Usuario o contrasena incorrectos.'));
+  LFakeAuth.FailWith(EAuthenticationError.Create('Usuario o contraseña incorrectos.'));
   LAuth := LFakeAuth;
   LForm := CreateLoginForm(LAuth);
   try
@@ -352,7 +352,7 @@ begin
     LForm.EdtPassword.Text := 'wrong';
     LForm.BtnLoginClick(nil);
 
-    AssertEquals('Usuario o contrasena incorrectos.', LForm.LblMessage.Caption,
+    AssertEquals('Usuario o contraseña incorrectos.', LForm.LblMessage.Caption,
       'Login form should show auth errors.');
     AssertEquals(0, LForm.ModalResult, 'Failed login should keep dialog open.');
   finally

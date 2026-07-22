@@ -361,10 +361,10 @@ end;
 procedure TUserService.ValidatePassword(const APassword: string);
 begin
   if Trim(APassword) = '' then
-    raise EUserValidationError.Create('La contrasena es obligatoria.');
+    raise EUserValidationError.Create('La contraseña es obligatoria.');
 
   if Length(APassword) <= 4 then
-    raise EUserValidationError.Create('La contrasena debe tener mas de 4 caracteres.');
+    raise EUserValidationError.Create('La contraseña debe tener mas de 4 caracteres.');
 end;
 
 procedure TUserService.ValidateUserData(const AUsername, ADisplayName,

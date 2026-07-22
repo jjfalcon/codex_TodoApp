@@ -1,6 +1,6 @@
 key,es,en
 FrmLogin.Caption,Login,Login
 FrmLogin.LblUsername.Caption,Usuario,Username
-FrmLogin.LblPassword.Caption,Contrasena,Password
+FrmLogin.LblPassword.Caption,Contraseña,Password
 FrmLogin.BtnLogin.Caption,Entrar,Sign in
 FrmLogin.BtnCancel.Caption,Cancelar,Cancel
