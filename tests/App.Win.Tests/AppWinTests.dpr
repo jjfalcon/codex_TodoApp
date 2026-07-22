@@ -5,6 +5,8 @@ program AppWinTests;
 uses
   SysUtils,
   Forms,
+  AboutFormTests in 'AboutFormTests.pas',
+  LocalizationAuditTests in 'LocalizationAuditTests.pas',
   LoginFormTests in 'LoginFormTests.pas',
   AppWinLocalization in '..\..\src\App.Win\AppWinLocalization.pas',
   LoginForm in '..\..\src\App.Win\LoginForm.pas',
@@ -24,7 +26,9 @@ begin
 
   try
     Application.Initialize;
+    RunAboutFormTests(Failures);
     RunLoginFormTests(Failures);
+    RunLocalizationAuditTests(Failures);
 
     if Failures = 0 then
       Writeln('All tests passed.')

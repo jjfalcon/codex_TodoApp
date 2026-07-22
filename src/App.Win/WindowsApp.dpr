@@ -60,7 +60,8 @@ begin
       Application.CreateForm(TFrmMain, FrmMain);
       FrmMain.UserRole := FrmLogin.LoggedInRole;
       FrmMain.ConfigureServices(LFactory, FrmLogin.SessionService,
-        TSystemClock.Create, FrmLogin.PasswordHasher, FrmLogin.LoggedInUserId);
+        TSystemClock.Create, FrmLogin.PasswordHasher, FrmLogin.LoggedInUserId,
+        LLocalization);
       FrmLogin.Free;
       FrmLogin := nil;
       Application.Run;

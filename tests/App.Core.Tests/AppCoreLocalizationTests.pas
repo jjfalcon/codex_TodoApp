@@ -60,6 +60,7 @@ begin
     LFile.Add('FrmLogin.BtnCancel.Caption,Cancelar,Cancel');
     LFile.Add('OtherForm.Caption,Otro,Other');
     LFile.Add('FrmLogin.LblMessage.Caption,"Hola, mundo","Hello, world"');
+    LFile.Add('About.VersionPrefix,Version: ,Version: ');
     LFile.SaveToFile(LTestLocalizationFile);
   finally
     LFile.Free;
@@ -108,6 +109,18 @@ begin
   DeleteFile(LTestLocalizationFile);
 end;
 
+procedure LoadsGlobalTextKey;
+var
+  LLocalization: ILocalizationService;
+begin
+  WriteLocalizationFile;
+  LLocalization := TCsvLocalizationService.Create(LTestLocalizationFile, 'en', 'es');
+  AssertTrue(LLocalization.HasText('About.VersionPrefix'),
+    'Should load global localization keys.');
+  AssertEquals('Version: ', LLocalization.Text('About.VersionPrefix'),
+    'Should return global localization key text.');
+  DeleteFile(LTestLocalizationFile);
+end;
 procedure ReturnsOnlyKeysForRequestedForm;
 var
   LLocalization: ILocalizationService;
@@ -131,6 +144,7 @@ begin
   RunTest('Localization_loads_text_for_selected_language', LoadsTextForSelectedLanguage, AFailures);
   RunTest('Localization_falls_back_to_default_language_when_selected_text_is_empty', FallsBackToDefaultLanguageWhenSelectedTextIsEmpty, AFailures);
   RunTest('Localization_parses_quoted_csv_values', ParsesQuotedCsvValues, AFailures);
+  RunTest('Localization_loads_global_text_key', LoadsGlobalTextKey, AFailures);
   RunTest('Localization_returns_only_keys_for_requested_form', ReturnsOnlyKeysForRequestedForm, AFailures);
 end;
 

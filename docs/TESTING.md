@@ -192,6 +192,37 @@ Estado documentado:
 - Cobertura global App.Win actual: 92%, 63 de 68 lineas cubiertas.
 - `LoginForm.pas`: 92%, 35 de 38 lineas ejecutables cubiertas.
 
+## localizationAudit Forms VCL
+
+Auditoria estricta del CSV de localizacion contra formularios VCL declarados como localizados.
+
+Ubicacion:
+
+```text
+tests\App.Win.Tests\LocalizationAuditTests.pas
+```
+
+Runner:
+
+```text
+tests\App.Win.Tests\run-tests.bat
+```
+
+Que valida:
+
+- El fichero `src\App.Win\languages.csv` existe.
+- El CSV contiene las columnas obligatorias `key`, idioma por defecto `es` e idioma activo `en`.
+- Las claves del CSV para el formulario apuntan a componentes existentes.
+- Las claves del CSV apuntan a propiedades publicadas existentes.
+- Los captions traducibles del formulario localizado tienen clave en el CSV.
+- La aplicacion productiva puede seguir aplicando localizacion en modo tolerante; la auditoria de tests usa modo estricto.
+
+Estado actual:
+
+- `FrmLogin`, `FrmMain`, `FrmTasks`, `FrmUsers` y `FrmAbout` auditados contra `languages.csv`.
+- `FrmAbout` combina datos de version, sistema y base de datos con prefijos leidos desde claves `About.*` del fichero de idioma; se cubre con `AboutFormTests`.
+- Al localizar nuevos formularios, agregar su instancia a la auditoria y ampliar el CSV.
+
 ## mutationTest
 
 Pruebas de mutacion para comprobar que los tests detectan cambios artificiales en reglas criticas.

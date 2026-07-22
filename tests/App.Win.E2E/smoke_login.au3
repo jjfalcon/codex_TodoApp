@@ -9,7 +9,7 @@ EndIf
 Global $AppExe = $CmdLine[1]
 Global $WorkingDir = $CmdLine[2]
 Global $LoginTitle = "[TITLE:Login]"
-Global $MainTitle = "[TITLE:Delphi TDD App - FMain]"
+Global $MainTitle = "[TITLE:Delphi TDD App]"
 Global $Pid = Run('"' & $AppExe & '"', $WorkingDir, @SW_SHOW)
 
 If $Pid = 0 Then

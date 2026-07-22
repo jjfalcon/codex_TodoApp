@@ -2,16 +2,6 @@
 
 ## Pendientes
 
-### Agregar auditoria de localizacion
-
-- Crear un runner o test estricto para validar `src\App.Win\languages.csv`.
-- Fallar si falta el fichero CSV.
-- Fallar si faltan columnas requeridas: `key`, idioma por defecto `es` e idioma activo.
-- Fallar si una clave apunta a un componente inexistente.
-- Fallar si una clave apunta a una propiedad inexistente.
-- Detectar captions traducibles del formulario que no aparecen en el CSV.
-- Mantener la app en modo tolerante en produccion, pero usar modo estricto en tests/CI.
-
 ### Ampliar mutation testing a autenticacion y usuarios
 
 - Agregar nuevos patches automatizados para filtros y busqueda de `AppCoreUserService.pas`.
@@ -25,6 +15,33 @@
 - Agregar diagnosticos con captura o listado de controles cuando falle una ventana.
 
 ## Realizadas
+
+### Auditoria estricta de localizacion
+
+- Se agrego `tests\App.Win.Tests\LocalizationAuditTests.pas`.
+- La auditoria se ejecuta desde `tests\App.Win.Tests\run-tests.bat`.
+- Se valida que `src\App.Win\languages.csv` exista.
+- Se validan columnas obligatorias: `key`, idioma por defecto `es` e idioma activo `en`.
+- Se falla si una clave apunta a un componente inexistente.
+- Se falla si una clave apunta a una propiedad publicada inexistente.
+- Se detectan captions traducibles del formulario auditado que no aparecen en el CSV.
+- La app mantiene aplicacion tolerante de localizacion en produccion; los tests usan modo estricto.
+- Estado actual: `FrmLogin`, `FrmMain`, `FrmTasks`, `FrmUsers` y `FrmAbout` auditados contra `languages.csv`.
+- Verificacion: `tests\App.Win.Tests\run-tests.bat` termina con `All tests passed`.
+
+### Traduccion del resto de pantallas
+
+- Se amplio `src\App.Win\languages.csv` con textos de `FrmMain`, `FrmTasks` y `FrmUsers`.
+- `WindowsApp.dpr` conserva el servicio de localizacion creado al arrancar y lo pasa a la ventana principal.
+- `FrmMain` aplica localizacion a sus botones de navegacion y propaga el servicio a las pantallas embebidas.
+- `FrmTasks` y `FrmUsers` exponen `ApplyLocalization` y aplican sus captions desde el CSV.
+- `FrmUsers` traduce las opciones de rol en ingles al aplicar idioma `en`.
+- `FrmAbout` traduce sus captions desde claves `FrmAbout.*` de `languages.csv`.
+- `FrmAbout` traduce sus prefijos dinamicos desde claves `About.*` de `languages.csv` y solo concatena valores de runtime.
+- `FrmAbout` se repinta al cambiar entre `en` y `es` sin conservar textos del idioma anterior.
+- `FrmMain` aplica la localizacion activa antes de mostrar `FrmAbout`.
+- Verificacion: `tests\App.Win.Tests\run-tests.bat` termina con `All tests passed`.
+- Verificacion: `dcc32 "-U..\App.Core" -B WindowsApp.dpr` termina sin errores.
 
 ### Revision del detalle del informe de DelphiCodeCoverage
 

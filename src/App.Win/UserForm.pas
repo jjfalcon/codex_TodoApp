@@ -9,6 +9,7 @@ uses
   Forms,
   StdCtrls,
   SysUtils,
+  AppCoreLocalization,
   AppCoreAuth,
   AppCoreClock,
   AppCoreUser,
@@ -64,6 +65,7 @@ type
     procedure SelectUserById(const AUserId: string);
     procedure ShowError(E: Exception);
   public
+    procedure ApplyLocalization(const ALocalization: ILocalizationService; AStrict: Boolean = True);
     procedure Configure(const AUsers: IUserRepository; const AClock: IClock;
       const AHasher: IPasswordHasher; const ACurrentUserId: string);
   end;
@@ -71,6 +73,20 @@ type
 implementation
 
 {$R *.dfm}
+
+uses
+  AppWinLocalization;
+
+procedure TFrmUsers.ApplyLocalization(const ALocalization: ILocalizationService;
+  AStrict: Boolean);
+begin
+  AppWinLocalization.ApplyLocalization(Self, ALocalization, AStrict);
+  if (ALocalization <> nil) and (LowerCase(ALocalization.Language) = 'en') then
+  begin
+    CmbRole.Items[0] := 'Administrator';
+    CmbRole.Items[1] := 'Normal user';
+  end;
+end;
 
 procedure TFrmUsers.BtnDeleteClick(Sender: TObject);
 begin

@@ -4,3 +4,48 @@ FrmLogin.LblUsername.Caption,Usuario,Username
 FrmLogin.LblPassword.Caption,Contraseña,Password
 FrmLogin.BtnLogin.Caption,Entrar,Sign in
 FrmLogin.BtnCancel.Caption,Cancelar,Cancel
+FrmMain.Caption,Delphi TDD App - FMain,Delphi TDD App - FMain
+FrmMain.BtnDashboard.Caption,Dashboard,Dashboard
+FrmMain.BtnTasks.Caption,Tareas,Tasks
+FrmMain.BtnUsers.Caption,Usuarios,Users
+FrmMain.BtnAbout.Caption,Acerca de,About
+FrmTasks.Caption,Tareas,Tasks
+FrmTasks.BtnAdd.Caption,Añadir,Add
+FrmTasks.BtnSearch.Caption,Buscar,Search
+FrmTasks.BtnComplete.Caption,Completar,Complete
+FrmTasks.BtnDelete.Caption,Eliminar,Delete
+FrmTasks.BtnRefresh.Caption,Refrescar,Refresh
+FrmTasks.BtnPending.Caption,Pendientes,Pending
+FrmUsers.Caption,Usuarios,Users
+FrmUsers.LblUsername.Caption,Usuario,Username
+FrmUsers.LblDisplayName.Caption,Nombre visible,Display name
+FrmUsers.LblEmail.Caption,Email,Email
+FrmUsers.LblPassword.Caption,Contraseña,Password
+FrmUsers.BtnSearch.Caption,Buscar,Search
+FrmUsers.ChkShowDeleted.Caption,Mostrar eliminados,Show deleted
+FrmUsers.ChkActive.Caption,Activo,Active
+FrmUsers.ChkLocked.Caption,Bloqueado,Locked
+FrmUsers.BtnNew.Caption,Crear,Create
+FrmUsers.BtnSave.Caption,Guardar,Save
+FrmUsers.BtnPassword.Caption,Cambiar contraseña,Change password
+FrmUsers.BtnUnlock.Caption,Desbloquear,Unlock
+FrmUsers.BtnDelete.Caption,Eliminar,Delete
+FrmAbout.Caption,Acerca de,About
+FrmAbout.LblTitle.Caption,Delphi TDD App,Delphi TDD App
+FrmAbout.LblAppName.Caption,Aplicacion Windows,Windows application
+FrmAbout.LblVersion.Caption,Version: 1.0.0,Version: 1.0.0
+FrmAbout.LblDescription.Caption,Aplicacion Windows desarrollada en Delphi siguiendo principios TDD.,Windows application developed in Delphi following TDD principles.
+FrmAbout.LblCopyright.Caption,Copyright 2026,Copyright 2026
+FrmAbout.LblTechHeader.Caption,Informacion tecnica,Technical information
+FrmAbout.LblExecVersion.Caption,Version del ejecutable: No disponible,Executable version: Not available
+FrmAbout.LblOS.Caption,Sistema operativo: Windows,Operating system: Windows
+FrmAbout.LblArch.Caption,Arquitectura: No disponible,Architecture: Not available
+FrmAbout.LblBuildDate.Caption,Fecha de compilacion: No disponible,Build date: Not available
+FrmAbout.LblDbPath.Caption,Base de datos: No disponible,Database: Not available
+FrmAbout.BtnAccept.Caption,Aceptar,OK
+About.VersionPrefix,Version: ,Version: 
+About.ExecutableVersionPrefix,Version del ejecutable: ,Executable version: 
+About.OperatingSystemPrefix,Sistema operativo: ,Operating system: 
+About.ArchitecturePrefix,Arquitectura: ,Architecture: 
+About.BuildDatePrefix,Fecha de compilacion: ,Build date: 
+About.DatabasePrefix,Base de datos: ,Database: 

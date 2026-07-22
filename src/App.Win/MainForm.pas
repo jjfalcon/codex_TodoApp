@@ -12,6 +12,7 @@ uses
   Graphics,
   AppCoreAuth,
   AppCoreClock,
+  AppCoreLocalization,
   AppCoreRepositoryFactory,
   AppCoreUser,
   AppCoreUserRepository;
@@ -41,7 +42,9 @@ type
     FSession: ISessionService;
     FClock: IClock;
     FHasher: IPasswordHasher;
+    FLocalization: ILocalizationService;
 
+    procedure ApplyLocalization;
     procedure ClearContent;
     procedure EmbedForm(AForm: TForm);
     function CreatePlaceholderForm(const ATitle, AMessage: string): TForm;
@@ -52,7 +55,8 @@ type
   public
     procedure ConfigureServices(const AFactory: IRepositoryFactory;
       const ASession: ISessionService; const AClock: IClock;
-      const AHasher: IPasswordHasher; const ACurrentUserId: string);
+      const AHasher: IPasswordHasher; const ACurrentUserId: string;
+      const ALocalization: ILocalizationService);
     property UserRole: TUserRole read FUserRole write SetUserRole;
   end;
 
@@ -66,7 +70,13 @@ implementation
 uses
   AboutForm,
   TaskForm,
-  UserForm;
+  UserForm,
+  AppWinLocalization;
+
+procedure TFrmMain.ApplyLocalization;
+begin
+  AppWinLocalization.ApplyLocalization(Self, FLocalization, False);
+end;
 
 procedure TFrmMain.BtnDashboardClick(Sender: TObject);
 begin
@@ -89,6 +99,7 @@ var
 begin
   LForm := TFrmAbout.Create(Self);
   try
+    LForm.ApplyLocalization(FLocalization, False);
     LForm.ShowModal;
   finally
     LForm.Free;
@@ -102,13 +113,18 @@ end;
 
 procedure TFrmMain.ConfigureServices(const AFactory: IRepositoryFactory;
   const ASession: ISessionService; const AClock: IClock;
-  const AHasher: IPasswordHasher; const ACurrentUserId: string);
+  const AHasher: IPasswordHasher; const ACurrentUserId: string;
+  const ALocalization: ILocalizationService);
 begin
   FFactory := AFactory;
   FSession := ASession;
   FClock := AClock;
   FHasher := AHasher;
   FCurrentUserId := ACurrentUserId;
+  FLocalization := ALocalization;
+  ApplyLocalization;
+  ClearContent;
+  LoadOption(noDashboard);
 end;
 
 function TFrmMain.CreatePlaceholderForm(const ATitle, AMessage: string): TForm;
@@ -169,15 +185,20 @@ begin
 
   case AOption of
     noDashboard:
-      EmbedForm(CreatePlaceholderForm('Dashboard', 'Panel principal de la aplicacion.'));
+      if (FLocalization <> nil) and (LowerCase(FLocalization.Language) = 'en') then
+        EmbedForm(CreatePlaceholderForm('Dashboard', 'Main application panel.'))
+      else
+        EmbedForm(CreatePlaceholderForm('Dashboard', 'Panel principal de la aplicacion.'));
     noTasks:
       begin
         EmbedForm(TFrmTasks.Create(Self));
+        TFrmTasks(FCurrentForm).ApplyLocalization(FLocalization, False);
         TFrmTasks(FCurrentForm).Configure(FFactory);
       end;
     noUsers:
       begin
         EmbedForm(TFrmUsers.Create(Self));
+        TFrmUsers(FCurrentForm).ApplyLocalization(FLocalization, False);
         TFrmUsers(FCurrentForm).Configure(FFactory.CreateUserRepository, FClock, FHasher, FCurrentUserId);
       end;
   end;

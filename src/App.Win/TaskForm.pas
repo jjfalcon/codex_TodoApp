@@ -10,6 +10,7 @@ uses
   StdCtrls,
   ExtCtrls,
   Dialogs,
+  AppCoreLocalization,
   AppCoreRepositoryFactory,
   AppCoreTaskItem,
   AppCoreTaskService;
@@ -41,6 +42,7 @@ type
     procedure RefreshList(const ATasks: TTaskItemArray);
     function SelectedTask: TTaskItem;
   public
+    procedure ApplyLocalization(const ALocalization: ILocalizationService; AStrict: Boolean = True);
     procedure Configure(const AFactory: IRepositoryFactory);
   end;
 
@@ -49,7 +51,14 @@ implementation
 {$R *.dfm}
 
 uses
-  AppCoreClock;
+  AppCoreClock,
+  AppWinLocalization;
+
+procedure TFrmTasks.ApplyLocalization(const ALocalization: ILocalizationService;
+  AStrict: Boolean);
+begin
+  AppWinLocalization.ApplyLocalization(Self, ALocalization, AStrict);
+end;
 
 procedure TFrmTasks.Configure(const AFactory: IRepositoryFactory);
 begin

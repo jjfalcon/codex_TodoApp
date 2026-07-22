@@ -4,10 +4,12 @@ interface
 
 uses
   Classes,
+  SysUtils,
   Controls,
   Forms,
   StdCtrls,
   ExtCtrls,
+  AppCoreLocalization,
   AppCoreAbout;
 
 type
@@ -27,14 +29,29 @@ type
     procedure BtnAcceptClick(Sender: TObject);
   private
     FService: IAboutService;
+    FLocalization: ILocalizationService;
+    function LocalizedText(const AKey, ADefaultValue: string;
+      AStrict: Boolean): string;
     procedure LoadAboutInfo;
   public
+    procedure ApplyLocalization(const ALocalization: ILocalizationService; AStrict: Boolean = True);
     constructor Create(AOwner: TComponent); override;
   end;
 
 implementation
 
 {$R *.dfm}
+
+uses
+  AppWinLocalization;
+
+procedure TFrmAbout.ApplyLocalization(const ALocalization: ILocalizationService;
+  AStrict: Boolean);
+begin
+  FLocalization := ALocalization;
+  AppWinLocalization.ApplyLocalization(Self, FLocalization, AStrict);
+  LoadAboutInfo;
+end;
 
 constructor TFrmAbout.Create(AOwner: TComponent);
 begin
@@ -43,22 +60,36 @@ begin
   LoadAboutInfo;
 end;
 
+function TFrmAbout.LocalizedText(const AKey, ADefaultValue: string;
+  AStrict: Boolean): string;
+begin
+  if (FLocalization <> nil) and FLocalization.HasText(AKey) then
+    Result := FLocalization.Text(AKey)
+  else if AStrict then
+    raise Exception.Create('Missing localization key ' + AKey + '.')
+  else
+    Result := ADefaultValue;
+end;
+
 procedure TFrmAbout.LoadAboutInfo;
 var
   LInfo: TAboutInfo;
 begin
   LInfo := FService.GetAboutInfo;
 
-  LblAppName.Caption := LInfo.ApplicationName;
-  LblVersion.Caption := 'Version: ' + LInfo.Version;
-  LblDescription.Caption := LInfo.Description;
-  LblCopyright.Caption := LInfo.Copyright;
+  LblVersion.Caption := LocalizedText('About.VersionPrefix', 'Version: ', False) +
+    LInfo.Version;
 
-  LblExecVersion.Caption := 'Version del ejecutable: ' + LInfo.ExecutableVersion;
-  LblOS.Caption := 'Sistema operativo: ' + LInfo.OperatingSystem;
-  LblArch.Caption := 'Arquitectura: ' + LInfo.Architecture;
-  LblBuildDate.Caption := 'Fecha de compilacion: ' + LInfo.BuildDate;
-  LblDbPath.Caption := 'Base de datos: ' + LInfo.DatabasePath;
+  LblExecVersion.Caption := LocalizedText('About.ExecutableVersionPrefix',
+    'Version del ejecutable: ', False) + LInfo.ExecutableVersion;
+  LblOS.Caption := LocalizedText('About.OperatingSystemPrefix',
+    'Sistema operativo: ', False) + LInfo.OperatingSystem;
+  LblArch.Caption := LocalizedText('About.ArchitecturePrefix',
+    'Arquitectura: ', False) + LInfo.Architecture;
+  LblBuildDate.Caption := LocalizedText('About.BuildDatePrefix',
+    'Fecha de compilacion: ', False) + LInfo.BuildDate;
+  LblDbPath.Caption := LocalizedText('About.DatabasePrefix',
+    'Base de datos: ', False) + LInfo.DatabasePath;
 end;
 
 procedure TFrmAbout.BtnAcceptClick(Sender: TObject);

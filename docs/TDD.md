@@ -106,6 +106,15 @@ El informe queda en:
 tests\App.Win.Tests\coverage\
 ```
 
+La auditoria estricta de localizacion se ejecuta junto con los unit tests de forms:
+
+```bat
+cd tests\App.Win.Tests
+run-tests.bat
+```
+
+Esta auditoria valida `languages.csv` contra los formularios declarados como localizados (`FrmLogin`, `FrmMain`, `FrmTasks`, `FrmUsers` y `FrmAbout`). Produccion mantiene aplicacion tolerante de textos, pero tests fallan ante CSV ausente, columnas obligatorias ausentes, claves a componentes/propiedades inexistentes o captions traducibles sin clave.
+
 ## Mutation testing
 
 Las mutaciones existentes se ejecutan con el runner propio:
