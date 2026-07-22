@@ -46,6 +46,15 @@
 
 ## Realizadas
 
+### Documentacion de tests unitarios de forms VCL
+
+- Se documento el patron `unitTest Forms VCL` en `docs\TESTING.md`.
+- Se documento el patron TDD para formularios en `docs\TDD.md`.
+- Se agrego `tests\App.Win.Tests\coverage.bat`.
+- Se documento coverage de forms con DelphiCodeCoverage.
+- Verificacion: `tests\App.Win.Tests\coverage.bat` termina con `All tests passed`.
+- Resultado actual: `LoginForm.pas` queda en 86% de cobertura, 20 de 23 lineas cubiertas.
+
 ### Tests unitarios de formulario login
 
 - Se agrego `tests\App.Win.Tests\AppWinTests.dpr`.

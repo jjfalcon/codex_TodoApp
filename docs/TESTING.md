@@ -7,7 +7,7 @@ Este proyecto usa cuatro niveles de verificacion. La nomenclatura consensuada es
 - `mutationTest`
 - `e2eTest`
 
-## unitTest
+## unitTest Core
 
 Pruebas de consola del nucleo, sin frameworks externos.
 
@@ -46,7 +46,70 @@ Uso esperado:
 - Obligatorio en cada cambio de nucleo.
 - Primer nivel del ciclo TDD rojo, verde, refactor.
 
-## coverageTest
+## unitTest Forms VCL
+
+Pruebas de consola de formularios VCL instanciados dentro del proceso, con fakes para los servicios del nucleo.
+
+Ubicacion:
+
+```text
+tests\App.Win.Tests\
+```
+
+Runner:
+
+```text
+tests\App.Win.Tests\AppWinTests.dpr
+```
+
+Estructura por formulario:
+
+```text
+tests\App.Win.Tests\<FormName>Tests.pas
+```
+
+Patron:
+
+- El runner llama a `Application.Initialize`.
+- El test crea el formulario con `TFrmX.Create(nil)`.
+- Las dependencias se inyectan con un metodo acotado para tests, por ejemplo `ConfigureForTests`.
+- Los servicios del nucleo se sustituyen por fakes o stubs.
+- Los eventos se invocan directamente cuando representan una accion del usuario, por ejemplo `BtnLoginClick(nil)`.
+- Los asserts revisan propiedades VCL y estado observable del formulario.
+
+Que cubre:
+
+- Foco inicial (`ActiveControl`).
+- Orden de tabulacion (`TabOrder`).
+- Configuracion visual con comportamiento, como `PasswordChar`.
+- Botones por defecto y cancelacion.
+- Mensajes de error (`Caption` visible al usuario).
+- Llamadas a servicios inyectados.
+- Estado publico del formulario tras una accion, como `ModalResult` o usuario autenticado.
+
+Que no cubre:
+
+- Reglas de negocio.
+- Persistencia real.
+- Repositorios reales.
+- Navegacion completa entre ventanas.
+- Capturas visuales o comparacion pixel-perfect.
+- Flujos completos de usuario.
+
+Ejecucion:
+
+```bat
+cd tests\App.Win.Tests
+run-tests.bat
+```
+
+Uso esperado:
+
+- Obligatorio para cambios de comportamiento en formularios.
+- Preferido frente a E2E cuando el comportamiento puede observarse en el propio form.
+- El E2E queda para comprobar integracion real de la aplicacion.
+
+## coverageTest Core
 
 Medicion de cobertura de lineas del nucleo con DelphiCodeCoverage.
 
@@ -80,6 +143,40 @@ Estado documentado:
 
 - Cobertura global previa: 92%, 799 de 868 lineas cubiertas.
 - `AppCoreUserService.pas` quedaba como modulo prioritario por menor cobertura relativa.
+
+## coverageTest Forms VCL
+
+Medicion de cobertura de lineas de formularios VCL con DelphiCodeCoverage.
+
+Script:
+
+```text
+tests\App.Win.Tests\coverage.bat
+```
+
+Que hace:
+
+- Compila `AppWinTests.dpr` con mapa detallado (`-GD`).
+- Ejecuta `AppWinTests.exe` mediante DelphiCodeCoverage.
+- Genera informe HTML/XML en `tests\App.Win.Tests\coverage\`.
+- Falla si el runner reporta tests fallidos o no se genera el informe.
+
+Ejecucion:
+
+```bat
+cd tests\App.Win.Tests
+coverage.bat
+```
+
+Uso esperado:
+
+- Medicion periodica de los unit tests de forms.
+- Antes de cerrar tareas de testabilidad de `src\App.Win`.
+- Al agregar tests para nuevos formularios, ampliar la lista `-u` del script con la unidad correspondiente.
+
+Estado documentado:
+
+- `LoginForm.pas`: 86%, 20 de 23 lineas cubiertas.
 
 ## mutationTest
 
@@ -167,8 +264,9 @@ Uso esperado:
 
 ## Politica recomendada
 
-- Para cambios de `src\App.Core`: ejecutar `unitTest`.
+- Para cambios de `src\App.Core`: ejecutar `unitTest Core`.
 - Para cambios en reglas criticas: ejecutar `unitTest` y `mutationTest`.
 - Para cambios que afecten a cobertura o deuda tecnica: ejecutar `coverageTest`.
-- Para cambios de `src\App.Win`, login o wiring UI-nucleo: ejecutar `unitTest` y `e2eTest`.
+- Para cambios de comportamiento en `src\App.Win`: ejecutar `unitTest Forms VCL`.
+- Para cambios de wiring UI-nucleo, login real o arranque: ejecutar `unitTest Forms VCL` y `e2eTest`.
 - Antes de entregar una funcionalidad completa de riesgo medio/alto: ejecutar todos los niveles aplicables.

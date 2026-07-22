@@ -27,7 +27,7 @@ La taxonomia completa de test esta en `docs/TESTING.md`: `unitTest`, `coverageTe
 - Eventos VCL triviales.
 - Detalles visuales que no cambian reglas de negocio.
 
-## Patron recomendado
+## Patron recomendado para nucleo
 
 Cada caso nuevo empieza en `App.Core.Tests`.
 
@@ -39,6 +39,18 @@ procedure Cannot_create_task_with_empty_title;
 ```
 
 Luego se implementa la regla en `App.Core`, y solo despues se conecta desde `App.Win`.
+
+## Patron recomendado para forms VCL
+
+Cuando el cambio es comportamiento propio del formulario, se prueba en `App.Win.Tests` sin arrancar toda la aplicacion:
+
+- Crear el form con `TFrmX.Create(nil)`.
+- Inyectar dependencias con un metodo acotado para tests, por ejemplo `ConfigureForTests`.
+- Usar fakes para servicios del nucleo.
+- Invocar eventos directamente cuando representen una accion del usuario.
+- Comprobar estado observable del form: foco, `TabOrder`, `PasswordChar`, mensajes, `ModalResult` y llamadas al fake.
+
+Estos tests no deben contener reglas de negocio. Si aparece una regla, primero debe moverse o mantenerse en `App.Core` y probarse en `App.Core.Tests`.
 
 ## Cobertura
 
@@ -63,6 +75,19 @@ tests\App.Core.Tests\coverage\
 ```
 
 El informe HTML principal es `CodeCoverage_summary.html`. El XML `CodeCoverage_summary.xml` puede usarse despues para integracion continua si se anade CI.
+
+Para forms VCL:
+
+```bat
+cd tests\App.Win.Tests
+coverage.bat
+```
+
+El informe queda en:
+
+```text
+tests\App.Win.Tests\coverage\
+```
 
 ## Mutation testing
 
