@@ -8,7 +8,9 @@ Esta preparada para compilar con Delphi 7, usando un runner de pruebas propio pa
 - `src/App.Core`: reglas de negocio, interfaces y servicios testeables.
 - `src/App.Win`: aplicacion VCL Windows, fina y conectada al nucleo.
 - `tests/App.Core.Tests`: pruebas del nucleo ejecutables por consola.
+- `tests/App.Win.E2E`: smoke tests E2E de la aplicacion VCL.
 - `docs/TDD.md`: forma de trabajo recomendada.
+- `docs/TESTING.md`: niveles de test consensuados del proyecto.
 - `docs/SESIONES.md`: documentacion técnica de las sesiones.
 
 ## Primer flujo TDD
@@ -35,5 +37,14 @@ AppCoreTests.exe
 cd ..\..\src\App.Win
 dcc32 "-U..\App.Core" WindowsApp.dpr
 ```
+
+## Niveles de test
+
+La taxonomia de verificacion del proyecto esta documentada en `docs/TESTING.md`:
+
+- `unitTest`: runner propio de consola para `src\App.Core`.
+- `coverageTest`: cobertura con DelphiCodeCoverage.
+- `mutationTest`: runner propio de mutaciones `M001`-`M011`.
+- `e2eTest`: smoke E2E con AutoIt para la app VCL.
 
 La funcionalidad inicial es una lista de tareas sencilla. Es deliberadamente pequena: sirve como patron para CRUD, validaciones, repositorios, servicios, pruebas y conexion con la interfaz.

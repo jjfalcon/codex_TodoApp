@@ -1,0 +1,12 @@
+diff --git a/src/App.Core/AppCoreAuth.pas b/src/App.Core/AppCoreAuth.pas
+--- a/src/App.Core/AppCoreAuth.pas
++++ b/src/App.Core/AppCoreAuth.pas
+@@ -278,7 +278,7 @@ end;
+ procedure TAuthService.RegisterWrongPassword(AUser: TUser);
+ begin
+   AUser.FailedAttempts := AUser.FailedAttempts + 1;
+-  if AUser.FailedAttempts >= FMaxFailedAttempts then
++  if AUser.FailedAttempts > FMaxFailedAttempts then
+     AUser.Locked := True;
+   FUsers.Save(AUser);
+ end;

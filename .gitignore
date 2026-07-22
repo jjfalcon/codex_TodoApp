@@ -19,6 +19,8 @@ tasks.json
 users.json
 autoit-v3.zip
 tests/App.Core.Tests/coverage/
+tests/App.Core.Tests/mutation-*.log
+tests/App.Core.Tests/mutation-report.txt
 tests/App.Core.Tests/test_app_config.ini
 tests/App.Win.E2E/runtime/
 Win32/

@@ -1,0 +1,11 @@
+diff --git a/src/App.Core/AppCoreUserService.pas b/src/App.Core/AppCoreUserService.pas
+--- a/src/App.Core/AppCoreUserService.pas
++++ b/src/App.Core/AppCoreUserService.pas
+@@ -118,6 +118,7 @@ end;
+ 
+ procedure TUserService.AssertCanRemoveAdminAccess(AUser: TUser);
+ begin
++  Exit;
+   if AUser.Active and (not AUser.Deleted) and (not AUser.Locked) and
+     (AUser.Role = urAdmin) and (ActiveAdminCountExcept(AUser.Id) = 0) then
+     raise ELastAdminError.Create('Debe existir al menos un administrador activo.');

@@ -1,0 +1,12 @@
+diff --git a/src/App.Core/AppCoreAuth.pas b/src/App.Core/AppCoreAuth.pas
+--- a/src/App.Core/AppCoreAuth.pas
++++ b/src/App.Core/AppCoreAuth.pas
+@@ -251,7 +251,7 @@ begin
+   if LUser.Deleted then
+     raise EDeletedUserError.Create('El usuario esta eliminado.');
+ 
+-  if not LUser.Active then
++  if False and (not LUser.Active) then
+     raise EInactiveUserError.Create('El usuario no esta activo.');
+ 
+   if LUser.Locked then

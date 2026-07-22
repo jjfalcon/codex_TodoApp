@@ -4,6 +4,8 @@
 
 La UI no contiene reglas de negocio. La ventana llama a servicios del nucleo, y el nucleo se prueba con un ejecutable de consola.
 
+La taxonomia completa de test esta en `docs/TESTING.md`: `unitTest`, `coverageTest`, `mutationTest` y `e2eTest`.
+
 ## Ciclo
 
 1. Rojo: escribe una prueba que describa el comportamiento.
@@ -61,3 +63,25 @@ tests\App.Core.Tests\coverage\
 ```
 
 El informe HTML principal es `CodeCoverage_summary.html`. El XML `CodeCoverage_summary.xml` puede usarse despues para integracion continua si se anade CI.
+
+## Mutation testing
+
+Las mutaciones existentes se ejecutan con el runner propio:
+
+```bat
+cd tests\App.Core.Tests
+mutation.bat
+```
+
+El runner aplica patches de `tests\App.Core.Tests\mutations\`, fuerza recompilacion y considera muerto un mutante si la compilacion o los tests fallan. Los supervivientes deben convertirse en nuevos tests TDD.
+
+## E2E
+
+El smoke E2E actual valida el arranque de la app VCL y el login:
+
+```bat
+cd tests\App.Win.E2E
+run-smoke-login.bat
+```
+
+Estos tests no sustituyen a `unitTest`; sirven para comprobar integracion UI-nucleo desde fuera del proceso.

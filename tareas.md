@@ -76,6 +76,20 @@
 - Se ajusto el orden de validaciones en `TUserService` para priorizar la regla de administrador minimo en operaciones que retirarian acceso administrativo.
 - Verificacion: `AppCoreTests.exe` termina con `All tests passed`.
 
+### Runner automatizado de mutation testing
+
+- Se agrego `tests\App.Core.Tests\mutation.bat`.
+- Se agregaron patches para las mutaciones existentes M001-M011 en `tests\App.Core.Tests\mutations\`.
+- El runner valida baseline, aplica cada patch, fuerza recompilacion, ejecuta tests y revierte la mutacion.
+- Genera `mutation-report.txt` y logs locales ignorados por Git.
+- Verificacion: 11 mutantes probados, 11 muertos, 0 supervivientes.
+
+### Taxonomia de niveles de test
+
+- Se documento la nomenclatura `unitTest`, `coverageTest`, `mutationTest` y `e2eTest`.
+- Se agrego `docs\TESTING.md` como guia central.
+- Se enlazo la taxonomia desde `README.md`, `docs\TDD.md`, `docs\MUTATION_TESTING.md` y `docs\E2E_AUTOIT.md`.
+
 ## Pendientes
 
 ### Mejorar cobertura de `AppCoreUserService`
@@ -104,7 +118,7 @@
 
 ### Ampliar mutation testing a autenticacion y usuarios
 
-- Probar mutantes en filtros y busqueda de `AppCoreUserService.pas`.
+- Agregar nuevos patches automatizados para filtros y busqueda de `AppCoreUserService.pas`.
 - Probar mutantes en persistencia de campos criticos de `AppCoreUserFileRepository.pas`.
 - Registrar supervivientes y convertirlos en nuevos tests TDD.
 

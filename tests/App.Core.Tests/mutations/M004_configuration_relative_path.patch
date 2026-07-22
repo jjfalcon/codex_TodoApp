@@ -1,0 +1,12 @@
+diff --git a/src/App.Core/AppCoreConfiguration.pas b/src/App.Core/AppCoreConfiguration.pas
+--- a/src/App.Core/AppCoreConfiguration.pas
++++ b/src/App.Core/AppCoreConfiguration.pas
+@@ -31,7 +31,7 @@ begin
+   FDataPath := '.';
+   FConnectionString := '';
+ 
+-  LFileName := ExpandFileName(AFileName);
++  LFileName := AFileName;
+   if not FileExists(LFileName) then
+     Exit;
+ 

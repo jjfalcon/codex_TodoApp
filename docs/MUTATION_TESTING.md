@@ -1,6 +1,43 @@
-# Mutation testing manual
+# Mutation testing
 
-Este documento registra pruebas manuales de mutacion ejecutadas contra `src/App.Core`.
+Este documento registra las pruebas de mutacion ejecutadas contra `src\App.Core`.
+
+Dentro de la taxonomia de `docs\TESTING.md`, este nivel se llama `mutationTest`.
+
+## Runner automatizado
+
+Las mutaciones existentes estan automatizadas con patches en:
+
+```text
+tests\App.Core.Tests\mutations\
+```
+
+Para ejecutarlas:
+
+```bat
+cd tests\App.Core.Tests
+mutation.bat
+```
+
+El runner:
+
+- Verifica primero que el arbol de trabajo no tenga cambios staged ni unstaged.
+- Compila y ejecuta una linea base para asegurar que los tests pasan antes de mutar.
+- Aplica cada patch con `git apply` desde la raiz del repositorio.
+- Fuerza recompilacion con `dcc32 -B`.
+- Ejecuta `AppCoreTests.exe`.
+- Marca el mutante como `Killed` si la compilacion o los tests fallan.
+- Revierte el patch con `git apply -R`.
+- Genera `mutation-report.txt` y logs `mutation-*.log`.
+
+Durante el desarrollo del runner puede saltarse la verificacion de arbol limpio con:
+
+```bat
+set MUTATION_ALLOW_DIRTY=1
+mutation.bat
+```
+
+No usar ese bypass para comprobaciones finales.
 
 ## Resultado del lote inicial
 
@@ -27,17 +64,13 @@ Fecha: 2026-06-22
 | M008 | `AppCoreAuth.pas` | Permitir login de usuario bloqueado | Killed | `Login_rejects_locked_user_even_with_valid_password` |
 | M009 | `AppCoreUserService.pas` | Permitir automodificacion de usuario | Killed | `UpdateUser_rejects_self_modification` |
 | M010 | `AppCoreUserService.pas` | Permitir editar/reactivar usuario eliminado | Killed | `DeleteUser_rejects_reactivation` |
-| M011 | `AppCoreUserService.pas` | Desactivar la proteccion de ultimo administrador activo | Survived | - |
+| M011 | `AppCoreUserService.pas` | Desactivar la proteccion de ultimo administrador activo | Killed | `UserManagement_prevents_deactivating_last_active_admin`, `UserManagement_prevents_blocking_last_active_admin`, `UserManagement_prevents_deleting_last_active_admin`, `UserManagement_prevents_downgrading_last_active_admin` |
 
-Resumen acumulado: 11 mutantes probados, 10 mutantes muertos, 1 superviviente.
+Resumen acumulado actualizado: 11 mutantes probados, 11 mutantes muertos, 0 supervivientes.
 
 ## Supervivientes
 
-### M011: ultimo administrador activo
-
-La mutacion que desactiva `AssertCanRemoveAdminAccess` sobrevivio. Esto indica que la suite actual no falla si se permite quitar el ultimo administrador activo mediante operaciones como desactivar, bloquear, eliminar o cambiar rol.
-
-Accion recomendada: agregar tests explicitos para operaciones que intenten dejar el sistema sin administradores activos.
+No hay supervivientes conocidos tras automatizar y repetir las mutaciones existentes.
 
 ## Verificacion posterior
 
@@ -51,9 +84,20 @@ AppCoreTests.exe
 
 Resultado: `All tests passed.`
 
+## Verificacion automatizada posterior
+
+Fecha: 2026-07-22
+
+```bat
+cd tests\App.Core.Tests
+set MUTATION_ALLOW_DIRTY=1
+mutation.bat
+```
+
+Resultado: 11 mutantes probados, 11 mutantes muertos, 0 supervivientes.
+
 ## Siguientes candidatos
 
-- `AppCoreUserService.pas`: cubrir la regla de ultimo administrador activo con tests especificos.
 - `AppCoreUserService.pas`: mutar filtros de usuarios activos/inactivos/bloqueados/eliminados.
 - `AppCoreUserService.pas`: mutar busqueda por email, username y display name.
 - `AppCoreUserFileRepository.pas`: mutar persistencia de campos criticos como `locked`, `deleted` y `role`.

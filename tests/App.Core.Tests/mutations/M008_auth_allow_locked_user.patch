@@ -1,0 +1,12 @@
+diff --git a/src/App.Core/AppCoreAuth.pas b/src/App.Core/AppCoreAuth.pas
+--- a/src/App.Core/AppCoreAuth.pas
++++ b/src/App.Core/AppCoreAuth.pas
+@@ -254,7 +254,7 @@ begin
+   if not LUser.Active then
+     raise EInactiveUserError.Create('El usuario no esta activo.');
+ 
+-  if LUser.Locked then
++  if False and LUser.Locked then
+     raise EUserLockedError.Create('El usuario esta bloqueado por demasiados intentos fallidos.');
+ 
+   if not FHasher.VerifyPassword(APassword, LUser.Salt, LUser.PasswordHash) then

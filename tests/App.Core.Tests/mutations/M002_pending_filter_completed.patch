@@ -1,0 +1,12 @@
+diff --git a/src/App.Core/AppCoreTaskService.pas b/src/App.Core/AppCoreTaskService.pas
+--- a/src/App.Core/AppCoreTaskService.pas
++++ b/src/App.Core/AppCoreTaskService.pas
+@@ -94,7 +94,7 @@ begin
+   LCount := 0;
+ 
+   for I := 0 to Length(LAll) - 1 do
+-    if LAll[I].Status = tsPending then
++    if LAll[I].Status = tsCompleted then
+     begin
+       Result[LCount] := LAll[I];
+       Inc(LCount);

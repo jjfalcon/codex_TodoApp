@@ -1,0 +1,11 @@
+diff --git a/src/App.Core/AppCoreTaskService.pas b/src/App.Core/AppCoreTaskService.pas
+--- a/src/App.Core/AppCoreTaskService.pas
++++ b/src/App.Core/AppCoreTaskService.pas
+@@ -53,6 +53,6 @@ function TTaskService.CreateTask(const ATitle: string): TTaskItem;
+ begin
+   EnsureTitleIsValid(ATitle);
+ 
+-  Result := TTaskItem.Create(NewId, Trim(ATitle), FClock.Now);
++  Result := TTaskItem.Create(NewId, ATitle, FClock.Now);
+   FRepository.Add(Result);
+ end;

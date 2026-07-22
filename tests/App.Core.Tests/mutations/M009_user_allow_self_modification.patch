@@ -1,0 +1,11 @@
+diff --git a/src/App.Core/AppCoreUserService.pas b/src/App.Core/AppCoreUserService.pas
+--- a/src/App.Core/AppCoreUserService.pas
++++ b/src/App.Core/AppCoreUserService.pas
+@@ -125,6 +125,7 @@ end;
+ 
+ procedure TUserService.AssertNotSelf(const AActorUserId, ATargetUserId: string);
+ begin
++  Exit;
+   if AActorUserId = ATargetUserId then
+     raise EUserSelfModificationError.Create('No puede modificar su propio usuario desde esta pantalla.');
+ end;

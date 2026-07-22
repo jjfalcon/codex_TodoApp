@@ -4,6 +4,8 @@
 
 Validar flujos basicos de la aplicacion VCL desde fuera del proceso, usando AutoIt para automatizar ventanas y controles.
 
+Dentro de la taxonomia de `docs\TESTING.md`, este nivel se llama `e2eTest`.
+
 ## Instalacion local
 
 Se usa AutoIt portable, extraido en:

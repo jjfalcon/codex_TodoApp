@@ -1,0 +1,11 @@
+diff --git a/src/App.Core/AppCoreUserService.pas b/src/App.Core/AppCoreUserService.pas
+--- a/src/App.Core/AppCoreUserService.pas
++++ b/src/App.Core/AppCoreUserService.pas
+@@ -131,6 +131,7 @@ end;
+ 
+ procedure TUserService.AssertUserIsEditable(AUser: TUser);
+ begin
++  Exit;
+   if AUser.Deleted then
+     raise EUserDeletedError.Create('El usuario esta eliminado.');
+ end;
