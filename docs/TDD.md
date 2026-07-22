@@ -61,6 +61,14 @@ Requisitos:
 - `dcc32` disponible en el `PATH`.
 - `CodeCoverage.exe` versionado en `.tools\delphi-code-coverage\`.
 
+Los scripts de coverage usan primero la herramienta versionada:
+
+```text
+.tools\delphi-code-coverage\CodeCoverage.exe
+```
+
+Si esa ruta no existe, intentan resolver `CodeCoverage.exe` desde el `PATH`. En una maquina nueva basta con clonar el repositorio y tener `dcc32` disponible; DelphiCodeCoverage no requiere instalacion global mientras el ejecutable versionado siga presente.
+
 Ejecucion:
 
 ```bat
@@ -75,6 +83,11 @@ tests\App.Core.Tests\coverage\
 ```
 
 El informe HTML principal es `CodeCoverage_summary.html`. El XML `CodeCoverage_summary.xml` puede usarse despues para integracion continua si se anade CI.
+
+Validacion limpia realizada el 2026-07-22:
+
+- `tests\App.Core.Tests\coverage.bat`: `All tests passed`, 91%, 901/982 lineas.
+- `tests\App.Win.Tests\coverage.bat`: `All tests passed`, 80%, 55/68 lineas.
 
 Para forms VCL:
 

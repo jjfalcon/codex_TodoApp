@@ -14,12 +14,6 @@
 - Propuesta inicial: no bajar del 90% global y subir despues por modulos criticos.
 - El umbral deberia aplicarse en script o CI cuando exista integracion continua.
 
-### Validar DelphiCodeCoverage en entorno limpio
-
-- En esta maquina `CodeCoverage.exe` esta disponible en el `PATH`.
-- Falta documentar o automatizar de donde instalarlo para una maquina nueva.
-- Confirmar que el flujo funciona igual sin artefactos previos de compilacion.
-
 ### Revisar detalle del informe generado por Delphi 7
 
 - El resumen global y por fichero es util.
@@ -49,6 +43,16 @@
 - Agregar diagnosticos con captura o listado de controles cuando falle una ventana.
 
 ## Realizadas
+
+### Validacion de DelphiCodeCoverage en entorno limpio
+
+- Se verifico que `CodeCoverage.exe` esta versionado en `.tools\delphi-code-coverage\CodeCoverage.exe`.
+- Los scripts `coverage.bat` usan primero la herramienta versionada y solo recurren al `PATH` como fallback.
+- Se limpiaron artefactos generados de compilacion e informes antes de ejecutar los coverageTest.
+- Verificacion: `tests\App.Core.Tests\coverage.bat` termina con `All tests passed`.
+- Resultado actual core: 91% de cobertura, 901 de 982 lineas cubiertas.
+- Verificacion: `tests\App.Win.Tests\coverage.bat` termina con `All tests passed`.
+- Resultado actual App.Win: 80% de cobertura, 55 de 68 lineas cubiertas.
 
 ### Textos seleccionables en formulario login
 

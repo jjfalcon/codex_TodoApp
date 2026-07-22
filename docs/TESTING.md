@@ -142,7 +142,8 @@ Uso esperado:
 
 Estado documentado:
 
-- Cobertura global previa: 92%, 799 de 868 lineas cubiertas.
+- Validado desde artefactos limpios el 2026-07-22.
+- Cobertura global actual: 91%, 901 de 982 lineas cubiertas.
 - `AppCoreUserService.pas` quedaba como modulo prioritario por menor cobertura relativa.
 
 ## coverageTest Forms VCL
@@ -177,6 +178,8 @@ Uso esperado:
 
 Estado documentado:
 
+- Validado desde artefactos limpios el 2026-07-22.
+- Cobertura global App.Win actual: 80%, 55 de 68 lineas cubiertas.
 - `LoginForm.pas`: 86%, 20 de 23 lineas cubiertas.
 
 ## mutationTest
