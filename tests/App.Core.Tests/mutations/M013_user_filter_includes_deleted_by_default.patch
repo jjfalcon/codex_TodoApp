@@ -1,0 +1,11 @@
+diff --git a/src/App.Core/AppCoreUserService.pas b/src/App.Core/AppCoreUserService.pas
+--- a/src/App.Core/AppCoreUserService.pas
++++ b/src/App.Core/AppCoreUserService.pas
+@@ -263,6 +263,6 @@ begin
+   if AUser.Deleted then
+   begin
+-    Result := ufDeleted in AFilters;
++    Result := True;
+     Exit;
+   end;
+ 

@@ -2,12 +2,6 @@
 
 ## Pendientes
 
-### Ampliar mutation testing a autenticacion y usuarios
-
-- Agregar nuevos patches automatizados para filtros y busqueda de `AppCoreUserService.pas`.
-- Probar mutantes en persistencia de campos criticos de `AppCoreUserFileRepository.pas`.
-- Registrar supervivientes y convertirlos en nuevos tests TDD.
-
 ### Ampliar E2E con AutoIt
 
 - Agregar un flujo E2E de alta de tarea desde la pantalla `Tareas`.
@@ -15,6 +9,15 @@
 - Agregar diagnosticos con captura o listado de controles cuando falle una ventana.
 
 ## Realizadas
+
+### Ampliacion de mutation testing en autenticacion y usuarios
+
+- Se agregaron mutantes M012-M014 para busqueda y filtros de `AppCoreUserService.pas`.
+- Se agregaron mutantes M015-M017 para persistencia de campos criticos de `AppCoreUserFileRepository.pas`.
+- Se actualizo M004 para el estado actual de `AppCoreConfiguration.pas`.
+- Resultado: 17 mutantes probados, 17 muertos, 0 supervivientes.
+- No se detectaron supervivientes que requieran nuevos tests TDD.
+- Verificacion: `tests\App.Core.Tests\mutation.bat` termina con `Summary: 17 tested, 17 killed, 0 survived`.
 
 ### Auditoria estricta de localizacion
 

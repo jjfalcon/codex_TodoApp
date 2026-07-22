@@ -1,0 +1,12 @@
+diff --git a/src/App.Core/AppCoreUserService.pas b/src/App.Core/AppCoreUserService.pas
+--- a/src/App.Core/AppCoreUserService.pas
++++ b/src/App.Core/AppCoreUserService.pas
+@@ -286,7 +286,7 @@ function TUserService.MatchesSearch(AUser: TUser;
+   const ASearchText: string): Boolean;
+ begin
+   Result := (ASearchText = '') or ContainsText(AUser.Username, ASearchText) or
+-    ContainsText(AUser.DisplayName, ASearchText) or ContainsText(AUser.Email, ASearchText);
++    False;
+ end;
+ 
+ function TUserService.NewId: string;

@@ -1,0 +1,11 @@
+diff --git a/src/App.Core/AppCoreUserFileRepository.pas b/src/App.Core/AppCoreUserFileRepository.pas
+--- a/src/App.Core/AppCoreUserFileRepository.pas
++++ b/src/App.Core/AppCoreUserFileRepository.pas
+@@ -255,6 +255,6 @@ begin
+   LDeleted := ExtractJsonBool(AJson, 'deleted');
+   LRole := JsonToRole(ExtractJsonString(AJson, 'role'));
+-  LFailedAttempts := ExtractJsonInteger(AJson, 'failedAttempts');
++  LFailedAttempts := 0;
+   LLocked := ExtractJsonBool(AJson, 'locked');
+   LCreatedAt := ExtractJsonDate(AJson, 'createdAt');
+   LLastLoginAt := ExtractJsonDate(AJson, 'lastLoginAt');

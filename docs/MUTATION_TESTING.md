@@ -68,6 +68,21 @@ Fecha: 2026-06-22
 
 Resumen acumulado actualizado: 11 mutantes probados, 11 mutantes muertos, 0 supervivientes.
 
+## Resultado del tercer lote
+
+Fecha: 2026-07-22
+
+| Id | Fichero | Mutacion | Resultado | Test que la detecto |
+| --- | --- | --- | --- | --- |
+| M012 | `AppCoreUserService.pas` | Buscar usuarios solo por username, ignorando display name/email | Killed | `SearchUsers_matches_username_display_name_and_email` |
+| M013 | `AppCoreUserService.pas` | Incluir usuarios eliminados aunque no se pida filtro `ufDeleted` | Killed | `ListUsers_excludes_deleted_users_by_default` |
+| M014 | `AppCoreUserService.pas` | Ignorar el filtro de usuarios activos | Killed | `FilterUsers_returns_only_active_users` |
+| M015 | `AppCoreUserFileRepository.pas` | Perder `email` al recargar usuarios desde JSON | Killed | `FilePersistence_persists_multiple_fields` |
+| M016 | `AppCoreUserFileRepository.pas` | Perder `failedAttempts` al recargar usuarios desde JSON | Killed | `FilePersistence_persists_multiple_fields` |
+| M017 | `AppCoreUserFileRepository.pas` | Perder `passwordHash` al recargar usuarios desde JSON | Killed | `FilePersistence_round_trips_password_hash_and_salt`, `Login_succeeds_after_file_reload` |
+
+Resumen acumulado actualizado: 17 mutantes probados, 17 mutantes muertos, 0 supervivientes.
+
 ## Supervivientes
 
 No hay supervivientes conocidos tras automatizar y repetir las mutaciones existentes.
@@ -94,10 +109,9 @@ set MUTATION_ALLOW_DIRTY=1
 mutation.bat
 ```
 
-Resultado: 11 mutantes probados, 11 mutantes muertos, 0 supervivientes.
+Resultado: 17 mutantes probados, 17 mutantes muertos, 0 supervivientes.
 
 ## Siguientes candidatos
 
-- `AppCoreUserService.pas`: mutar filtros de usuarios activos/inactivos/bloqueados/eliminados.
-- `AppCoreUserService.pas`: mutar busqueda por email, username y display name.
-- `AppCoreUserFileRepository.pas`: mutar persistencia de campos criticos como `locked`, `deleted` y `role`.
+- Ampliar persistencia con mutantes adicionales de `locked`, `deleted`, `role` y fechas si se detecta nueva deuda.
+- Agregar mutantes de combinaciones de filtros multiples cuando existan reglas mas ricas que filtros individuales.

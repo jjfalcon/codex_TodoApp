@@ -266,8 +266,9 @@ Uso esperado:
 
 Estado actual:
 
-- 11 mutantes automatizados (`M001` a `M011`).
-- 11 mutantes muertos.
+- 17 mutantes automatizados (`M001` a `M017`).
+- 17 mutantes muertos.
+- 0 mutantes supervivientes.
 - 0 supervivientes conocidos.
 
 ## visualTest Forms VCL

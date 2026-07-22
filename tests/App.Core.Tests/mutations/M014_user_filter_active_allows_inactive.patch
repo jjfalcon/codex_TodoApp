@@ -1,0 +1,11 @@
+diff --git a/src/App.Core/AppCoreUserService.pas b/src/App.Core/AppCoreUserService.pas
+--- a/src/App.Core/AppCoreUserService.pas
++++ b/src/App.Core/AppCoreUserService.pas
+@@ -274,6 +274,6 @@ begin
+ 
+   Result := True;
+-  if (ufActive in AFilters) and (not AUser.Active) then
++  if False and (ufActive in AFilters) and (not AUser.Active) then
+     Result := False;
+   if (ufInactive in AFilters) and AUser.Active then
+     Result := False;
