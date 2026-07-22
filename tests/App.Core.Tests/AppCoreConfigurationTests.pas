@@ -44,6 +44,8 @@ begin
     AssertEquals('json', LConfig.Backend, 'Default backend should be json.');
     AssertEquals('.', LConfig.DataPath, 'Default dataPath should be ".".');
     AssertEquals('', LConfig.ConnectionString, 'Default connectionString should be "".');
+    AssertEquals('es', LConfig.Language, 'Default language should be es.');
+    AssertEquals('languages.csv', LConfig.LanguageFile, 'Default language file should be languages.csv.');
   finally
     LConfig.Free;
   end;
@@ -122,12 +124,39 @@ begin
   DeleteFile(LTestConfigFile);
 end;
 
+procedure ReadsLocalizationSettings;
+var
+  LConfig: TAppConfiguration;
+  LFile: TStringList;
+begin
+  DeleteFile(LTestConfigFile);
+  LFile := TStringList.Create;
+  try
+    LFile.Add('[Localization]');
+    LFile.Add('Language=en');
+    LFile.Add('File=i18n.csv');
+    LFile.SaveToFile(LTestConfigFile);
+  finally
+    LFile.Free;
+  end;
+
+  LConfig := TAppConfiguration.Create(LTestConfigFile);
+  try
+    AssertEquals('en', LConfig.Language, 'Should read selected language.');
+    AssertEquals('i18n.csv', LConfig.LanguageFile, 'Should read localization file.');
+  finally
+    LConfig.Free;
+  end;
+  DeleteFile(LTestConfigFile);
+end;
+
 procedure RunConfigurationTests(var AFailures: Integer);
 begin
   RunTest('Defaults_when_file_does_not_exist', DefaultsWhenFileDoesNotExist, AFailures);
   RunTest('Reads_json_backend', ReadsJsonBackend, AFailures);
   RunTest('Reads_dataPath', ReadsDataPath, AFailures);
   RunTest('Reads_connectionString', ReadsConnectionString, AFailures);
+  RunTest('Reads_localization_settings', ReadsLocalizationSettings, AFailures);
 end;
 
 end.

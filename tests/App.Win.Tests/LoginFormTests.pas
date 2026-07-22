@@ -7,12 +7,14 @@ procedure RunLoginFormTests(var AFailures: Integer);
 implementation
 
 uses
+  Classes,
   SysUtils,
   Windows,
   Controls,
   Forms,
   LoginForm,
   AppCoreAuth,
+  AppCoreLocalization,
   AppCoreUser;
 
 type
@@ -34,6 +36,19 @@ type
     property LoginCalls: Integer read FLoginCalls;
     property LastUsername: string read FLastUsername;
     property LastPassword: string read FLastPassword;
+  end;
+
+  TFakeLocalizationService = class(TInterfacedObject, ILocalizationService)
+  private
+    FTexts: TStringList;
+  public
+    constructor Create;
+    destructor Destroy; override;
+    function Language: string;
+    function HasText(const AKey: string): Boolean;
+    function Text(const AKey: string): string;
+    procedure AddKeysForForm(const AFormName: string; AKeys: TStrings);
+    procedure AddText(const AKey, AValue: string);
   end;
 
 constructor TFakeAuthService.Create;
@@ -68,6 +83,54 @@ end;
 
 procedure TFakeAuthService.Logout;
 begin
+end;
+
+constructor TFakeLocalizationService.Create;
+begin
+  inherited Create;
+  FTexts := TStringList.Create;
+end;
+
+destructor TFakeLocalizationService.Destroy;
+begin
+  FTexts.Free;
+  inherited Destroy;
+end;
+
+procedure TFakeLocalizationService.AddText(const AKey, AValue: string);
+begin
+  FTexts.Values[AKey] := AValue;
+end;
+
+function TFakeLocalizationService.Language: string;
+begin
+  Result := 'en';
+end;
+
+function TFakeLocalizationService.HasText(const AKey: string): Boolean;
+begin
+  Result := FTexts.IndexOfName(AKey) >= 0;
+end;
+
+function TFakeLocalizationService.Text(const AKey: string): string;
+begin
+  Result := FTexts.Values[AKey];
+end;
+
+procedure TFakeLocalizationService.AddKeysForForm(const AFormName: string;
+  AKeys: TStrings);
+var
+  I: Integer;
+  LPrefix: string;
+  LKey: string;
+begin
+  LPrefix := AFormName + '.';
+  for I := 0 to FTexts.Count - 1 do
+  begin
+    LKey := FTexts.Names[I];
+    if Copy(LKey, 1, Length(LPrefix)) = LPrefix then
+      AKeys.Add(LKey);
+  end;
 end;
 
 procedure AssertEquals(const AExpected, AActual: string; const AMessage: string); overload;
@@ -148,6 +211,51 @@ begin
     AssertEquals(1, LForm.EdtPassword.TabOrder, 'Password should be second in tab order.');
     AssertEquals(2, LForm.BtnLogin.TabOrder, 'Login button should be third in tab order.');
     AssertEquals(3, LForm.BtnCancel.TabOrder, 'Cancel button should be fourth in tab order.');
+  finally
+    LForm.Free;
+  end;
+end;
+
+procedure LoginFormLoadsSpanishTextsByDefault;
+var
+  LAuth: IAuthService;
+  LForm: TFrmLogin;
+begin
+  LAuth := TFakeAuthService.Create;
+  LForm := CreateLoginForm(LAuth);
+  try
+    AssertEquals('Login', LForm.Caption, 'Login form should load default title.');
+    AssertEquals('Usuario', LForm.LblUsername.Caption, 'Login form should load default username label.');
+    AssertEquals('Contrasena', LForm.LblPassword.Caption, 'Login form should load default password label.');
+    AssertEquals('Entrar', LForm.BtnLogin.Caption, 'Login form should load default login button.');
+    AssertEquals('Cancelar', LForm.BtnCancel.Caption, 'Login form should load default cancel button.');
+  finally
+    LForm.Free;
+  end;
+end;
+
+procedure LoginFormLoadsEnglishTextsWhenSelected;
+var
+  LAuth: IAuthService;
+  LLocalization: TFakeLocalizationService;
+  LForm: TFrmLogin;
+begin
+  LAuth := TFakeAuthService.Create;
+  LLocalization := TFakeLocalizationService.Create;
+  LLocalization.AddText('FrmLogin.Caption', 'Login');
+  LLocalization.AddText('FrmLogin.LblUsername.Caption', 'Username');
+  LLocalization.AddText('FrmLogin.LblPassword.Caption', 'Password');
+  LLocalization.AddText('FrmLogin.BtnLogin.Caption', 'Sign in');
+  LLocalization.AddText('FrmLogin.BtnCancel.Caption', 'Cancel');
+  LForm := CreateLoginForm(LAuth);
+  try
+    LForm.ApplyLocalization(LLocalization);
+
+    AssertEquals('Login', LForm.Caption, 'Login form should load English title.');
+    AssertEquals('Username', LForm.LblUsername.Caption, 'Login form should load English username label.');
+    AssertEquals('Password', LForm.LblPassword.Caption, 'Login form should load English password label.');
+    AssertEquals('Sign in', LForm.BtnLogin.Caption, 'Login form should load English login button.');
+    AssertEquals('Cancel', LForm.BtnCancel.Caption, 'Login form should load English cancel button.');
   finally
     LForm.Free;
   end;
@@ -257,6 +365,8 @@ begin
   RunTest('LoginForm_sets_initial_focus_to_username', LoginFormSetsInitialFocusToUsername, AFailures);
   RunTest('LoginForm_masks_password_input', LoginFormMasksPasswordInput, AFailures);
   RunTest('LoginForm_has_expected_tab_order', LoginFormHasExpectedTabOrder, AFailures);
+  RunTest('LoginForm_loads_spanish_texts_by_default', LoginFormLoadsSpanishTextsByDefault, AFailures);
+  RunTest('LoginForm_loads_english_texts_when_selected', LoginFormLoadsEnglishTextsWhenSelected, AFailures);
   RunTest('LoginForm_tab_moves_through_fields_in_order', LoginFormTabMovesThroughFieldsInOrder, AFailures);
   RunTest('LoginForm_enter_triggers_default_login_button', LoginFormEnterTriggersDefaultLoginButton, AFailures);
   RunTest('LoginForm_calls_auth_on_accept', LoginFormCallsAuthOnAccept, AFailures);

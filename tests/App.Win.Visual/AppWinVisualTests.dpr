@@ -7,9 +7,11 @@ uses
   Windows,
   Graphics,
   Forms,
+  AppWinLocalization in '..\..\src\App.Win\AppWinLocalization.pas',
   LoginForm in '..\..\src\App.Win\LoginForm.pas',
   AppCoreAuth in '..\..\src\App.Core\AppCoreAuth.pas',
   AppCoreClock in '..\..\src\App.Core\AppCoreClock.pas',
+  AppCoreLocalization in '..\..\src\App.Core\AppCoreLocalization.pas',
   AppCorePreferences in '..\..\src\App.Core\AppCorePreferences.pas',
   AppCoreRepositoryFactory in '..\..\src\App.Core\AppCoreRepositoryFactory.pas',
   AppCoreUser in '..\..\src\App.Core\AppCoreUser.pas',
@@ -154,6 +156,7 @@ var
   LBaselineFile: string;
   LActualFile: string;
   LDiffFile: string;
+  LLocalizationFile: string;
 begin
   LBaseDir := ExtractFilePath(ParamStr(0)) + 'baselines\';
   LActualDir := ExtractFilePath(ParamStr(0)) + 'actual\';
@@ -166,10 +169,12 @@ begin
   LBaselineFile := LBaseDir + 'LoginForm.bmp';
   LActualFile := LActualDir + 'LoginForm.bmp';
   LDiffFile := LDiffDir + 'LoginForm.diff.bmp';
+  LLocalizationFile := ExtractFilePath(ParamStr(0)) + '..\..\src\App.Win\languages.csv';
 
   LForm := TFrmLogin.Create(nil);
   try
     LForm.ConfigureForTests(TFakeAuthService.Create);
+    LForm.ApplyLocalization(TCsvLocalizationService.Create(LLocalizationFile, 'es', 'es'));
     LForm.Position := poDesigned;
     LForm.Left := 0;
     LForm.Top := 0;

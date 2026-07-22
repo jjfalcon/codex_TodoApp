@@ -12,11 +12,15 @@ type
     FBackend: string;
     FDataPath: string;
     FConnectionString: string;
+    FLanguage: string;
+    FLanguageFile: string;
   public
     constructor Create(const AFileName: string);
     property Backend: string read FBackend;
     property DataPath: string read FDataPath;
     property ConnectionString: string read FConnectionString;
+    property Language: string read FLanguage;
+    property LanguageFile: string read FLanguageFile;
   end;
 
 implementation
@@ -30,6 +34,8 @@ begin
   FBackend := 'json';
   FDataPath := '.';
   FConnectionString := '';
+  FLanguage := 'es';
+  FLanguageFile := 'languages.csv';
 
   LFileName := ExpandFileName(AFileName);
   if not FileExists(LFileName) then
@@ -40,6 +46,8 @@ begin
     FBackend := LowerCase(LIni.ReadString('Persistence', 'Backend', 'json'));
     FDataPath := LIni.ReadString('Persistence', 'DataPath', '.');
     FConnectionString := LIni.ReadString('Persistence', 'ConnectionString', '');
+    FLanguage := LowerCase(LIni.ReadString('Localization', 'Language', 'es'));
+    FLanguageFile := LIni.ReadString('Localization', 'File', 'languages.csv');
   finally
     LIni.Free;
   end;

@@ -8,6 +8,7 @@ uses
   Controls,
   Forms,
   StdCtrls,
+  AppCoreLocalization,
   AppCoreAuth,
   AppCoreClock,
   AppCorePreferences,
@@ -37,6 +38,8 @@ type
   public
     procedure Configure(const AFactory: IRepositoryFactory);
     procedure ConfigureForTests(const AAuth: IAuthService);
+    procedure ApplyLanguage(const ALanguage: string);
+    procedure ApplyLocalization(const ALocalization: ILocalizationService; AStrict: Boolean = True);
     property LoggedInRole: TUserRole read FLoggedInRole;
     property LoggedInUserId: string read FLoggedInUserId;
     property SessionService: ISessionService read FSession;
@@ -47,6 +50,9 @@ var
   FrmLogin: TFrmLogin;
 
 implementation
+
+uses
+  AppWinLocalization;
 
 {$R *.dfm}
 
@@ -70,6 +76,32 @@ begin
     on E: EUserLockedError do
       LblMessage.Caption := E.Message;
   end;
+end;
+
+procedure TFrmLogin.ApplyLanguage(const ALanguage: string);
+begin
+  if LowerCase(ALanguage) = 'en' then
+  begin
+    Caption := 'Login';
+    LblUsername.Caption := 'Username';
+    LblPassword.Caption := 'Password';
+    BtnLogin.Caption := 'Sign in';
+    BtnCancel.Caption := 'Cancel';
+  end
+  else
+  begin
+    Caption := 'Login';
+    LblUsername.Caption := 'Usuario';
+    LblPassword.Caption := 'Contrasena';
+    BtnLogin.Caption := 'Entrar';
+    BtnCancel.Caption := 'Cancelar';
+  end;
+end;
+
+procedure TFrmLogin.ApplyLocalization(const ALocalization: ILocalizationService;
+  AStrict: Boolean);
+begin
+  AppWinLocalization.ApplyLocalization(Self, ALocalization, AStrict);
 end;
 
 procedure TFrmLogin.Configure(const AFactory: IRepositoryFactory);
@@ -101,6 +133,7 @@ begin
   FLoggedInUserId := '';
   EdtPassword.PasswordChar := '*';
   LblMessage.Caption := '';
+  ApplyLanguage('es');
   ActiveControl := EdtUsername;
 end;
 

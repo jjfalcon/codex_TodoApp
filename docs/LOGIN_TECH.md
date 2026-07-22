@@ -98,6 +98,45 @@ Responsabilidades:
 - Mostrar mensajes de error procedentes del nucleo.
 - Exponer `LoggedInRole` al arranque para configurar `FMain`.
 
+## Localizacion de textos
+
+Los textos visibles del login se cargan desde `src\App.Win\languages.csv`.
+
+Formato:
+
+```csv
+key,es,en
+FrmLogin.Caption,Login,Login
+FrmLogin.LblUsername.Caption,Usuario,Username
+FrmLogin.LblPassword.Caption,Contrasena,Password
+FrmLogin.BtnLogin.Caption,Entrar,Sign in
+FrmLogin.BtnCancel.Caption,Cancelar,Cancel
+```
+
+La clave usa la nomenclatura:
+
+```text
+FormName.ComponentName.PropertyName
+```
+
+Para propiedades del propio formulario:
+
+```text
+FormName.PropertyName
+```
+
+`AppCoreLocalization.TCsvLocalizationService` lee el CSV, selecciona la columna de idioma configurada y usa `es` como fallback. `AppWinLocalization.ApplyLocalization` no recorre todas las propiedades del formulario: aplica solo las claves del CSV que empiezan por el nombre del form actual.
+
+Configuracion:
+
+```ini
+[Localization]
+Language=es
+File=languages.csv
+```
+
+El arranque en `WindowsApp.dpr` crea el servicio de localizacion y lo aplica a `FrmLogin` tras configurar sus servicios.
+
 Usuarios de desarrollo:
 
 - `admin / admin123`: administrador.

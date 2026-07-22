@@ -2,10 +2,6 @@
 
 ## Pendientes
 
-### Testear form login
-
-- visual. texto cargado desde lenguaje seleccionado
-
 ### Mejorar cobertura de `AppCoreUserService`
 
 - Cobertura actual: 85%, 128 de 150 lineas.
@@ -30,6 +26,16 @@
 - Algunos nombres internos de clases/metodos aparecen truncados en el XML/HTML.
 - No bloquea la medicion de lineas, pero conviene revisarlo si se quiere usar el informe para analisis fino por metodo.
 
+### Agregar auditoria de localizacion
+
+- Crear un runner o test estricto para validar `src\App.Win\languages.csv`.
+- Fallar si falta el fichero CSV.
+- Fallar si faltan columnas requeridas: `key`, idioma por defecto `es` e idioma activo.
+- Fallar si una clave apunta a un componente inexistente.
+- Fallar si una clave apunta a una propiedad inexistente.
+- Detectar captions traducibles del formulario que no aparecen en el CSV.
+- Mantener la app en modo tolerante en produccion, pero usar modo estricto en tests/CI.
+
 ### Ampliar mutation testing a autenticacion y usuarios
 
 - Agregar nuevos patches automatizados para filtros y busqueda de `AppCoreUserService.pas`.
@@ -43,6 +49,24 @@
 - Agregar diagnosticos con captura o listado de controles cuando falle una ventana.
 
 ## Realizadas
+
+### Textos seleccionables en formulario login
+
+- Se agrego `AppCoreLocalization.pas` con `TCsvLocalizationService`.
+- Se agrego `AppWinLocalization.pas` para aplicar solo las claves CSV del formulario actual.
+- Se agrego `src\App.Win\languages.csv` con columnas `es` y `en`.
+- Se agrego seccion `[Localization]` a `src\App.Win\app.config`.
+- `WindowsApp.dpr` carga el CSV y aplica textos al `FrmLogin`.
+- El E2E copia `languages.csv` al runtime aislado.
+- Se cubren carga por idioma, fallback a idioma por defecto, CSV con comillas y filtrado de claves por form.
+- Se cubren captions de formulario, usuario, password, entrar y cancelar desde un servicio de localizacion.
+- Verificacion: `tests\App.Core.Tests\coverage.bat` termina con `All tests passed`.
+- Resultado actual core: 91% de cobertura, 901 de 982 lineas cubiertas.
+- Verificacion: `tests\App.Win.Tests\run-tests.bat` termina con `All tests passed`.
+- Verificacion: `tests\App.Win.Tests\coverage.bat` termina con `All tests passed`.
+- Resultado actual App.Win: 80% de cobertura, 55 de 68 lineas cubiertas.
+- Verificacion visual: `tests\App.Win.Visual\run-visual-tests.bat verify` termina con `All visual tests passed`.
+- Verificacion E2E: `tests\App.Win.E2E\run-smoke-login.bat` termina con `Smoke login passed`.
 
 ### Visual test de formulario login
 

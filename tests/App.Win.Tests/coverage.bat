@@ -27,7 +27,7 @@ if errorlevel 1 exit /b 1
   -m "%TEST_MAP%" ^
   -e "%TEST_EXE%" ^
   -sp "%WIN_SRC%" ^
-  -u LoginForm ^
+  -u LoginForm AppWinLocalization ^
   -od "%COVERAGE_OUT%" ^
   -html ^
   -xml ^

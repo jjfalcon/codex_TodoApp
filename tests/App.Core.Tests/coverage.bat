@@ -27,7 +27,7 @@ if errorlevel 1 exit /b 1
   -m "%TEST_MAP%" ^
   -e "%TEST_EXE%" ^
   -sp "%CORE_SRC%" ^
-  -u AppCoreAbout AppCoreAuth AppCoreConfiguration AppCorePreferences AppCorePreferencesFileRepository AppCoreRepositoryFactory AppCoreTaskFileRepository AppCoreTaskItem AppCoreTaskRepository AppCoreTaskService AppCoreUser AppCoreUserFileRepository AppCoreUserRepository AppCoreUserService ^
+  -u AppCoreAbout AppCoreAuth AppCoreConfiguration AppCoreLocalization AppCorePreferences AppCorePreferencesFileRepository AppCoreRepositoryFactory AppCoreTaskFileRepository AppCoreTaskItem AppCoreTaskRepository AppCoreTaskService AppCoreUser AppCoreUserFileRepository AppCoreUserRepository AppCoreUserService ^
   -od "%COVERAGE_OUT%" ^
   -html ^
   -xml ^
