@@ -86,8 +86,10 @@ El informe HTML principal es `CodeCoverage_summary.html`. El XML `CodeCoverage_s
 
 Validacion limpia realizada el 2026-07-22:
 
-- `tests\App.Core.Tests\coverage.bat`: `All tests passed`, 91%, 901/982 lineas.
-- `tests\App.Win.Tests\coverage.bat`: `All tests passed`, 80%, 55/68 lineas.
+- `tests\App.Core.Tests\coverage.bat`: `All tests passed`, 93%, 931/991 lineas.
+- `tests\App.Win.Tests\coverage.bat`: `All tests passed`, 92%, 63/68 lineas.
+
+El coverageTest Core aplica un umbral minimo del 90% sobre `CodeCoverage_summary.xml`. Si la cobertura global del nucleo baja de ese valor, `coverage.bat` termina con error.
 
 Para forms VCL:
 

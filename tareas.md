@@ -2,18 +2,6 @@
 
 ## Pendientes
 
-### Mejorar cobertura de `AppCoreUserService`
-
-- Cobertura actual: 85%, 128 de 150 lineas.
-- Es el fichero con menor cobertura del nucleo.
-- Revisar ramas no cubiertas antes de subir el umbral global de cobertura.
-
-### Definir umbral minimo de cobertura
-
-- La medicion ya existe, pero no hay politica de corte.
-- Propuesta inicial: no bajar del 90% global y subir despues por modulos criticos.
-- El umbral deberia aplicarse en script o CI cuando exista integracion continua.
-
 ### Revisar detalle del informe generado por Delphi 7
 
 - El resumen global y por fichero es util.
@@ -44,6 +32,17 @@
 
 ## Realizadas
 
+### Cobertura de `AppCoreUserService` y umbral minimo Core
+
+- Se agregaron unit tests para permisos de actor administrador, usuario inexistente, campos obligatorios, contraseña vacia, actualizacion manteniendo usuario/email, activar, desactivar, bloquear, desbloquear y filtros por estado.
+- `AppCoreUserService.pas` queda con 100% de cobertura de lineas, 177 de 177 lineas cubiertas.
+- Se agrego umbral minimo del 90% a `tests\App.Core.Tests\coverage.bat`.
+- El coverageTest Core falla si `CodeCoverage_summary.xml` reporta menos del 90% cubierto.
+- Verificacion: `AppCoreTests.exe` termina con `All tests passed`.
+- Verificacion: `tests\App.Core.Tests\coverage.bat` termina con `All tests passed`.
+- Resultado actual core: 93% de cobertura, 931 de 991 lineas cubiertas.
+- Resultado del umbral: `Coverage threshold passed: 93% >= 90%`.
+
 ### Validacion de DelphiCodeCoverage en entorno limpio
 
 - Se verifico que `CodeCoverage.exe` esta versionado en `.tools\delphi-code-coverage\CodeCoverage.exe`.
@@ -52,7 +51,7 @@
 - Verificacion: `tests\App.Core.Tests\coverage.bat` termina con `All tests passed`.
 - Resultado actual core: 91% de cobertura, 901 de 982 lineas cubiertas.
 - Verificacion: `tests\App.Win.Tests\coverage.bat` termina con `All tests passed`.
-- Resultado actual App.Win: 80% de cobertura, 55 de 68 lineas cubiertas.
+- Resultado actual App.Win: 92% de cobertura, 63 de 68 lineas cubiertas.
 
 ### Textos seleccionables en formulario login
 
@@ -68,7 +67,7 @@
 - Resultado actual core: 91% de cobertura, 901 de 982 lineas cubiertas.
 - Verificacion: `tests\App.Win.Tests\run-tests.bat` termina con `All tests passed`.
 - Verificacion: `tests\App.Win.Tests\coverage.bat` termina con `All tests passed`.
-- Resultado actual App.Win: 80% de cobertura, 55 de 68 lineas cubiertas.
+- Resultado actual App.Win: 92% de cobertura, 63 de 68 lineas cubiertas.
 - Verificacion visual: `tests\App.Win.Visual\run-visual-tests.bat verify` termina con `All visual tests passed`.
 - Verificacion E2E: `tests\App.Win.E2E\run-smoke-login.bat` termina con `Smoke login passed`.
 
@@ -89,7 +88,7 @@
 - Se agrego `tests\App.Win.Tests\coverage.bat`.
 - Se documento coverage de forms con DelphiCodeCoverage.
 - Verificacion: `tests\App.Win.Tests\coverage.bat` termina con `All tests passed`.
-- Resultado actual: `LoginForm.pas` queda en 86% de cobertura, 20 de 23 lineas cubiertas.
+- Resultado actual: `LoginForm.pas` queda en 92% de cobertura, 35 de 38 lineas ejecutables cubiertas.
 
 ### Navegacion por teclado en formulario login
 

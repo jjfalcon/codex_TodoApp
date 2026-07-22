@@ -5,6 +5,7 @@ set TEST_EXE=AppCoreTests.exe
 set TEST_MAP=AppCoreTests.map
 set COVERAGE_OUT=coverage
 set COVERAGE_LOG=%COVERAGE_OUT%\coverage.log
+set MIN_COVERAGE=90
 set CODE_COVERAGE=%~dp0..\..\.tools\delphi-code-coverage\CodeCoverage.exe
 for %%I in ("..\..\src\App.Core") do set CORE_SRC=%%~fI
 
@@ -42,5 +43,8 @@ if not exist "%COVERAGE_OUT%\CodeCoverage_summary.html" (
 
 findstr /C:"test(s) failed." "%COVERAGE_LOG%" >nul
 if not errorlevel 1 exit /b 1
+
+powershell -NoProfile -ExecutionPolicy Bypass -Command "$xml = [xml](Get-Content '%COVERAGE_OUT%\CodeCoverage_summary.xml'); $covered = [int]$xml.report.stats.coveredpercent.value; if ($covered -lt %MIN_COVERAGE%) { Write-Host ('Coverage threshold failed: ' + $covered + '%% < %MIN_COVERAGE%%%'); exit 1 } else { Write-Host ('Coverage threshold passed: ' + $covered + '%% >= %MIN_COVERAGE%%%') }"
+if errorlevel 1 exit /b 1
 
 exit /b 0

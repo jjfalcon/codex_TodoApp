@@ -25,7 +25,7 @@ type
     FLoginCalls: Integer;
     FLastUsername: string;
     FLastPassword: string;
-    FErrorMessage: string;
+    FError: Exception;
     FUser: TUser;
   public
     constructor Create;
@@ -59,14 +59,15 @@ end;
 
 destructor TFakeAuthService.Destroy;
 begin
+  FError.Free;
   FUser.Free;
   inherited Destroy;
 end;
 
 procedure TFakeAuthService.FailWith(AError: Exception);
 begin
-  FErrorMessage := AError.Message;
-  AError.Free;
+  FError.Free;
+  FError := AError;
 end;
 
 function TFakeAuthService.Login(const AUsername, APassword: string): TUser;
@@ -75,8 +76,16 @@ begin
   FLastUsername := AUsername;
   FLastPassword := APassword;
 
-  if FErrorMessage <> '' then
-    raise EAuthenticationError.Create(FErrorMessage);
+  if FError <> nil then
+  begin
+    if FError is ELoginValidationError then
+      raise ELoginValidationError.Create(FError.Message);
+    if FError is EInactiveUserError then
+      raise EInactiveUserError.Create(FError.Message);
+    if FError is EUserLockedError then
+      raise EUserLockedError.Create(FError.Message);
+    raise EAuthenticationError.Create(FError.Message);
+  end;
 
   Result := FUser;
 end;
@@ -261,6 +270,25 @@ begin
   end;
 end;
 
+procedure LoginFormApplyLanguageLoadsEnglishTexts;
+var
+  LAuth: IAuthService;
+  LForm: TFrmLogin;
+begin
+  LAuth := TFakeAuthService.Create;
+  LForm := CreateLoginForm(LAuth);
+  try
+    LForm.ApplyLanguage('en');
+
+    AssertEquals('Login', LForm.Caption, 'Login form should load English title.');
+    AssertEquals('Username', LForm.LblUsername.Caption, 'Login form should load English username label.');
+    AssertEquals('Password', LForm.LblPassword.Caption, 'Login form should load English password label.');
+    AssertEquals('Sign in', LForm.BtnLogin.Caption, 'Login form should load English login button.');
+    AssertEquals('Cancel', LForm.BtnCancel.Caption, 'Login form should load English cancel button.');
+  finally
+    LForm.Free;
+  end;
+end;
 procedure LoginFormTabMovesThroughFieldsInOrder;
 var
   LAuth: IAuthService;
@@ -360,6 +388,68 @@ begin
   end;
 end;
 
+procedure LoginFormShowsValidationErrorWhenLoginInputIsInvalid;
+var
+  LFakeAuth: TFakeAuthService;
+  LAuth: IAuthService;
+  LForm: TFrmLogin;
+begin
+  LFakeAuth := TFakeAuthService.Create;
+  LFakeAuth.FailWith(ELoginValidationError.Create('El usuario es obligatorio.'));
+  LAuth := LFakeAuth;
+  LForm := CreateLoginForm(LAuth);
+  try
+    LForm.BtnLoginClick(nil);
+
+    AssertEquals('El usuario es obligatorio.', LForm.LblMessage.Caption,
+      'Login form should show validation errors.');
+    AssertEquals(0, LForm.ModalResult, 'Validation error should keep dialog open.');
+  finally
+    LForm.Free;
+  end;
+end;
+
+procedure LoginFormShowsInactiveUserErrorWhenUserIsInactive;
+var
+  LFakeAuth: TFakeAuthService;
+  LAuth: IAuthService;
+  LForm: TFrmLogin;
+begin
+  LFakeAuth := TFakeAuthService.Create;
+  LFakeAuth.FailWith(EInactiveUserError.Create('El usuario esta inactivo.'));
+  LAuth := LFakeAuth;
+  LForm := CreateLoginForm(LAuth);
+  try
+    LForm.BtnLoginClick(nil);
+
+    AssertEquals('El usuario esta inactivo.', LForm.LblMessage.Caption,
+      'Login form should show inactive user errors.');
+    AssertEquals(0, LForm.ModalResult, 'Inactive user error should keep dialog open.');
+  finally
+    LForm.Free;
+  end;
+end;
+
+procedure LoginFormShowsLockedUserErrorWhenUserIsLocked;
+var
+  LFakeAuth: TFakeAuthService;
+  LAuth: IAuthService;
+  LForm: TFrmLogin;
+begin
+  LFakeAuth := TFakeAuthService.Create;
+  LFakeAuth.FailWith(EUserLockedError.Create('El usuario esta bloqueado.'));
+  LAuth := LFakeAuth;
+  LForm := CreateLoginForm(LAuth);
+  try
+    LForm.BtnLoginClick(nil);
+
+    AssertEquals('El usuario esta bloqueado.', LForm.LblMessage.Caption,
+      'Login form should show locked user errors.');
+    AssertEquals(0, LForm.ModalResult, 'Locked user error should keep dialog open.');
+  finally
+    LForm.Free;
+  end;
+end;
 procedure RunLoginFormTests(var AFailures: Integer);
 begin
   RunTest('LoginForm_sets_initial_focus_to_username', LoginFormSetsInitialFocusToUsername, AFailures);
@@ -367,10 +457,14 @@ begin
   RunTest('LoginForm_has_expected_tab_order', LoginFormHasExpectedTabOrder, AFailures);
   RunTest('LoginForm_loads_spanish_texts_by_default', LoginFormLoadsSpanishTextsByDefault, AFailures);
   RunTest('LoginForm_loads_english_texts_when_selected', LoginFormLoadsEnglishTextsWhenSelected, AFailures);
+  RunTest('LoginForm_apply_language_loads_english_texts', LoginFormApplyLanguageLoadsEnglishTexts, AFailures);
   RunTest('LoginForm_tab_moves_through_fields_in_order', LoginFormTabMovesThroughFieldsInOrder, AFailures);
   RunTest('LoginForm_enter_triggers_default_login_button', LoginFormEnterTriggersDefaultLoginButton, AFailures);
   RunTest('LoginForm_calls_auth_on_accept', LoginFormCallsAuthOnAccept, AFailures);
   RunTest('LoginForm_shows_error_when_login_fails', LoginFormShowsErrorWhenLoginFails, AFailures);
+  RunTest('LoginForm_shows_validation_error_when_login_input_is_invalid', LoginFormShowsValidationErrorWhenLoginInputIsInvalid, AFailures);
+  RunTest('LoginForm_shows_inactive_user_error_when_user_is_inactive', LoginFormShowsInactiveUserErrorWhenUserIsInactive, AFailures);
+  RunTest('LoginForm_shows_locked_user_error_when_user_is_locked', LoginFormShowsLockedUserErrorWhenUserIsLocked, AFailures);
 end;
 
 end.

@@ -126,6 +126,7 @@ Que hace:
 - Ejecuta `AppCoreTests.exe` mediante DelphiCodeCoverage.
 - Genera informe HTML/XML en `tests\App.Core.Tests\coverage\`.
 - Falla si el runner reporta tests fallidos o no se genera el informe.
+- Falla si la cobertura global del nucleo baja del 90%.
 
 Ejecucion:
 
@@ -143,8 +144,9 @@ Uso esperado:
 Estado documentado:
 
 - Validado desde artefactos limpios el 2026-07-22.
-- Cobertura global actual: 91%, 901 de 982 lineas cubiertas.
-- `AppCoreUserService.pas` quedaba como modulo prioritario por menor cobertura relativa.
+- Umbral minimo Core: 90%.
+- Cobertura global Core actual: 93%, 931 de 991 lineas cubiertas.
+- `AppCoreUserService.pas`: 100%, 177 de 177 lineas cubiertas.
 
 ## coverageTest Forms VCL
 
@@ -179,8 +181,8 @@ Uso esperado:
 Estado documentado:
 
 - Validado desde artefactos limpios el 2026-07-22.
-- Cobertura global App.Win actual: 80%, 55 de 68 lineas cubiertas.
-- `LoginForm.pas`: 86%, 20 de 23 lineas cubiertas.
+- Cobertura global App.Win actual: 92%, 63 de 68 lineas cubiertas.
+- `LoginForm.pas`: 92%, 35 de 38 lineas ejecutables cubiertas.
 
 ## mutationTest
 

@@ -226,6 +226,78 @@ begin
   raise Exception.Create('Expected EUserValidationError.');
 end;
 
+procedure CreateUserRejectsNonAdminActor;
+var
+  LRepository: TInMemoryUserRepository;
+  LService: TUserService;
+  LHasher: IPasswordHasher;
+  LClock: IClock;
+begin
+  BuildUserServices(LRepository, LService, LHasher, LClock);
+  try
+    LService.CreateUser('user', 'newuser', 'New User',
+      'newuser@example.com', 'secret', urNormal);
+  except
+    on E: EAccessDeniedError do
+      Exit;
+  end;
+  raise Exception.Create('Expected EAccessDeniedError.');
+end;
+
+procedure CreateUserRejectsMissingRequiredFields;
+var
+  LRepository: TInMemoryUserRepository;
+  LService: TUserService;
+  LHasher: IPasswordHasher;
+  LClock: IClock;
+begin
+  BuildUserServices(LRepository, LService, LHasher, LClock);
+  try
+    LService.CreateUser('admin', '   ', 'New User',
+      'required-user@example.com', 'secret', urNormal);
+  except
+    on E: EUserValidationError do ;
+  else
+    raise Exception.Create('Expected username validation error.');
+  end;
+
+  try
+    LService.CreateUser('admin', 'requireduser', '   ',
+      'required-user@example.com', 'secret', urNormal);
+  except
+    on E: EUserValidationError do ;
+  else
+    raise Exception.Create('Expected display name validation error.');
+  end;
+
+  try
+    LService.CreateUser('admin', 'requireduser', 'Required User',
+      '   ', 'secret', urNormal);
+  except
+    on E: EUserValidationError do
+      Exit;
+  end;
+  raise Exception.Create('Expected email validation error.');
+end;
+
+procedure CreateUserRejectsBlankPassword;
+var
+  LRepository: TInMemoryUserRepository;
+  LService: TUserService;
+  LHasher: IPasswordHasher;
+  LClock: IClock;
+begin
+  BuildUserServices(LRepository, LService, LHasher, LClock);
+  try
+    LService.CreateUser('admin', 'blankpass', 'Blank Pass',
+      'blankpass@example.com', '   ', urNormal);
+  except
+    on E: EUserValidationError do
+      Exit;
+  end;
+  raise Exception.Create('Expected EUserValidationError.');
+end;
+
 procedure UpdateUserRejectsSelfModification;
 var
   LRepository: TInMemoryUserRepository;
@@ -242,6 +314,92 @@ begin
       Exit;
   end;
   raise Exception.Create('Expected EUserSelfModificationError.');
+end;
+
+procedure UpdateUserRejectsUnknownUser;
+var
+  LRepository: TInMemoryUserRepository;
+  LService: TUserService;
+  LHasher: IPasswordHasher;
+  LClock: IClock;
+begin
+  BuildUserServices(LRepository, LService, LHasher, LClock);
+  try
+    LService.UpdateUser('admin', 'missing', 'missing', 'Missing',
+      'missing@example.com', True, urNormal, False);
+  except
+    on E: EUserNotFoundError do
+      Exit;
+  end;
+  raise Exception.Create('Expected EUserNotFoundError.');
+end;
+
+procedure UpdateUserAllowsKeepingSameUsernameAndEmail;
+var
+  LRepository: TInMemoryUserRepository;
+  LService: TUserService;
+  LHasher: IPasswordHasher;
+  LClock: IClock;
+  LUser: TUser;
+begin
+  BuildUserServices(LRepository, LService, LHasher, LClock);
+  LService.UpdateUser('admin', 'user', '  user  ', '  Usuario editado  ',
+    '  user@example.com  ', True, urNormal, False);
+
+  LUser := LRepository.FindById('user');
+  AssertEquals('user', LUser.Username, 'Username should keep same value.');
+  AssertEquals('Usuario editado', LUser.DisplayName, 'Display name should be updated and trimmed.');
+  AssertEquals('user@example.com', LUser.Email, 'Email should keep same value.');
+end;
+
+procedure ActivateUserMakesInactiveUserActive;
+var
+  LRepository: TInMemoryUserRepository;
+  LService: TUserService;
+  LHasher: IPasswordHasher;
+  LClock: IClock;
+begin
+  BuildUserServices(LRepository, LService, LHasher, LClock);
+  LService.ActivateUser('admin', 'disabled');
+  AssertTrue(LRepository.FindById('disabled').Active, 'Inactive user should become active.');
+end;
+
+procedure DeactivateUserMakesUserInactive;
+var
+  LRepository: TInMemoryUserRepository;
+  LService: TUserService;
+  LHasher: IPasswordHasher;
+  LClock: IClock;
+begin
+  BuildUserServices(LRepository, LService, LHasher, LClock);
+  LService.DeactivateUser('admin', 'user');
+  AssertFalse(LRepository.FindById('user').Active, 'Active user should become inactive.');
+end;
+
+procedure BlockUserLocksUser;
+var
+  LRepository: TInMemoryUserRepository;
+  LService: TUserService;
+  LHasher: IPasswordHasher;
+  LClock: IClock;
+begin
+  BuildUserServices(LRepository, LService, LHasher, LClock);
+  LService.BlockUser('admin', 'user');
+  AssertTrue(LRepository.FindById('user').Locked, 'User should be locked.');
+end;
+
+procedure UnlockUserClearsLockAndFailedAttempts;
+var
+  LRepository: TInMemoryUserRepository;
+  LService: TUserService;
+  LHasher: IPasswordHasher;
+  LClock: IClock;
+begin
+  BuildUserServices(LRepository, LService, LHasher, LClock);
+  LService.UnlockUser('admin', 'locked');
+  AssertFalse(LRepository.FindById('locked').Locked, 'User should be unlocked.');
+  AssertEquals(0, LRepository.FindById('locked').FailedAttempts,
+    'Unlock should clear failed attempts.');
 end;
 
 procedure ChangePasswordReplacesOldCredentials;
@@ -508,7 +666,60 @@ begin
   LList := LService.ListUsers('', [ufDeleted]);
   try
     AssertEquals(1, LList.Count, 'Deleted filter should show deleted users.');
-    AssertEquals('user', TUser(LList[0]).Username, 'Deleted filter should return deleted user.');
+  AssertEquals('user', TUser(LList[0]).Username, 'Deleted filter should return deleted user.');
+  finally
+    LList.Free;
+  end;
+end;
+
+procedure FilterUsersReturnsOnlyActiveUsers;
+var
+  LRepository: TInMemoryUserRepository;
+  LService: TUserService;
+  LHasher: IPasswordHasher;
+  LClock: IClock;
+  LList: TList;
+begin
+  BuildUserServices(LRepository, LService, LHasher, LClock);
+  LList := LService.ListUsers('', [ufActive]);
+  try
+    AssertEquals(4, LList.Count, 'Active filter should hide inactive users.');
+  finally
+    LList.Free;
+  end;
+end;
+
+procedure FilterUsersReturnsOnlyInactiveUsers;
+var
+  LRepository: TInMemoryUserRepository;
+  LService: TUserService;
+  LHasher: IPasswordHasher;
+  LClock: IClock;
+  LList: TList;
+begin
+  BuildUserServices(LRepository, LService, LHasher, LClock);
+  LList := LService.ListUsers('', [ufInactive]);
+  try
+    AssertEquals(1, LList.Count, 'Inactive filter should return only inactive users.');
+    AssertEquals('disabled', TUser(LList[0]).Username, 'Inactive filter should return disabled user.');
+  finally
+    LList.Free;
+  end;
+end;
+
+procedure FilterUsersReturnsOnlyBlockedUsers;
+var
+  LRepository: TInMemoryUserRepository;
+  LService: TUserService;
+  LHasher: IPasswordHasher;
+  LClock: IClock;
+  LList: TList;
+begin
+  BuildUserServices(LRepository, LService, LHasher, LClock);
+  LList := LService.ListUsers('', [ufBlocked]);
+  try
+    AssertEquals(1, LList.Count, 'Blocked filter should return only blocked users.');
+    AssertEquals('locked', TUser(LList[0]).Username, 'Blocked filter should return locked user.');
   finally
     LList.Free;
   end;
@@ -752,7 +963,16 @@ begin
   RunTest('CreateUser_rejects_short_password', CreateUserRejectsShortPassword, AFailures);
   RunTest('CreateUser_rejects_duplicate_username', CreateUserRejectsDuplicateUsername, AFailures);
   RunTest('CreateUser_rejects_duplicate_email', CreateUserRejectsDuplicateEmail, AFailures);
+  RunTest('CreateUser_rejects_non_admin_actor', CreateUserRejectsNonAdminActor, AFailures);
+  RunTest('CreateUser_rejects_missing_required_fields', CreateUserRejectsMissingRequiredFields, AFailures);
+  RunTest('CreateUser_rejects_blank_password', CreateUserRejectsBlankPassword, AFailures);
   RunTest('UpdateUser_rejects_self_modification', UpdateUserRejectsSelfModification, AFailures);
+  RunTest('UpdateUser_rejects_unknown_user', UpdateUserRejectsUnknownUser, AFailures);
+  RunTest('UpdateUser_allows_keeping_same_username_and_email', UpdateUserAllowsKeepingSameUsernameAndEmail, AFailures);
+  RunTest('ActivateUser_makes_inactive_user_active', ActivateUserMakesInactiveUserActive, AFailures);
+  RunTest('DeactivateUser_makes_user_inactive', DeactivateUserMakesUserInactive, AFailures);
+  RunTest('BlockUser_locks_user', BlockUserLocksUser, AFailures);
+  RunTest('UnlockUser_clears_lock_and_failed_attempts', UnlockUserClearsLockAndFailedAttempts, AFailures);
   RunTest('ChangePassword_replaces_old_credentials', ChangePasswordReplacesOldCredentials, AFailures);
   RunTest('DeleteUser_marks_user_as_deleted', DeleteUserMarksUserAsDeleted, AFailures);
   RunTest('DeleteUser_requires_confirmation', DeleteUserRequiresConfirmation, AFailures);
@@ -767,6 +987,9 @@ begin
   RunTest('SearchUsers_matches_username_display_name_and_email', SearchUsersMatchesUsernameDisplayNameAndEmail, AFailures);
   RunTest('ListUsers_excludes_deleted_users_by_default', ListUsersExcludesDeletedUsersByDefault, AFailures);
   RunTest('FilterUsers_returns_deleted_users_when_requested', FilterUsersReturnsDeletedUsersWhenRequested, AFailures);
+  RunTest('FilterUsers_returns_only_active_users', FilterUsersReturnsOnlyActiveUsers, AFailures);
+  RunTest('FilterUsers_returns_only_inactive_users', FilterUsersReturnsOnlyInactiveUsers, AFailures);
+  RunTest('FilterUsers_returns_only_blocked_users', FilterUsersReturnsOnlyBlockedUsers, AFailures);
   RunTest('Login_updates_user_last_login_at', LoginUpdatesUserLastLoginAt, AFailures);
   RunTest('FilePersistence_saves_and_loads_users', FilePersistenceSavesAndLoadsUsers, AFailures);
   RunTest('FilePersistence_persists_multiple_fields', FilePersistencePersistsMultipleFields, AFailures);
