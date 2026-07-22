@@ -1,6 +1,64 @@
 # Tareas
 
+## Pendientes
+
+### Testear form login
+
+- visual. formulario verificado con captura
+- visual. texto cargado desde lenguaje seleccionado
+- unit. Enter/CR en campos y boton por defecto
+
+### Mejorar cobertura de `AppCoreUserService`
+
+- Cobertura actual: 85%, 128 de 150 lineas.
+- Es el fichero con menor cobertura del nucleo.
+- Revisar ramas no cubiertas antes de subir el umbral global de cobertura.
+
+### Definir umbral minimo de cobertura
+
+- La medicion ya existe, pero no hay politica de corte.
+- Propuesta inicial: no bajar del 90% global y subir despues por modulos criticos.
+- El umbral deberia aplicarse en script o CI cuando exista integracion continua.
+
+### Validar DelphiCodeCoverage en entorno limpio
+
+- En esta maquina `CodeCoverage.exe` esta disponible en el `PATH`.
+- Falta documentar o automatizar de donde instalarlo para una maquina nueva.
+- Confirmar que el flujo funciona igual sin artefactos previos de compilacion.
+
+### Revisar detalle del informe generado por Delphi 7
+
+- El resumen global y por fichero es util.
+- Algunos nombres internos de clases/metodos aparecen truncados en el XML/HTML.
+- No bloquea la medicion de lineas, pero conviene revisarlo si se quiere usar el informe para analisis fino por metodo.
+
+### Ampliar mutation testing a autenticacion y usuarios
+
+- Agregar nuevos patches automatizados para filtros y busqueda de `AppCoreUserService.pas`.
+- Probar mutantes en persistencia de campos criticos de `AppCoreUserFileRepository.pas`.
+- Registrar supervivientes y convertirlos en nuevos tests TDD.
+
+### Ampliar E2E con AutoIt
+
+- Agregar un flujo E2E de alta de tarea desde la pantalla `Tareas`.
+- Agregar un flujo E2E de completar tarea y comprobar prefijo `[x]`.
+- Agregar diagnosticos con captura o listado de controles cuando falle una ventana.
+
 ## Realizadas
+
+### Tests unitarios de formulario login
+
+- Se agrego `tests\App.Win.Tests\AppWinTests.dpr`.
+- Se agrego `tests\App.Win.Tests\LoginFormTests.pas`.
+- Se agrego `tests\App.Win.Tests\run-tests.bat`.
+- Se cubre foco inicial en usuario.
+- Se cubre orden de tabulacion: usuario, password, entrar, cancelar.
+- Se cubre que password oculta el texto introducido.
+- Se cubre que errores de autenticacion se visualizan en el formulario.
+- Se cubre que el boton Entrar llama al servicio de autenticacion inyectado.
+- Se agrego `TFrmLogin.ConfigureForTests` para inyectar `IAuthService` sin crear repositorios reales.
+- Verificacion: `run-tests.bat` termina con `All tests passed`.
+- Verificacion adicional: `AppCoreTests.exe` termina con `All tests passed` y `WindowsApp.dpr` compila.
 
 ### Filtro de tareas pendientes
 
@@ -89,41 +147,3 @@
 - Se documento la nomenclatura `unitTest`, `coverageTest`, `mutationTest` y `e2eTest`.
 - Se agrego `docs\TESTING.md` como guia central.
 - Se enlazo la taxonomia desde `README.md`, `docs\TDD.md`, `docs\MUTATION_TESTING.md` y `docs\E2E_AUTOIT.md`.
-
-## Pendientes
-
-### Mejorar cobertura de `AppCoreUserService`
-
-- Cobertura actual: 85%, 128 de 150 lineas.
-- Es el fichero con menor cobertura del nucleo.
-- Revisar ramas no cubiertas antes de subir el umbral global de cobertura.
-
-### Definir umbral minimo de cobertura
-
-- La medicion ya existe, pero no hay politica de corte.
-- Propuesta inicial: no bajar del 90% global y subir despues por modulos criticos.
-- El umbral deberia aplicarse en script o CI cuando exista integracion continua.
-
-### Validar DelphiCodeCoverage en entorno limpio
-
-- En esta maquina `CodeCoverage.exe` esta disponible en el `PATH`.
-- Falta documentar o automatizar de donde instalarlo para una maquina nueva.
-- Confirmar que el flujo funciona igual sin artefactos previos de compilacion.
-
-### Revisar detalle del informe generado por Delphi 7
-
-- El resumen global y por fichero es util.
-- Algunos nombres internos de clases/metodos aparecen truncados en el XML/HTML.
-- No bloquea la medicion de lineas, pero conviene revisarlo si se quiere usar el informe para analisis fino por metodo.
-
-### Ampliar mutation testing a autenticacion y usuarios
-
-- Agregar nuevos patches automatizados para filtros y busqueda de `AppCoreUserService.pas`.
-- Probar mutantes en persistencia de campos criticos de `AppCoreUserFileRepository.pas`.
-- Registrar supervivientes y convertirlos en nuevos tests TDD.
-
-### Ampliar E2E con AutoIt
-
-- Agregar un flujo E2E de alta de tarea desde la pantalla `Tareas`.
-- Agregar un flujo E2E de completar tarea y comprobar prefijo `[x]`.
-- Agregar diagnosticos con captura o listado de controles cuando falle una ventana.

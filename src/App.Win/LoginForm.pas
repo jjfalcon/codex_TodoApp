@@ -36,6 +36,7 @@ type
     FLoggedInUserId: string;
   public
     procedure Configure(const AFactory: IRepositoryFactory);
+    procedure ConfigureForTests(const AAuth: IAuthService);
     property LoggedInRole: TUserRole read FLoggedInRole;
     property LoggedInUserId: string read FLoggedInUserId;
     property SessionService: ISessionService read FSession;
@@ -89,12 +90,18 @@ begin
   EdtUsername.Text := FPreferences.LastUsername;
 end;
 
+procedure TFrmLogin.ConfigureForTests(const AAuth: IAuthService);
+begin
+  FAuth := AAuth;
+end;
+
 procedure TFrmLogin.FormCreate(Sender: TObject);
 begin
   FLoggedInRole := urNormal;
   FLoggedInUserId := '';
   EdtPassword.PasswordChar := '*';
   LblMessage.Caption := '';
+  ActiveControl := EdtUsername;
 end;
 
 end.
