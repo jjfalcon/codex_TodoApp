@@ -161,3 +161,56 @@
 - Para cambiar de backend (ej. MySQL) solo hace falta: crear `TMySQLRepositoryFactory`, registrarlo en el DPR, cambiar `app.config`
 - `UserForm.pas` no se modificó — ya recibía `IUserRepository` por inyección
 - Las preferencias de login se guardan en `app.config` sección `[Login]`, mismo archivo que la configuración general
+
+---
+
+## 9. Sesion 9 - 2026-07-22: Calidad de tests, coverage, mutationTest y E2E
+
+Commits relevantes:
+
+- `04c6bd0` Track all tools artifacts
+- `aba49f0` Cover last active admin rule
+- `fda2481` Incluir suite mutationTest
+
+### Core
+- Se cubrio la regla de ultimo administrador activo en `TUserService`.
+- Se agregaron tests para impedir desactivar, bloquear, eliminar o degradar el ultimo administrador activo.
+- Los cuatro casos esperan `ELastAdminError`.
+- Se ajusto el orden de validaciones para priorizar la regla de administrador minimo cuando una operacion retiraria acceso administrativo.
+
+### unitTest
+- `AppCoreUserServiceTests.pas` registra ahora los cuatro casos `UserManagement_prevents_*_last_active_admin`.
+- Verificacion: `AppCoreTests.exe` termina con `All tests passed`.
+- Total actual observado: 78 tests de nucleo en consola.
+
+### coverageTest
+- Se integro `tests\App.Core.Tests\coverage.bat`.
+- Se versiono `CodeCoverage.exe` en `.tools\delphi-code-coverage\`.
+- El script compila con mapa detallado (`-GD`) y genera HTML/XML en `tests\App.Core.Tests\coverage\`.
+- Resultado documentado: 92% global, 799 de 868 lineas cubiertas.
+
+### mutationTest
+- Se agrego `tests\App.Core.Tests\mutation.bat` como runner propio automatizado.
+- Se agregaron patches versionados `M001`-`M011` en `tests\App.Core.Tests\mutations\`.
+- El superviviente M011 quedo cubierto tras agregar los tests de ultimo administrador activo.
+- Resultado verificado: 11 mutantes probados, 11 killed, 0 survived.
+
+### e2eTest
+- Se agrego AutoIt portable en `.tools\autoit\install`.
+- Se agrego `tests\App.Win.E2E\smoke_login.au3`.
+- Se agrego `tests\App.Win.E2E\run-smoke-login.bat`.
+- El smoke compila la app VCL, prepara runtime aislado, hace login con `admin/admin` y verifica la ventana principal.
+
+### Documentacion
+- Se agrego `docs\TESTING.md` como guia central de niveles de test.
+- Se consenso la nomenclatura `unitTest`, `coverageTest`, `mutationTest` y `e2eTest`.
+- Se enlazo la taxonomia desde `README.md`, `docs\TDD.md`, `docs\MUTATION_TESTING.md` y `docs\E2E_AUTOIT.md`.
+
+### Pendientes identificados
+- Mejorar cobertura especifica de `AppCoreUserService`.
+- Definir umbral minimo de cobertura.
+- Validar DelphiCodeCoverage en entorno limpio.
+- Ampliar mutationTest con filtros/busqueda de usuarios y persistencia critica de `AppCoreUserFileRepository`.
+- Ampliar e2eTest con alta y completado de tareas, mas diagnosticos de fallo.
+
+---
