@@ -8,6 +8,18 @@
 - Agregar un flujo E2E de completar tarea y comprobar prefijo `[x]`.
 - Agregar diagnosticos con captura o listado de controles cuando falle una ventana.
 
+### Especificar preferencias de usuario
+
+- Definir una spec de preferencias de usuario.
+- Acordar que preferencias se guardan, donde se persisten y cuando se aplican.
+- Cubrir idioma, ultimo usuario y futuras preferencias de interfaz si aplican.
+
+### Crear form CRUD de tabla generica
+
+- Definir un formulario reutilizable para CRUD de tablas.
+- Acordar columnas, acciones, validaciones y puntos de extension.
+- Separar reglas de negocio en `src\App.Core` y mantener la UI como capa fina.
+
 ## Realizadas
 
 ### Ampliacion de mutation testing en autenticacion y usuarios
