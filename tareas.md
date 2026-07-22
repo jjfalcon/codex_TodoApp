@@ -4,7 +4,6 @@
 
 ### Testear form login
 
-- visual. formulario verificado con captura
 - visual. texto cargado desde lenguaje seleccionado
 
 ### Mejorar cobertura de `AppCoreUserService`
@@ -44,6 +43,16 @@
 - Agregar diagnosticos con captura o listado de controles cuando falle una ventana.
 
 ## Realizadas
+
+### Visual test de formulario login
+
+- Se agrego `tests\App.Win.Visual\AppWinVisualTests.dpr`.
+- Se agrego `tests\App.Win.Visual\run-visual-tests.bat`.
+- Se implementaron modos `approve` y `verify` para baselines visuales.
+- Se captura el area cliente de `TFrmLogin`.
+- Se compara contra `tests\App.Win.Visual\baselines\LoginForm.bmp`.
+- Se ignoran capturas actuales y diffs en `.gitignore`.
+- Se documento `visualTest Forms VCL` en `docs\TESTING.md`.
 
 ### Documentacion de tests unitarios de forms VCL
 

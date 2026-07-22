@@ -4,6 +4,7 @@ Este proyecto usa cuatro niveles de verificacion. La nomenclatura consensuada es
 
 - `unitTest`
 - `coverageTest`
+- `visualTest`
 - `mutationTest`
 - `e2eTest`
 
@@ -225,6 +226,56 @@ Estado actual:
 - 11 mutantes muertos.
 - 0 supervivientes conocidos.
 
+## visualTest Forms VCL
+
+Pruebas visuales de formularios VCL comparando capturas contra baselines aprobados.
+
+Ubicacion:
+
+```text
+tests\App.Win.Visual\
+```
+
+Runner:
+
+```text
+tests\App.Win.Visual\run-visual-tests.bat
+```
+
+Modos:
+
+- `approve`: genera o reemplaza el baseline versionado.
+- `verify`: compara contra el baseline existente y falla si no existe.
+
+Rutas:
+
+```text
+tests\App.Win.Visual\baselines\  baseline versionado
+tests\App.Win.Visual\actual\     captura actual ignorada por Git
+tests\App.Win.Visual\diff\       diferencia ignorada por Git
+```
+
+Ejecucion:
+
+```bat
+cd tests\App.Win.Visual
+run-visual-tests.bat verify
+```
+
+Para aprobar una captura:
+
+```bat
+cd tests\App.Win.Visual
+run-visual-tests.bat approve
+```
+
+Uso esperado:
+
+- Detectar cambios accidentales de layout en `.dfm`.
+- Revisar formularios en estado inicial o estados visuales importantes.
+- No reemplaza unit tests de comportamiento ni E2E de integracion.
+- En modo `verify`, nunca genera un baseline automaticamente.
+
 ## e2eTest
 
 Pruebas end-to-end de la aplicacion VCL desde fuera del proceso, usando AutoIt.
@@ -268,5 +319,6 @@ Uso esperado:
 - Para cambios en reglas criticas: ejecutar `unitTest` y `mutationTest`.
 - Para cambios que afecten a cobertura o deuda tecnica: ejecutar `coverageTest`.
 - Para cambios de comportamiento en `src\App.Win`: ejecutar `unitTest Forms VCL`.
+- Para cambios de layout en `src\App.Win`: ejecutar `visualTest Forms VCL`.
 - Para cambios de wiring UI-nucleo, login real o arranque: ejecutar `unitTest Forms VCL` y `e2eTest`.
 - Antes de entregar una funcionalidad completa de riesgo medio/alto: ejecutar todos los niveles aplicables.
