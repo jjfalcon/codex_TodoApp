@@ -21,6 +21,7 @@ type
     LblCopyright: TLabel;
     LblTechHeader: TLabel;
     LblExecVersion: TLabel;
+    LblCommit: TLabel;
     LblOS: TLabel;
     LblArch: TLabel;
     LblBuildDate: TLabel;
@@ -82,6 +83,8 @@ begin
 
   LblExecVersion.Caption := LocalizedText('About.ExecutableVersionPrefix',
     'Version del ejecutable: ', False) + LInfo.ExecutableVersion;
+  LblCommit.Caption := LocalizedText('About.CommitPrefix',
+    'Commit GitHub: ', False) + LInfo.CommitHash;
   LblOS.Caption := LocalizedText('About.OperatingSystemPrefix',
     'Sistema operativo: ', False) + LInfo.OperatingSystem;
   LblArch.Caption := LocalizedText('About.ArchitecturePrefix',

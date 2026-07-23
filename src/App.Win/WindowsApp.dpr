@@ -10,6 +10,7 @@ uses
   TaskForm in 'TaskForm.pas' {FrmTasks},
   UserForm in 'UserForm.pas' {FrmUsers},
   AppCoreAbout in '..\App.Core\AppCoreAbout.pas',
+  AppCoreBuildInfo in '..\App.Core\AppCoreBuildInfo.pas',
   AppCoreAuth in '..\App.Core\AppCoreAuth.pas',
   AppCoreClock in '..\App.Core\AppCoreClock.pas',
   AppCoreConfiguration in '..\App.Core\AppCoreConfiguration.pas',

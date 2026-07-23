@@ -8,7 +8,8 @@ implementation
 
 uses
   SysUtils,
-  AppCoreAbout;
+  AppCoreAbout,
+  AppCoreBuildInfo;
 
 procedure AssertEquals(const AExpected, AActual: string; const AMessage: string);
 begin
@@ -37,6 +38,7 @@ begin
   Result.Description := 'Test description.';
   Result.Copyright := 'Test Copyright 2026';
   Result.ExecutableVersion := '2.0.0.1';
+  Result.CommitHash := 'abc1234';
   Result.OperatingSystem := 'Windows 10';
   Result.Architecture := 'x64';
   Result.BuildDate := '2026-06-09';
@@ -90,15 +92,41 @@ var
 begin
   LInfo := CreateFullInfo;
   LInfo.ExecutableVersion := '';
+  LInfo.CommitHash := '';
   LInfo.Architecture := '';
   LInfo.BuildDate := '';
   LInfo.DatabasePath := '';
   LService := TAboutService.Create(LInfo);
   LInfo := LService.GetAboutInfo;
   AssertEquals('No disponible', LInfo.ExecutableVersion, 'Missing executable version should show No disponible.');
+  AssertEquals('No disponible', LInfo.CommitHash, 'Missing commit hash should show No disponible.');
   AssertEquals('No disponible', LInfo.Architecture, 'Missing architecture should show No disponible.');
   AssertEquals('No disponible', LInfo.BuildDate, 'Missing build date should show No disponible.');
   AssertEquals('No disponible', LInfo.DatabasePath, 'Missing database path should show No disponible.');
+end;
+
+procedure AboutInfoReturnsGeneratedBuildVersion;
+var
+  LInfo: TAboutInfo;
+  LService: IAboutService;
+begin
+  LService := TAboutService.Create;
+  LInfo := LService.GetAboutInfo;
+  AssertEquals(AppBuildVersion, LInfo.Version,
+    'Default version should include Git commit count as fourth value.');
+  AssertEquals(AppBuildVersion, LInfo.ExecutableVersion,
+    'Executable version should match generated application version.');
+end;
+
+procedure AboutInfoReturnsGeneratedCommitHash;
+var
+  LInfo: TAboutInfo;
+  LService: IAboutService;
+begin
+  LService := TAboutService.Create;
+  LInfo := LService.GetAboutInfo;
+  AssertEquals(AppBuildCommitHash, LInfo.CommitHash,
+    'Default about info should expose short Git commit hash.');
 end;
 
 procedure AboutInfoDoesNotExposeSensitiveConnectionData;
@@ -133,6 +161,8 @@ begin
   RunTest('AboutInfo_returns_description', AboutInfoReturnsDescription, AFailures);
   RunTest('AboutInfo_returns_copyright', AboutInfoReturnsCopyright, AFailures);
   RunTest('AboutInfo_returns_not_available_for_missing_optional_data', AboutInfoReturnsNotAvailableForMissingOptionalData, AFailures);
+  RunTest('AboutInfo_returns_generated_build_version', AboutInfoReturnsGeneratedBuildVersion, AFailures);
+  RunTest('AboutInfo_returns_generated_commit_hash', AboutInfoReturnsGeneratedCommitHash, AFailures);
   RunTest('AboutInfo_does_not_expose_sensitive_connection_data', AboutInfoDoesNotExposeSensitiveConnectionData, AFailures);
   RunTest('AboutInfo_can_be_loaded_without_active_business_changes', AboutInfoCanBeLoadedWithoutActiveBusinessChanges, AFailures);
 end;

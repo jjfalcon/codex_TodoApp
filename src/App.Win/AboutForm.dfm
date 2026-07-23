@@ -3,7 +3,7 @@ object FrmAbout: TFrmAbout
   Top = 0
   BorderStyle = bsDialog
   Caption = 'Acerca de'
-  ClientHeight = 320
+  ClientHeight = 340
   ClientWidth = 420
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -78,35 +78,42 @@ object FrmAbout: TFrmAbout
   end
   object LblOS: TLabel
     Left = 20
-    Top = 200
+    Top = 220
     Width = 380
     Height = 13
     Caption = 'Sistema operativo: Windows'
   end
+  object LblCommit: TLabel
+    Left = 20
+    Top = 200
+    Width = 380
+    Height = 13
+    Caption = 'Commit GitHub: No disponible'
+  end
   object LblArch: TLabel
     Left = 20
-    Top = 220
+    Top = 240
     Width = 380
     Height = 13
     Caption = 'Arquitectura: No disponible'
   end
   object LblBuildDate: TLabel
     Left = 20
-    Top = 240
+    Top = 260
     Width = 380
     Height = 13
     Caption = 'Fecha de compilacion: No disponible'
   end
   object LblDbPath: TLabel
     Left = 20
-    Top = 260
+    Top = 280
     Width = 380
     Height = 13
     Caption = 'Base de datos: No disponible'
   end
   object BtnAccept: TButton
     Left = 172
-    Top = 288
+    Top = 308
     Width = 75
     Height = 23
     Caption = 'Aceptar'

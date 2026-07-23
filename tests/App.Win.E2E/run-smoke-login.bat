@@ -12,13 +12,15 @@ if not exist "%AUTOIT%" (
   exit /b 2
 )
 
+call "%ROOT%\scripts\generate-build-info.bat"
+if errorlevel 1 exit /b 1
+
 pushd "%APP_DIR%"
 dcc32 "-U..\App.Core" WindowsApp.dpr
-if errorlevel 1 (
-  popd
-  exit /b 1
-)
+set COMPILE_RESULT=%ERRORLEVEL%
 popd
+copy /Y "%ROOT%\src\App.Core\AppCoreBuildInfo.template.pas" "%ROOT%\src\App.Core\AppCoreBuildInfo.pas" >nul
+if not "%COMPILE_RESULT%"=="0" exit /b 1
 
 if exist "%RUNTIME%" rmdir /s /q "%RUNTIME%"
 mkdir "%RUNTIME%"

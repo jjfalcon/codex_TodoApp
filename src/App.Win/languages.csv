@@ -38,6 +38,7 @@ FrmAbout.LblDescription.Caption,Aplicacion Windows desarrollada en Delphi siguie
 FrmAbout.LblCopyright.Caption,Copyright 2026,Copyright 2026
 FrmAbout.LblTechHeader.Caption,Informacion tecnica,Technical information
 FrmAbout.LblExecVersion.Caption,Version del ejecutable: No disponible,Executable version: Not available
+FrmAbout.LblCommit.Caption,Commit GitHub: No disponible,GitHub commit: Not available
 FrmAbout.LblOS.Caption,Sistema operativo: Windows,Operating system: Windows
 FrmAbout.LblArch.Caption,Arquitectura: No disponible,Architecture: Not available
 FrmAbout.LblBuildDate.Caption,Fecha de compilacion: No disponible,Build date: Not available
@@ -45,6 +46,7 @@ FrmAbout.LblDbPath.Caption,Base de datos: No disponible,Database: Not available
 FrmAbout.BtnAccept.Caption,Aceptar,OK
 About.VersionPrefix,Version: ,Version: 
 About.ExecutableVersionPrefix,Version del ejecutable: ,Executable version: 
+About.CommitPrefix,"Commit GitHub: ","GitHub commit: "
 About.OperatingSystemPrefix,Sistema operativo: ,Operating system: 
 About.ArchitecturePrefix,Arquitectura: ,Architecture: 
 About.BuildDatePrefix,Fecha de compilacion: ,Build date: 

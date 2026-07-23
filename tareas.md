@@ -14,7 +14,31 @@
 - Acordar columnas, acciones, validaciones y puntos de extension.
 - Separar reglas de negocio en `src\App.Core` y mantener la UI como capa fina.
 
+### Monitorizar funcionamiento de la aplicacion
+
+- Definir indicadores para detectar errores y degradacion de la aplicacion.
+- Registrar fallos relevantes, excepciones y eventos de diagnostico.
+- Acordar donde se almacenan los logs o metricas y como se revisan.
+- Incluir senales de salud para detectar degradacion antes de que afecte al usuario.
+
 ## Realizadas
+
+### Version y build number trazables a GitHub
+
+- Se agrego `src\App.Core\AppCoreBuildInfo.pas` como fallback estable para compilaciones manuales.
+- Se agrego `src\App.Core\AppCoreBuildInfo.template.pas` para restaurar el fallback despues de builds automatizadas.
+- Se agrego `scripts\generate-build-info.bat`.
+- Se agrego `scripts\build-windows.bat` como wrapper simple de build trazable.
+- El script calcula la version como `Major.Minor.Patch.CommitCount`, usando `git rev-list --count HEAD`.
+- El script incluye el commit corto con `git rev-parse --short HEAD`.
+- La version actual generada es `1.0.0.34`.
+- El commit actual generado es `00e623b`.
+- `TAboutService` expone version, version del ejecutable, fecha de build y commit GitHub.
+- `FrmAbout` muestra `Commit GitHub` y traduce el prefijo desde `languages.csv`.
+- `scripts\build-windows.bat` y el runner E2E ejecutan el generador antes de compilar `WindowsApp.dpr` y restauran el fallback al terminar.
+- Verificacion: `AppCoreTests.exe` termina con `All tests passed`.
+- Verificacion: `tests\App.Win.Tests\run-tests.bat` termina con `All tests passed`.
+- Verificacion: `tests\App.Win.E2E\run-smoke-login.bat` termina con `Smoke login and task CRUD flow passed`.
 
 ### Ampliacion de E2E con AutoIt
 

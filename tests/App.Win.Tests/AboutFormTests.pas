@@ -120,6 +120,7 @@ begin
   Result.AddText('FrmAbout.BtnAccept.Caption', 'OK translated');
   Result.AddText('About.VersionPrefix', 'Version translated: ');
   Result.AddText('About.ExecutableVersionPrefix', 'Executable translated: ');
+  Result.AddText('About.CommitPrefix', 'Commit translated: ');
   Result.AddText('About.OperatingSystemPrefix', 'OS translated: ');
   Result.AddText('About.ArchitecturePrefix', 'Arch translated: ');
   Result.AddText('About.BuildDatePrefix', 'Build translated: ');
@@ -134,6 +135,7 @@ begin
   Result.AddText('FrmAbout.BtnAccept.Caption', 'Aceptar');
   Result.AddText('About.VersionPrefix', 'Version: ');
   Result.AddText('About.ExecutableVersionPrefix', 'Version del ejecutable: ');
+  Result.AddText('About.CommitPrefix', 'Commit GitHub: ');
   Result.AddText('About.OperatingSystemPrefix', 'Sistema operativo: ');
   Result.AddText('About.ArchitecturePrefix', 'Arquitectura: ');
   Result.AddText('About.BuildDatePrefix', 'Fecha de compilacion: ');
@@ -164,6 +166,8 @@ begin
       'Version label should use active language.');
     AssertStartsWith('Executable translated: ', LForm.LblExecVersion.Caption,
       'Executable version label should use active language.');
+    AssertStartsWith('Commit translated: ', LForm.LblCommit.Caption,
+      'Commit label should use active language.');
     AssertStartsWith('OS translated: ', LForm.LblOS.Caption,
       'Operating system label should use active language.');
     AssertStartsWith('Arch translated: ', LForm.LblArch.Caption,
@@ -193,6 +197,8 @@ begin
       'Accept button should return to Spanish.');
     AssertStartsWith('Version del ejecutable: ', LForm.LblExecVersion.Caption,
       'Executable version label should return to Spanish.');
+    AssertStartsWith('Commit GitHub: ', LForm.LblCommit.Caption,
+      'Commit label should return to Spanish.');
     AssertStartsWith('Sistema operativo: ', LForm.LblOS.Caption,
       'Operating system label should return to Spanish.');
     AssertStartsWith('Arquitectura: ', LForm.LblArch.Caption,
@@ -224,6 +230,8 @@ begin
       'Technical header should come from real language file.');
     AssertStartsWith('Executable version: ', LForm.LblExecVersion.Caption,
       'Executable version prefix should come from real language file.');
+    AssertStartsWith('GitHub commit: ', LForm.LblCommit.Caption,
+      'Commit prefix should come from real language file.');
     AssertStartsWith('Operating system: ', LForm.LblOS.Caption,
       'Operating system prefix should come from real language file.');
     AssertStartsWith('Database: ', LForm.LblDbPath.Caption,

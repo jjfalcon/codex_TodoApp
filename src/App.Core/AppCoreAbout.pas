@@ -12,6 +12,7 @@ type
     Description: string;
     Copyright: string;
     ExecutableVersion: string;
+    CommitHash: string;
     OperatingSystem: string;
     Architecture: string;
     BuildDate: string;
@@ -35,6 +36,9 @@ type
 
 implementation
 
+uses
+  AppCoreBuildInfo;
+
 const
   NotAvailable = 'No disponible';
 
@@ -42,13 +46,14 @@ constructor TAboutService.Create;
 begin
   inherited Create;
   FInfo.ApplicationName := 'Delphi TDD App';
-  FInfo.Version := '1.0.0';
+  FInfo.Version := AppBuildVersion;
   FInfo.Description := 'Aplicacion Windows desarrollada en Delphi siguiendo principios TDD.';
   FInfo.Copyright := 'Copyright 2026';
-  FInfo.ExecutableVersion := '1.0.0';
+  FInfo.ExecutableVersion := AppBuildVersion;
+  FInfo.CommitHash := AppBuildCommitHash;
   FInfo.OperatingSystem := 'Windows';
   FInfo.Architecture := NotAvailable;
-  FInfo.BuildDate := NotAvailable;
+  FInfo.BuildDate := AppBuildDate;
   FInfo.DatabasePath := NotAvailable;
   ProcessInfo;
 end;
@@ -74,6 +79,7 @@ begin
   if FInfo.Description = '' then FInfo.Description := NotAvailable;
   if FInfo.Copyright = '' then FInfo.Copyright := NotAvailable;
   if FInfo.ExecutableVersion = '' then FInfo.ExecutableVersion := NotAvailable;
+  if FInfo.CommitHash = '' then FInfo.CommitHash := NotAvailable;
   if FInfo.OperatingSystem = '' then FInfo.OperatingSystem := NotAvailable;
   if FInfo.Architecture = '' then FInfo.Architecture := NotAvailable;
   if FInfo.BuildDate = '' then FInfo.BuildDate := NotAvailable;
