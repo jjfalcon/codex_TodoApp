@@ -55,7 +55,7 @@ begin
     LFile.Add('key,es,en');
     LFile.Add('FrmLogin.Caption,Login,Login');
     LFile.Add('FrmLogin.LblUsername.Caption,Usuario,Username');
-    LFile.Add('FrmLogin.LblPassword.Caption,Contraseña,Password');
+    LFile.Add('FrmLogin.LblPassword.Caption,Contraseï¿½a,Password');
     LFile.Add('FrmLogin.BtnLogin.Caption,Entrar,Sign in');
     LFile.Add('FrmLogin.BtnCancel.Caption,Cancelar,Cancel');
     LFile.Add('OtherForm.Caption,Otro,Other');
@@ -139,6 +139,23 @@ begin
   DeleteFile(LTestLocalizationFile);
 end;
 
+procedure ChangesLanguageAndReloadsTexts;
+var
+  LLocalization: ILocalizationService;
+begin
+  WriteLocalizationFile;
+  LLocalization := TCsvLocalizationService.Create(LTestLocalizationFile, 'es', 'es');
+  AssertEquals('Usuario', LLocalization.Text('FrmLogin.LblUsername.Caption'),
+    'Should start with Spanish text.');
+
+  LLocalization.ChangeLanguage('en');
+
+  AssertEquals('en', LLocalization.Language, 'Language should be updated.');
+  AssertEquals('Username', LLocalization.Text('FrmLogin.LblUsername.Caption'),
+    'Texts should be reloaded for new language.');
+  DeleteFile(LTestLocalizationFile);
+end;
+
 procedure RunLocalizationTests(var AFailures: Integer);
 begin
   RunTest('Localization_loads_text_for_selected_language', LoadsTextForSelectedLanguage, AFailures);
@@ -146,6 +163,7 @@ begin
   RunTest('Localization_parses_quoted_csv_values', ParsesQuotedCsvValues, AFailures);
   RunTest('Localization_loads_global_text_key', LoadsGlobalTextKey, AFailures);
   RunTest('Localization_returns_only_keys_for_requested_form', ReturnsOnlyKeysForRequestedForm, AFailures);
+  RunTest('Localization_changes_language_and_reloads_texts', ChangesLanguageAndReloadsTexts, AFailures);
 end;
 
 end.

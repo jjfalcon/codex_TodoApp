@@ -48,6 +48,7 @@ type
     function HasText(const AKey: string): Boolean;
     function Text(const AKey: string): string;
     procedure AddKeysForForm(const AFormName: string; AKeys: TStrings);
+    procedure ChangeLanguage(const ALanguage: string);
     procedure AddText(const AKey, AValue: string);
   end;
 
@@ -111,6 +112,10 @@ begin
   FTexts.Values[AKey] := AValue;
 end;
 
+procedure TFakeLocalizationService.ChangeLanguage(const ALanguage: string);
+begin
+end;
+
 function TFakeLocalizationService.Language: string;
 begin
   Result := 'en';
@@ -158,6 +163,12 @@ procedure AssertTrue(AValue: Boolean; const AMessage: string);
 begin
   if not AValue then
     raise Exception.Create(AMessage);
+end;
+
+procedure AssertStartsWith(const APrefix, AActual: string; const AMessage: string);
+begin
+  if Copy(AActual, 1, Length(APrefix)) <> APrefix then
+    raise Exception.Create(AMessage + ' Expected prefix "' + APrefix + '", got "' + AActual + '".');
 end;
 
 procedure RunTest(const AName: string; AProc: TTestProc; var AFailures: Integer);
@@ -235,7 +246,7 @@ begin
   try
     AssertEquals('Login', LForm.Caption, 'Login form should load default title.');
     AssertEquals('Usuario', LForm.LblUsername.Caption, 'Login form should load default username label.');
-    AssertEquals('Contraseña', LForm.LblPassword.Caption, 'Login form should load default password label.');
+    AssertEquals('Contrase' + Chr(241) + 'a', LForm.LblPassword.Caption, 'Login form should load default password label.');
     AssertEquals('Entrar', LForm.BtnLogin.Caption, 'Login form should load default login button.');
     AssertEquals('Cancelar', LForm.BtnCancel.Caption, 'Login form should load default cancel button.');
   finally
@@ -372,7 +383,7 @@ var
   LForm: TFrmLogin;
 begin
   LFakeAuth := TFakeAuthService.Create;
-  LFakeAuth.FailWith(EAuthenticationError.Create('Usuario o contraseña incorrectos.'));
+  LFakeAuth.FailWith(EAuthenticationError.Create('Usuario o contraseï¿½a incorrectos.'));
   LAuth := LFakeAuth;
   LForm := CreateLoginForm(LAuth);
   try
@@ -380,7 +391,7 @@ begin
     LForm.EdtPassword.Text := 'wrong';
     LForm.BtnLoginClick(nil);
 
-    AssertEquals('Usuario o contraseña incorrectos.', LForm.LblMessage.Caption,
+    AssertEquals('Usuario o contraseï¿½a incorrectos.', LForm.LblMessage.Caption,
       'Login form should show auth errors.');
     AssertEquals(0, LForm.ModalResult, 'Failed login should keep dialog open.');
   finally

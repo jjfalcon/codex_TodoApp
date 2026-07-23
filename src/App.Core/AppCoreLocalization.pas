@@ -13,11 +13,14 @@ type
     function HasText(const AKey: string): Boolean;
     function Text(const AKey: string): string;
     procedure AddKeysForForm(const AFormName: string; AKeys: TStrings);
+    procedure ChangeLanguage(const ALanguage: string);
   end;
 
   TCsvLocalizationService = class(TInterfacedObject, ILocalizationService)
   private
     FLanguage: string;
+    FFileName: string;
+    FDefaultLanguage: string;
     FTexts: TStringList;
     function FindColumn(const AHeaders: TStringList; const AName: string): Integer;
     function ValueAt(const AValues: TStringList; AIndex: Integer): string;
@@ -29,6 +32,7 @@ type
     function HasText(const AKey: string): Boolean;
     function Text(const AKey: string): string;
     procedure AddKeysForForm(const AFormName: string; AKeys: TStrings);
+    procedure ChangeLanguage(const ALanguage: string);
   end;
 
 procedure ParseCsvLine(const ALine: string; AValues: TStrings);
@@ -73,11 +77,22 @@ constructor TCsvLocalizationService.Create(const AFileName, ALanguage,
   ADefaultLanguage: string);
 begin
   inherited Create;
+  FFileName := AFileName;
+  FDefaultLanguage := LowerCase(ADefaultLanguage);
   FLanguage := LowerCase(ALanguage);
   if FLanguage = '' then
-    FLanguage := LowerCase(ADefaultLanguage);
+    FLanguage := FDefaultLanguage;
   FTexts := TStringList.Create;
-  LoadFromFile(AFileName, LowerCase(ADefaultLanguage));
+  LoadFromFile(FFileName, FDefaultLanguage);
+end;
+
+procedure TCsvLocalizationService.ChangeLanguage(const ALanguage: string);
+begin
+  FLanguage := LowerCase(ALanguage);
+  if FLanguage = '' then
+    FLanguage := FDefaultLanguage;
+  FTexts.Clear;
+  LoadFromFile(FFileName, FDefaultLanguage);
 end;
 
 destructor TCsvLocalizationService.Destroy;

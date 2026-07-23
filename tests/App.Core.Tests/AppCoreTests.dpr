@@ -11,6 +11,7 @@ uses
   AppCoreDiagnosticsTests in 'AppCoreDiagnosticsTests.pas',
   AppCoreLocalizationTests in 'AppCoreLocalizationTests.pas',
   AppCorePreferencesFileRepositoryTests in 'AppCorePreferencesFileRepositoryTests.pas',
+  AppCorePreferencesServiceTests in 'AppCorePreferencesServiceTests.pas',
   AppCoreRepositoryFactoryTests in 'AppCoreRepositoryFactoryTests.pas',
   AppCoreTaskServiceTests in 'AppCoreTaskServiceTests.pas',
   AppCoreUserServiceTests in 'AppCoreUserServiceTests.pas',
@@ -49,6 +50,7 @@ begin
     RunLocalizationTests(Failures);
     RunRepositoryFactoryTests(Failures);
     RunPreferencesFileRepositoryTests(Failures);
+    RunPreferencesServiceTests(Failures);
 
     if Failures = 0 then
       Writeln('All tests passed.')

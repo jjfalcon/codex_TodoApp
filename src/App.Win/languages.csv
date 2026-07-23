@@ -1,16 +1,17 @@
 key,es,en
 FrmLogin.Caption,Login,Login
 FrmLogin.LblUsername.Caption,Usuario,Username
-FrmLogin.LblPassword.Caption,Contraseña,Password
+FrmLogin.LblPassword.Caption,Contraseï¿½a,Password
 FrmLogin.BtnLogin.Caption,Entrar,Sign in
 FrmLogin.BtnCancel.Caption,Cancelar,Cancel
 FrmMain.Caption,Delphi TDD App - FMain,Delphi TDD App - FMain
 FrmMain.BtnDashboard.Caption,Dashboard,Dashboard
 FrmMain.BtnTasks.Caption,Tareas,Tasks
 FrmMain.BtnUsers.Caption,Usuarios,Users
+FrmMain.BtnPreferences.Caption,Preferencias,Preferences
 FrmMain.BtnAbout.Caption,Acerca de,About
 FrmTasks.Caption,Tareas,Tasks
-FrmTasks.BtnAdd.Caption,Añadir,Add
+FrmTasks.BtnAdd.Caption,Aï¿½adir,Add
 FrmTasks.BtnSearch.Caption,Buscar,Search
 FrmTasks.BtnComplete.Caption,Completar,Complete
 FrmTasks.BtnDelete.Caption,Eliminar,Delete
@@ -20,14 +21,14 @@ FrmUsers.Caption,Usuarios,Users
 FrmUsers.LblUsername.Caption,Usuario,Username
 FrmUsers.LblDisplayName.Caption,Nombre visible,Display name
 FrmUsers.LblEmail.Caption,Email,Email
-FrmUsers.LblPassword.Caption,Contraseña,Password
+FrmUsers.LblPassword.Caption,Contraseï¿½a,Password
 FrmUsers.BtnSearch.Caption,Buscar,Search
 FrmUsers.ChkShowDeleted.Caption,Mostrar eliminados,Show deleted
 FrmUsers.ChkActive.Caption,Activo,Active
 FrmUsers.ChkLocked.Caption,Bloqueado,Locked
 FrmUsers.BtnNew.Caption,Crear,Create
 FrmUsers.BtnSave.Caption,Guardar,Save
-FrmUsers.BtnPassword.Caption,Cambiar contraseña,Change password
+FrmUsers.BtnPassword.Caption,Cambiar contraseï¿½a,Change password
 FrmUsers.BtnUnlock.Caption,Desbloquear,Unlock
 FrmUsers.BtnDelete.Caption,Eliminar,Delete
 FrmAbout.Caption,Acerca de,About
@@ -44,6 +45,12 @@ FrmAbout.LblArch.Caption,Arquitectura: No disponible,Architecture: Not available
 FrmAbout.LblBuildDate.Caption,Fecha de compilacion: No disponible,Build date: Not available
 FrmAbout.LblDbPath.Caption,Base de datos: No disponible,Database: Not available
 FrmAbout.BtnAccept.Caption,Aceptar,OK
+FrmPreferences.Caption,Preferencias,Preferences
+FrmPreferences.LblTitle.Caption,Preferencias,Preferences
+FrmPreferences.LblLastUsername.Caption,Ultimo usuario,Last username
+FrmPreferences.LblLanguage.Caption,Idioma,Language
+FrmPreferences.LblLastMainOption.Caption,Pantalla de inicio,Startup screen
+FrmPreferences.BtnSave.Caption,Guardar,Save
 About.VersionPrefix,Version: ,Version: 
 About.ExecutableVersionPrefix,Version del ejecutable: ,Executable version: 
 About.CommitPrefix,"Commit GitHub: ","GitHub commit: "

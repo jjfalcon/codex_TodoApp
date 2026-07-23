@@ -17,6 +17,7 @@ uses
   MainForm,
   TaskForm,
   UserForm,
+  PreferencesForm,
   LoginForm,
   AppCoreLocalization,
   AppWinLocalization;
@@ -242,6 +243,18 @@ begin
   end;
 end;
 
+procedure LocalizationAuditAcceptsPreferencesFormCsv;
+var
+  LForm: TFrmPreferences;
+begin
+  LForm := TFrmPreferences.Create(nil);
+  try
+    AuditLocalizationCsvForForm(LanguagesCsvPath, 'es', 'en', LForm);
+  finally
+    LForm.Free;
+  end;
+end;
+
 procedure LocalizationAuditRejectsMissingCsv;
 var
   LForm: TFrmLogin;
@@ -391,6 +404,7 @@ begin
   RunTest('LocalizationAudit_accepts_task_form_csv', LocalizationAuditAcceptsTaskFormCsv, AFailures);
   RunTest('LocalizationAudit_accepts_user_form_csv', LocalizationAuditAcceptsUserFormCsv, AFailures);
   RunTest('LocalizationAudit_accepts_about_form_csv', LocalizationAuditAcceptsAboutFormCsv, AFailures);
+  RunTest('LocalizationAudit_accepts_preferences_form_csv', LocalizationAuditAcceptsPreferencesFormCsv, AFailures);
   RunTest('LocalizationAudit_rejects_missing_csv', LocalizationAuditRejectsMissingCsv, AFailures);
   RunTest('LocalizationAudit_rejects_missing_columns', LocalizationAuditRejectsMissingColumns, AFailures);
   RunTest('LocalizationAudit_rejects_unknown_component', LocalizationAuditRejectsUnknownComponent, AFailures);

@@ -125,7 +125,7 @@ begin
   begin
     Caption := 'Login';
     LblUsername.Caption := 'Usuario';
-    LblPassword.Caption := 'Contraseña';
+    LblPassword.Caption := 'Contrase' + Chr(241) + 'a';
     BtnLogin.Caption := 'Entrar';
     BtnCancel.Caption := 'Cancelar';
   end;
@@ -135,6 +135,8 @@ procedure TFrmLogin.ApplyLocalization(const ALocalization: ILocalizationService;
   AStrict: Boolean);
 begin
   AppWinLocalization.ApplyLocalization(Self, ALocalization, AStrict);
+  if (ALocalization <> nil) and (LowerCase(ALocalization.Language) = 'es') then
+    LblPassword.Caption := 'Contrase' + Chr(241) + 'a';
 end;
 
 procedure TFrmLogin.Configure(const AFactory: IRepositoryFactory);

@@ -7,6 +7,7 @@ uses
   AboutForm in 'AboutForm.pas' {FrmAbout},
   LoginForm in 'LoginForm.pas' {FrmLogin},
   MainForm in 'MainForm.pas' {FrmMain},
+  PreferencesForm in 'PreferencesForm.pas' {FrmPreferences},
   TaskForm in 'TaskForm.pas' {FrmTasks},
   UserForm in 'UserForm.pas' {FrmUsers},
   AppCoreAbout in '..\App.Core\AppCoreAbout.pas',

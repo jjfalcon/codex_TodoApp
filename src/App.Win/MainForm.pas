@@ -20,13 +20,14 @@ uses
   AppCoreUserRepository;
 
 type
-  TNavigationOption = (noDashboard, noTasks, noUsers);
+  TNavigationOption = (noDashboard, noTasks, noUsers, noPreferences);
 
   TFrmMain = class(TForm)
     PnlSidebar: TPanel;
     BtnDashboard: TButton;
     BtnTasks: TButton;
     BtnUsers: TButton;
+    BtnPreferences: TButton;
     BtnAbout: TButton;
     PnlContent: TPanel;
     procedure FormCreate(Sender: TObject);
@@ -34,6 +35,7 @@ type
     procedure BtnDashboardClick(Sender: TObject);
     procedure BtnTasksClick(Sender: TObject);
     procedure BtnUsersClick(Sender: TObject);
+    procedure BtnPreferencesClick(Sender: TObject);
     procedure BtnAboutClick(Sender: TObject);
   private
     FActiveOption: TNavigationOption;
@@ -54,6 +56,7 @@ type
     function CreatePlaceholderForm(const ATitle, AMessage: string): TForm;
     function NavigationOptionToPreference(AOption: TNavigationOption): string;
     function PreferenceToNavigationOption(const AValue: string): TNavigationOption;
+    procedure PreferencesLanguageSaved(Sender: TObject; const ALanguage: string);
     procedure LoadOption(AOption: TNavigationOption);
     procedure SetActiveButton(AOption: TNavigationOption);
     procedure SetUserRole(AValue: TUserRole);
@@ -76,6 +79,7 @@ implementation
 
 uses
   AboutForm,
+  PreferencesForm,
   TaskForm,
   UserForm,
   AppWinLocalization;
@@ -98,6 +102,11 @@ end;
 procedure TFrmMain.BtnUsersClick(Sender: TObject);
 begin
   LoadOption(noUsers);
+end;
+
+procedure TFrmMain.BtnPreferencesClick(Sender: TObject);
+begin
+  LoadOption(noPreferences);
 end;
 
 procedure TFrmMain.BtnAboutClick(Sender: TObject);
@@ -214,11 +223,18 @@ begin
         TFrmUsers(FCurrentForm).ApplyLocalization(FLocalization, False);
         TFrmUsers(FCurrentForm).Configure(FFactory.CreateUserRepository, FClock, FHasher, FCurrentUserId);
       end;
+    noPreferences:
+      begin
+        EmbedForm(TFrmPreferences.Create(Self));
+        TFrmPreferences(FCurrentForm).ApplyLocalization(FLocalization, False);
+        TFrmPreferences(FCurrentForm).Configure(TPreferencesService.Create(FPreferences));
+        TFrmPreferences(FCurrentForm).OnLanguageSaved := PreferencesLanguageSaved;
+      end;
   end;
 
   FActiveOption := AOption;
   SetActiveButton(AOption);
-  if FPreferences <> nil then
+  if (FPreferences <> nil) and (AOption <> noPreferences) then
     FPreferences.SetLastMainOption(NavigationOptionToPreference(AOption));
 end;
 
@@ -244,15 +260,29 @@ begin
     Result := noDashboard;
 end;
 
+procedure TFrmMain.PreferencesLanguageSaved(Sender: TObject;
+  const ALanguage: string);
+begin
+  if FLocalization <> nil then
+  begin
+    FLocalization.ChangeLanguage(ALanguage);
+    ApplyLocalization;
+    if FCurrentForm is TFrmPreferences then
+      TFrmPreferences(FCurrentForm).ApplyLocalization(FLocalization, False);
+  end;
+end;
+
 procedure TFrmMain.SetActiveButton(AOption: TNavigationOption);
 begin
   BtnDashboard.Font.Style := [];
   BtnTasks.Font.Style := [];
   BtnUsers.Font.Style := [];
+  BtnPreferences.Font.Style := [];
 
   BtnDashboard.Enabled := True;
   BtnTasks.Enabled := True;
   BtnUsers.Enabled := FUserRole = urAdmin;
+  BtnPreferences.Enabled := True;
 
   case AOption of
     noDashboard:
@@ -261,6 +291,8 @@ begin
       BtnTasks.Font.Style := [fsBold];
     noUsers:
       BtnUsers.Font.Style := [fsBold];
+    noPreferences:
+      BtnPreferences.Font.Style := [fsBold];
   end;
 end;
 

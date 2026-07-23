@@ -26,6 +26,7 @@ type
     function HasText(const AKey: string): Boolean;
     function Text(const AKey: string): string;
     procedure AddKeysForForm(const AFormName: string; AKeys: TStrings);
+    procedure ChangeLanguage(const ALanguage: string);
     procedure AddText(const AKey, AValue: string);
   end;
 
@@ -76,6 +77,11 @@ end;
 procedure TFakeLocalizationService.AddText(const AKey, AValue: string);
 begin
   FTexts.Values[AKey] := AValue;
+end;
+
+procedure TFakeLocalizationService.ChangeLanguage(const ALanguage: string);
+begin
+  FLanguage := ALanguage;
 end;
 
 procedure AssertEquals(const AExpected, AActual: string; const AMessage: string);

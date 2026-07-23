@@ -9,13 +9,14 @@ Recordar preferencias locales de uso para mejorar el arranque de la aplicacion s
 - Recordar el ultimo usuario escrito en el login.
 - Recordar el idioma activo.
 - Recordar la ultima opcion activa de `FMain`.
+- Permitir ver y editar preferencias desde un formulario embebido en `FMain`.
 
 ## Fuera de alcance actual
 
 - Sincronizar preferencias entre equipos.
 - Guardar contrasenas o secretos.
 - Preferencias por usuario autenticado en base de datos.
-- Editor visual de preferencias.
+- Preferencias por usuario autenticado diferenciadas del fichero local.
 
 ## Persistencia
 
@@ -44,7 +45,20 @@ Valores definidos:
 
 - `LastUsername` se aplica al abrir `FrmLogin` para precargar el campo usuario.
 - `Language` se aplica al crear el servicio de localizacion durante el arranque.
+- Si `Language` se cambia desde `FrmPreferences`, la aplicacion reaplica la localizacion inmediatamente en `FMain` y en el formulario embebido actual.
 - `LastOption` se aplica al configurar `FrmMain`; si la opcion guardada no es valida o no esta permitida para el rol actual, se abre `Dashboard`.
+
+## Pantalla de preferencias
+
+`FrmPreferences` se abre embebido desde la barra lateral de `FMain`.
+
+Campos visibles:
+
+- Ultimo usuario: solo lectura.
+- Idioma: editable mediante combo con valores `es` y `en`.
+- Pantalla de inicio: editable mediante combo con valores internos `Dashboard`, `Tasks` y `Users`.
+
+Al guardar, la UI llama a `TPreferencesService`; las validaciones permanecen en `src\App.Core`.
 
 ## Reglas
 
@@ -52,9 +66,15 @@ Valores definidos:
 - Una actualizacion de preferencia no debe borrar las demas claves existentes.
 - Si el fichero no existe, las preferencias devuelven cadena vacia.
 - La UI solo lee o escribe preferencias a traves de la interfaz del nucleo.
+- Solo se aceptan idiomas `es` y `en` desde la pantalla de preferencias.
+- Solo se aceptan opciones iniciales `Dashboard`, `Tasks` y `Users`.
 
 ## Componentes
 
 - `src\App.Core\AppCorePreferences.pas`: interfaz `ILoginPreferencesRepository` e implementacion en memoria para tests.
+- `src\App.Core\AppCorePreferences.pas`: `TPreferencesService` valida y guarda preferencias editables.
 - `src\App.Core\AppCorePreferencesFileRepository.pas`: implementacion local sobre `app.config`.
+- `src\App.Win\PreferencesForm.pas`: formulario VCL embebible de preferencias.
 - `tests\App.Core.Tests\AppCorePreferencesFileRepositoryTests.pas`: pruebas de persistencia.
+- `tests\App.Core.Tests\AppCorePreferencesServiceTests.pas`: pruebas de validacion y guardado.
+- `tests\App.Win.Tests\PreferencesFormTests.pas`: pruebas unitarias del formulario VCL.

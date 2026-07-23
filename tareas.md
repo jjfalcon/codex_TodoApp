@@ -10,6 +10,15 @@
 
 ## Realizadas
 
+### Formulario embebido de preferencias
+
+- Se agrego `TPreferencesService` para validar idioma y opcion inicial desde `src\App.Core`.
+- Se agrego `FrmPreferences` como formulario embebible en `FMain`.
+- La barra lateral de `FMain` incluye `Preferencias`.
+- El formulario muestra ultimo usuario en solo lectura y permite editar idioma y pantalla de inicio.
+- Al guardar un nuevo idioma, `FMain` reaplica la localizacion sin reiniciar.
+- Se agregaron pruebas Core y App.Win para el flujo de preferencias.
+
 ### Especificacion de preferencias de usuario
 
 - Se documento `docs\USER_PREFERENCES_SPEC.md`.

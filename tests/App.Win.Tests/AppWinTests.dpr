@@ -8,8 +8,10 @@ uses
   AboutFormTests in 'AboutFormTests.pas',
   LocalizationAuditTests in 'LocalizationAuditTests.pas',
   LoginFormTests in 'LoginFormTests.pas',
+  PreferencesFormTests in 'PreferencesFormTests.pas',
   AppWinLocalization in '..\..\src\App.Win\AppWinLocalization.pas',
   LoginForm in '..\..\src\App.Win\LoginForm.pas',
+  PreferencesForm in '..\..\src\App.Win\PreferencesForm.pas',
   AppCoreAuth in '..\..\src\App.Core\AppCoreAuth.pas',
   AppCoreClock in '..\..\src\App.Core\AppCoreClock.pas',
   AppCoreDiagnostics in '..\..\src\App.Core\AppCoreDiagnostics.pas',
@@ -29,6 +31,7 @@ begin
     Application.Initialize;
     RunAboutFormTests(Failures);
     RunLoginFormTests(Failures);
+    RunPreferencesFormTests(Failures);
     RunLocalizationAuditTests(Failures);
 
     if Failures = 0 then

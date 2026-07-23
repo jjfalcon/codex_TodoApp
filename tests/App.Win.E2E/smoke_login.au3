@@ -127,6 +127,9 @@ Func FindButton($Title, $Text1, $Text2, $Text3)
     For $I = 1 To 12
         Global $Text = ControlGetText($Title, "", "[CLASS:TButton; INSTANCE:" & $I & "]")
         If ($Text = $Text1) Or ($Text = $Text2) Or ($Text = $Text3) Then Return "[CLASS:TButton; INSTANCE:" & $I & "]"
+        If ($Text1 <> "") And StringInStr($Text, $Text1) Then Return "[CLASS:TButton; INSTANCE:" & $I & "]"
+        If ($Text2 <> "") And StringInStr($Text, $Text2) Then Return "[CLASS:TButton; INSTANCE:" & $I & "]"
+        If ($Text3 <> "") And StringInStr($Text, $Text3) Then Return "[CLASS:TButton; INSTANCE:" & $I & "]"
     Next
     Return ""
 EndFunc
@@ -185,7 +188,7 @@ For $I = 1 To 4
     ControlSetText($MainTitle, "", "[CLASS:TEdit; INSTANCE:" & $I & "]", $TaskTitle)
 Next
 
-Global $AddButton = FindButton($MainTitle, "A" & Chr(241) & "adir", "Anadir", "Add")
+Global $AddButton = FindButton($MainTitle, "adir", "Anadir", "Add")
 If $AddButton = "" Then _
     Fail(19, "Could not find Add task button.")
 
