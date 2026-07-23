@@ -1,10 +1,10 @@
 # Resumen de sesiones - TodoApp
 
 ## Estadisticas del proyecto
-- Commits: 22
-- Tests: 83 (78 core + 5 App.Win, todos pasan)
+- Commits: 36
+- Tests registrados: 138 llamadas `RunTest` entre Core y App.Win
 - Archivos fuente: ~32
-- Documentacion: 18 docs en docs/
+- Documentacion: 19 docs en docs/
 
 ---
 
@@ -287,5 +287,79 @@ Cobertura funcional de los tests:
 - Cubrir textos cargados desde lenguaje seleccionado.
 - Mantener una verificacion visual con captura para el login.
 - Ampliar `tests\App.Win.Tests\coverage.bat` con nuevas unidades en `-u` cuando se agreguen tests de otros forms.
+
+---
+
+## 11. Sesion 11 - 2026-07-23: E2E ampliado, build trazable y monitorizacion local
+
+Commits relevantes:
+
+- `00e623b` Incluir diagnosticos de captura en E2E
+- `515c98c` Incluir version trazable en About
+- `f885030` Agregar monitorizacion local con timings
+
+### e2eTest
+
+- Se amplio `tests\App.Win.E2E\smoke_login.au3` para cubrir login, apertura de `Tareas`, alta de tarea y completado.
+- El flujo verifica que la tarea aparece pendiente con prefijo `[ ]` y completada con prefijo `[x]`.
+- Se agrego diagnostico de fallo con listado de ventanas, clases, botones, edits, labels y seleccion de lista.
+- Se agrego captura automatica de pantalla en `tests\App.Win.E2E\runtime\diagnostics\failure.png` cuando falla una asercion.
+- El runner `run-smoke-login.bat` prepara `runtime\diagnostics` y valida tambien el log de monitorizacion.
+
+### Version y build trazable
+
+- Se agrego `src\App.Core\AppCoreBuildInfo.pas` como fallback estable.
+- Se agrego `src\App.Core\AppCoreBuildInfo.template.pas` para restaurar el fallback tras builds automatizadas.
+- Se agrego `scripts\generate-build-info.bat` para generar version real desde Git.
+- Se agrego `scripts\build-windows.bat` como wrapper simple de build trazable.
+- La version del ejecutable se calcula como `Major.Minor.Patch.CommitCount`, usando `git rev-list --count HEAD`.
+- El commit GitHub se obtiene con `git rev-parse --short HEAD`.
+- `TAboutService` expone version, version del ejecutable, fecha de build y commit.
+- `FrmAbout` muestra `Commit GitHub` con prefijo localizado desde `languages.csv`.
+- El build automatizado genera la info real antes de compilar y restaura el fallback para evitar bucles de commits.
+
+### Monitorizacion local
+
+- Se agrego `src\App.Core\AppCoreDiagnostics.pas`.
+- `TFileDiagnosticsLogger` escribe `logs\application.log`.
+- `TDiagnosticTimer` mide duraciones en milisegundos.
+- El logger soporta `INFO`, `WARNING`, `ERROR` y `TIMING`.
+- Se sanean valores sensibles como `password=`, `pwd=`, `token=`, `secret=` y `connectionstring=`.
+- `WindowsApp.dpr` registra `App.Start`, `App.Stop` y `App.UnhandledException`.
+- `TFrmLogin` registra `Auth.Login` con resultado y `durationMs`.
+- `TFrmMain` registra apertura de la pantalla `Tareas`.
+- `TFrmTasks` registra `Task.Create` y `Task.Complete` con resultado y `durationMs`.
+- El E2E comprueba que `logs\application.log` existe y contiene `App.Start`, `Auth.Login`, `Task.Create` y `Task.Complete`.
+
+### Tests y documentacion
+
+- Se agrego `tests\App.Core.Tests\AppCoreDiagnosticsTests.pas`.
+- Se agregaron tests para escritura de `INFO`, escritura de `TIMING durationMs` y saneado de valores sensibles.
+- `tests\App.Core.Tests\coverage.bat` incluye `AppCoreDiagnostics` en la lista de unidades medidas.
+- `tests\App.Win.Tests\AppWinTests.dpr` incluye la nueva unidad Core para compilar los forms instrumentados.
+- Se agrego `docs\MONITORING.md` con ubicacion, formato, eventos iniciales y politica de privacidad del log.
+- `README.md` enlaza la documentacion de monitorizacion.
+- `.gitignore` ignora `logs/` y `tests\App.Core.Tests\diagnostics-test/`.
+- `tareas.md` marco como realizadas las tareas de version/build trazable y monitorizacion local.
+
+### Verificaciones ejecutadas
+
+- `AppCoreTests.exe`: `All tests passed`.
+- `tests\App.Win.Tests\run-tests.bat`: `All tests passed`.
+- `tests\App.Win.E2E\run-smoke-login.bat`: `Smoke login and task CRUD flow passed`.
+- `scripts\build-windows.bat`: compila correctamente y restaura `AppCoreBuildInfo.pas`.
+- `git diff --check`: sin errores.
+
+### GitHub
+
+- Commit `00e623b` subido a `origin/master`.
+- Commit `515c98c` subido a `origin/master`.
+- Commit `f885030` subido a `origin/master`.
+- El arbol quedo limpio tras cada push.
+
+### Pendientes actuales
+
+- Especificar preferencias de usuario.
+- Crear form CRUD de tabla generica.
 
 ---
