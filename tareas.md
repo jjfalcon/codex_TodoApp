@@ -2,12 +2,6 @@
 
 ## Pendientes
 
-### Especificar preferencias de usuario
-
-- Definir una spec de preferencias de usuario.
-- Acordar que preferencias se guardan, donde se persisten y cuando se aplican.
-- Cubrir idioma, ultimo usuario y futuras preferencias de interfaz si aplican.
-
 ### Crear form CRUD de tabla generica
 
 - Definir un formulario reutilizable para CRUD de tablas.
@@ -15,6 +9,16 @@
 - Separar reglas de negocio en `src\App.Core` y mantener la UI como capa fina.
 
 ## Realizadas
+
+### Especificacion de preferencias de usuario
+
+- Se documento `docs\USER_PREFERENCES_SPEC.md`.
+- Se definieron preferencias locales actuales: ultimo usuario, idioma activo y ultima opcion activa de `FMain`.
+- Se acordo persistencia en `app.config` mediante `TFileLoginPreferencesRepository`.
+- Se extendio `ILoginPreferencesRepository` con `ActiveLanguage` y `LastMainOption`.
+- Se agregaron pruebas de persistencia para idioma activo, ultima opcion principal y conservacion de claves existentes.
+- `FMain` restaura la ultima opcion activa permitida para el rol actual y guarda la navegacion seleccionada.
+- Verificacion: `AppCoreTests.exe` termina con `All tests passed`.
 
 ### Monitorizacion local de errores y degradacion
 

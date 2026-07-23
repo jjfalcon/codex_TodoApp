@@ -12,6 +12,7 @@ Esta preparada para compilar con Delphi 7, usando un runner de pruebas propio pa
 - `docs/TDD.md`: forma de trabajo recomendada.
 - `docs/TESTING.md`: niveles de test consensuados del proyecto.
 - `docs/MONITORING.md`: monitorizacion local, timings y diagnostico.
+- `docs/USER_PREFERENCES_SPEC.md`: preferencias locales de usuario.
 - `docs/SESIONES.md`: documentacion técnica de las sesiones.
 
 ## Primer flujo TDD

@@ -14,6 +14,7 @@ uses
   AppCoreClock,
   AppCoreDiagnostics,
   AppCoreLocalization,
+  AppCorePreferences,
   AppCoreRepositoryFactory,
   AppCoreUser,
   AppCoreUserRepository;
@@ -45,11 +46,14 @@ type
     FHasher: IPasswordHasher;
     FLocalization: ILocalizationService;
     FDiagnostics: IDiagnosticsLogger;
+    FPreferences: ILoginPreferencesRepository;
 
     procedure ApplyLocalization;
     procedure ClearContent;
     procedure EmbedForm(AForm: TForm);
     function CreatePlaceholderForm(const ATitle, AMessage: string): TForm;
+    function NavigationOptionToPreference(AOption: TNavigationOption): string;
+    function PreferenceToNavigationOption(const AValue: string): TNavigationOption;
     procedure LoadOption(AOption: TNavigationOption);
     procedure SetActiveButton(AOption: TNavigationOption);
     procedure SetUserRole(AValue: TUserRole);
@@ -127,9 +131,10 @@ begin
   FCurrentUserId := ACurrentUserId;
   FLocalization := ALocalization;
   FDiagnostics := ADiagnostics;
+  FPreferences := FFactory.CreateLoginPreferencesRepository;
   ApplyLocalization;
   ClearContent;
-  LoadOption(noDashboard);
+  LoadOption(PreferenceToNavigationOption(FPreferences.LastMainOption));
 end;
 
 function TFrmMain.CreatePlaceholderForm(const ATitle, AMessage: string): TForm;
@@ -213,6 +218,30 @@ begin
 
   FActiveOption := AOption;
   SetActiveButton(AOption);
+  if FPreferences <> nil then
+    FPreferences.SetLastMainOption(NavigationOptionToPreference(AOption));
+end;
+
+function TFrmMain.NavigationOptionToPreference(AOption: TNavigationOption): string;
+begin
+  case AOption of
+    noTasks:
+      Result := 'Tasks';
+    noUsers:
+      Result := 'Users';
+  else
+    Result := 'Dashboard';
+  end;
+end;
+
+function TFrmMain.PreferenceToNavigationOption(const AValue: string): TNavigationOption;
+begin
+  if AValue = 'Tasks' then
+    Result := noTasks
+  else if (AValue = 'Users') and (FUserRole = urAdmin) then
+    Result := noUsers
+  else
+    Result := noDashboard;
 end;
 
 procedure TFrmMain.SetActiveButton(AOption: TNavigationOption);
