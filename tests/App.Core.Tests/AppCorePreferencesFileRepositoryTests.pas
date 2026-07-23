@@ -9,6 +9,7 @@ implementation
 uses
   Classes,
   SysUtils,
+  AppCoreCrud,
   AppCorePreferences,
   AppCorePreferencesFileRepository;
 
@@ -229,6 +230,30 @@ begin
   DeleteFile(LTestPrefsFile);
 end;
 
+procedure PersistsGridLayoutInNamedSection;
+var
+  LLayout: ICrudGridLayoutRepository;
+  LFile: TStringList;
+begin
+  DeleteFile(LTestPrefsFile);
+  LLayout := TFileLoginPreferencesRepository.Create(LTestPrefsFile) as ICrudGridLayoutRepository;
+  LLayout.WriteGridValue('USR', 'username.Width', '150');
+  LLayout := nil;
+
+  LLayout := TFileLoginPreferencesRepository.Create(LTestPrefsFile) as ICrudGridLayoutRepository;
+  AssertEquals('150', LLayout.ReadGridValue('USR', 'username.Width'), 'Grid layout should persist after reload.');
+  LLayout := nil;
+
+  LFile := TStringList.Create;
+  try
+    LFile.LoadFromFile(LTestPrefsFile);
+    AssertTrue(LFile.IndexOf('[Grid.USR]') >= 0, 'Grid layout should use a named Grid section.');
+  finally
+    LFile.Free;
+  end;
+  DeleteFile(LTestPrefsFile);
+end;
+
 procedure RunPreferencesFileRepositoryTests(var AFailures: Integer);
 begin
   RunTest('NewRepository_returns_empty', NewRepositoryReturnsEmpty, AFailures);
@@ -239,6 +264,7 @@ begin
   RunTest('Overwrites_previous_username', OverwritesPreviousUsername, AFailures);
   RunTest('Saves_preferences_without_dropping_existing_values', SavesPreferencesWithoutDroppingExistingValues, AFailures);
   RunTest('Adds_missing_key_inside_existing_section', AddsMissingKeyInsideExistingSection, AFailures);
+  RunTest('Persists_grid_layout_in_named_section', PersistsGridLayoutInNamedSection, AFailures);
 end;
 
 end.

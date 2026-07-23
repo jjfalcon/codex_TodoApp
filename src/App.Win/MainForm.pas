@@ -12,21 +12,24 @@ uses
   Graphics,
   AppCoreAuth,
   AppCoreClock,
+  AppCoreCrud,
   AppCoreDiagnostics,
   AppCoreLocalization,
   AppCorePreferences,
   AppCoreRepositoryFactory,
   AppCoreUser,
-  AppCoreUserRepository;
+  AppCoreUserRepository,
+  AppCoreUserService;
 
 type
-  TNavigationOption = (noDashboard, noTasks, noUsers, noPreferences);
+  TNavigationOption = (noDashboard, noTasks, noUsers, noUsr, noPreferences);
 
   TFrmMain = class(TForm)
     PnlSidebar: TPanel;
     BtnDashboard: TButton;
     BtnTasks: TButton;
     BtnUsers: TButton;
+    BtnUsr: TButton;
     BtnPreferences: TButton;
     BtnAbout: TButton;
     PnlContent: TPanel;
@@ -35,6 +38,7 @@ type
     procedure BtnDashboardClick(Sender: TObject);
     procedure BtnTasksClick(Sender: TObject);
     procedure BtnUsersClick(Sender: TObject);
+    procedure BtnUsrClick(Sender: TObject);
     procedure BtnPreferencesClick(Sender: TObject);
     procedure BtnAboutClick(Sender: TObject);
   private
@@ -49,6 +53,7 @@ type
     FLocalization: ILocalizationService;
     FDiagnostics: IDiagnosticsLogger;
     FPreferences: ILoginPreferencesRepository;
+    FCrudUserService: TUserService;
 
     procedure ApplyLocalization;
     procedure ClearContent;
@@ -79,9 +84,11 @@ implementation
 
 uses
   AboutForm,
+  CrudForm,
   PreferencesForm,
   TaskForm,
   UserForm,
+  AppCoreUserCrudProvider,
   AppWinLocalization;
 
 procedure TFrmMain.ApplyLocalization;
@@ -102,6 +109,11 @@ end;
 procedure TFrmMain.BtnUsersClick(Sender: TObject);
 begin
   LoadOption(noUsers);
+end;
+
+procedure TFrmMain.BtnUsrClick(Sender: TObject);
+begin
+  LoadOption(noUsr);
 end;
 
 procedure TFrmMain.BtnPreferencesClick(Sender: TObject);
@@ -125,6 +137,7 @@ end;
 procedure TFrmMain.ClearContent;
 begin
   FreeAndNil(FCurrentForm);
+  FreeAndNil(FCrudUserService);
 end;
 
 procedure TFrmMain.ConfigureServices(const AFactory: IRepositoryFactory;
@@ -196,7 +209,7 @@ end;
 
 procedure TFrmMain.LoadOption(AOption: TNavigationOption);
 begin
-  if (AOption = noUsers) and (FUserRole <> urAdmin) then
+  if (AOption in [noUsers, noUsr]) and (FUserRole <> urAdmin) then
     Exit;
 
   if (FCurrentForm <> nil) and (FActiveOption = AOption) then
@@ -223,6 +236,14 @@ begin
         TFrmUsers(FCurrentForm).ApplyLocalization(FLocalization, False);
         TFrmUsers(FCurrentForm).Configure(FFactory.CreateUserRepository, FClock, FHasher, FCurrentUserId);
       end;
+    noUsr:
+      begin
+        EmbedForm(TFrmCrud.Create(Self));
+        TFrmCrud(FCurrentForm).ApplyLocalization(FLocalization, False);
+        FCrudUserService := TUserService.Create(FFactory.CreateUserRepository, FClock, FHasher);
+        TFrmCrud(FCurrentForm).Configure(TUserCrudProvider.Create(FCrudUserService,
+          FCurrentUserId), emDetail, FPreferences as ICrudGridLayoutRepository, 'USR');
+      end;
     noPreferences:
       begin
         EmbedForm(TFrmPreferences.Create(Self));
@@ -245,6 +266,8 @@ begin
       Result := 'Tasks';
     noUsers:
       Result := 'Users';
+    noUsr:
+      Result := 'USR';
   else
     Result := 'Dashboard';
   end;
@@ -256,6 +279,8 @@ begin
     Result := noTasks
   else if (AValue = 'Users') and (FUserRole = urAdmin) then
     Result := noUsers
+  else if (AValue = 'USR') and (FUserRole = urAdmin) then
+    Result := noUsr
   else
     Result := noDashboard;
 end;
@@ -269,6 +294,8 @@ begin
     ApplyLocalization;
     if FCurrentForm is TFrmPreferences then
       TFrmPreferences(FCurrentForm).ApplyLocalization(FLocalization, False);
+    if FCurrentForm is TFrmCrud then
+      TFrmCrud(FCurrentForm).ApplyLocalization(FLocalization, False);
   end;
 end;
 
@@ -277,11 +304,13 @@ begin
   BtnDashboard.Font.Style := [];
   BtnTasks.Font.Style := [];
   BtnUsers.Font.Style := [];
+  BtnUsr.Font.Style := [];
   BtnPreferences.Font.Style := [];
 
   BtnDashboard.Enabled := True;
   BtnTasks.Enabled := True;
   BtnUsers.Enabled := FUserRole = urAdmin;
+  BtnUsr.Enabled := FUserRole = urAdmin;
   BtnPreferences.Enabled := True;
 
   case AOption of
@@ -291,6 +320,8 @@ begin
       BtnTasks.Font.Style := [fsBold];
     noUsers:
       BtnUsers.Font.Style := [fsBold];
+    noUsr:
+      BtnUsr.Font.Style := [fsBold];
     noPreferences:
       BtnPreferences.Font.Style := [fsBold];
   end;
@@ -307,6 +338,8 @@ procedure TFrmMain.UpdatePermissions;
 begin
   BtnUsers.Visible := FUserRole = urAdmin;
   BtnUsers.Enabled := FUserRole = urAdmin;
+  BtnUsr.Visible := FUserRole = urAdmin;
+  BtnUsr.Enabled := FUserRole = urAdmin;
 end;
 
 end.

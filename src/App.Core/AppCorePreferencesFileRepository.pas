@@ -5,10 +5,12 @@ interface
 uses
   SysUtils,
   Classes,
+  AppCoreCrud,
   AppCorePreferences;
 
 type
-  TFileLoginPreferencesRepository = class(TInterfacedObject, ILoginPreferencesRepository)
+  TFileLoginPreferencesRepository = class(TInterfacedObject, ILoginPreferencesRepository,
+    ICrudGridLayoutRepository)
   private
     FFileName: string;
     FLastUsername: string;
@@ -25,6 +27,8 @@ type
     procedure SetActiveLanguage(const ALanguage: string);
     function LastMainOption: string;
     procedure SetLastMainOption(const AOption: string);
+    function ReadGridValue(const AGridKey, AName: string): string;
+    procedure WriteGridValue(const AGridKey, AName, AValue: string);
   end;
 
 implementation
@@ -152,6 +156,52 @@ begin
   finally
     LFile.Free;
   end;
+end;
+
+function TFileLoginPreferencesRepository.ReadGridValue(const AGridKey,
+  AName: string): string;
+var
+  LFile: TStringList;
+  I: Integer;
+  LLine: string;
+  LSection: string;
+  LSeparator: Integer;
+begin
+  Result := '';
+  if not FileExists(FFileName) then
+    Exit;
+
+  LFile := TStringList.Create;
+  try
+    LFile.LoadFromFile(FFileName);
+    LSection := '';
+    for I := 0 to LFile.Count - 1 do
+    begin
+      LLine := Trim(LFile[I]);
+      if LLine = '' then
+        Continue;
+      if (LLine[1] = '[') and (LLine[Length(LLine)] = ']') then
+      begin
+        LSection := Copy(LLine, 2, Length(LLine) - 2);
+        Continue;
+      end;
+      LSeparator := Pos('=', LLine);
+      if (LSection = 'Grid.' + AGridKey) and (LSeparator > 0) and
+        (Copy(LLine, 1, LSeparator - 1) = AName) then
+      begin
+        Result := Copy(LLine, LSeparator + 1, MaxInt);
+        Exit;
+      end;
+    end;
+  finally
+    LFile.Free;
+  end;
+end;
+
+procedure TFileLoginPreferencesRepository.WriteGridValue(const AGridKey, AName,
+  AValue: string);
+begin
+  SaveValue('Grid.' + AGridKey, AName, AValue);
 end;
 
 procedure TFileLoginPreferencesRepository.SetActiveLanguage(const ALanguage: string);

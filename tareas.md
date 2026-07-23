@@ -2,13 +2,31 @@
 
 ## Pendientes
 
+## Realizadas
+
 ### Crear form CRUD de tabla generica
 
-- Definir un formulario reutilizable para CRUD de tablas.
-- Acordar columnas, acciones, validaciones y puntos de extension.
-- Separar reglas de negocio en `src\App.Core` y mantener la UI como capa fina.
-
-## Realizadas
+- Se agrego `src\App.Core\AppCoreCrud.pas` con schema, record generico, modos de edicion e interfaz `ICrudProvider`.
+- Se agrego `src\App.Core\AppCoreUserCrudProvider.pas` como adaptador de usuarios sobre `TUserService`.
+- Se agrego `src\App.Win\CrudForm.pas` con `TClientDataSet`, busqueda, orden por cabecera, alta, borrado y edicion segun modo.
+- Se agrego `src\App.Win\CrudDetailForm.pas` para alta/edicion dinamica desde el schema.
+- Se definieron modos `emNone`, `emGrid` y `emDetail`.
+- Se agrego persistencia opcional de layout de columnas en `app.config`, con una seccion `Grid.<clave>` por grid.
+- Se corrigio `USR` para crear el servicio de usuarios despues de embeber el formulario, evitando que `ClearContent` lo liberase antes de cargar datos.
+- Se agregaron filtros por columna delegados a `ICrudProvider.List`.
+- Se reemplazo la busqueda inline por un formulario no modal que resalta en amarillo las celdas coincidentes sin filtrar filas.
+- Se agrego confirmacion antes de eliminar registros desde el CRUD generico.
+- Se corrigio la escritura de campos en `CrudDetailForm`, reparando crear/editar en modo detalle.
+- Se agregaron indicadores de orden (`^`/`v`) y filtro (`*`) en cabeceras.
+- Se persisten filtros y orden junto al layout en la seccion `Grid.<clave>` de `app.config`.
+- El formulario CRUD usa cabecera `alTop` y grid `alClient` para ocupar el espacio restante.
+- Se elimino el boton `Filtrar`; los filtros se abren con `Ctrl+click` sobre la cabecera.
+- Se cambio el texto de `Refrescar` a `Reset`.
+- Se agrego opcion administrativa `USR` en `FMain` usando `TFrmCrud`, `TUserCrudProvider` y `emDetail`.
+- Se documento `docs\CRUD_FORM_SPEC.md`.
+- Verificacion: `AppCoreTests.exe` termina con `All tests passed`.
+- Verificacion: `tests\App.Win.Tests\run-tests.bat` termina con `All tests passed`.
+- Verificacion: `dcc32 "-U..\App.Core" -B WindowsApp.dpr` termina sin errores.
 
 ### Formulario embebido de preferencias
 

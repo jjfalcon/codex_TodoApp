@@ -6,11 +6,15 @@ uses
   SysUtils,
   Forms,
   AboutFormTests in 'AboutFormTests.pas',
+  CrudFormTests in 'CrudFormTests.pas',
   LocalizationAuditTests in 'LocalizationAuditTests.pas',
   LoginFormTests in 'LoginFormTests.pas',
   PreferencesFormTests in 'PreferencesFormTests.pas',
   AppWinLocalization in '..\..\src\App.Win\AppWinLocalization.pas',
+  CrudDetailForm in '..\..\src\App.Win\CrudDetailForm.pas',
+  CrudForm in '..\..\src\App.Win\CrudForm.pas',
   LoginForm in '..\..\src\App.Win\LoginForm.pas',
+  AppCoreCrud in '..\..\src\App.Core\AppCoreCrud.pas',
   PreferencesForm in '..\..\src\App.Win\PreferencesForm.pas',
   AppCoreAuth in '..\..\src\App.Core\AppCoreAuth.pas',
   AppCoreClock in '..\..\src\App.Core\AppCoreClock.pas',
@@ -30,6 +34,7 @@ begin
   try
     Application.Initialize;
     RunAboutFormTests(Failures);
+    RunCrudFormTests(Failures);
     RunLoginFormTests(Failures);
     RunPreferencesFormTests(Failures);
     RunLocalizationAuditTests(Failures);

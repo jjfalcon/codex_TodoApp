@@ -3,7 +3,9 @@ unit AppCorePreferences;
 interface
 
 uses
-  SysUtils;
+  SysUtils,
+  Classes,
+  AppCoreCrud;
 
 type
   EPreferencesValidationError = class(Exception);
@@ -24,18 +26,24 @@ type
     procedure SetLastMainOption(const AOption: string);
   end;
 
-  TInMemoryLoginPreferencesRepository = class(TInterfacedObject, ILoginPreferencesRepository)
+  TInMemoryLoginPreferencesRepository = class(TInterfacedObject, ILoginPreferencesRepository,
+    ICrudGridLayoutRepository)
   private
     FLastUsername: string;
     FActiveLanguage: string;
     FLastMainOption: string;
+    FGridValues: TStringList;
   public
+    constructor Create;
+    destructor Destroy; override;
     function LastUsername: string;
     procedure SetLastUsername(const AUsername: string);
     function ActiveLanguage: string;
     procedure SetActiveLanguage(const ALanguage: string);
     function LastMainOption: string;
     procedure SetLastMainOption(const AOption: string);
+    function ReadGridValue(const AGridKey, AName: string): string;
+    procedure WriteGridValue(const AGridKey, AName, AValue: string);
   end;
 
   TPreferencesService = class
@@ -84,13 +92,26 @@ end;
 
 procedure TPreferencesService.ValidateMainOption(const AOption: string);
 begin
-  if (AOption <> 'Dashboard') and (AOption <> 'Tasks') and (AOption <> 'Users') then
+  if (AOption <> 'Dashboard') and (AOption <> 'Tasks') and (AOption <> 'Users') and
+    (AOption <> 'USR') then
     raise EPreferencesValidationError.Create('Opcion principal no valida.');
 end;
 
 function TInMemoryLoginPreferencesRepository.ActiveLanguage: string;
 begin
   Result := FActiveLanguage;
+end;
+
+constructor TInMemoryLoginPreferencesRepository.Create;
+begin
+  inherited Create;
+  FGridValues := TStringList.Create;
+end;
+
+destructor TInMemoryLoginPreferencesRepository.Destroy;
+begin
+  FGridValues.Free;
+  inherited Destroy;
 end;
 
 function TInMemoryLoginPreferencesRepository.LastUsername: string;
@@ -101,6 +122,12 @@ end;
 function TInMemoryLoginPreferencesRepository.LastMainOption: string;
 begin
   Result := FLastMainOption;
+end;
+
+function TInMemoryLoginPreferencesRepository.ReadGridValue(const AGridKey,
+  AName: string): string;
+begin
+  Result := FGridValues.Values[AGridKey + '.' + AName];
 end;
 
 procedure TInMemoryLoginPreferencesRepository.SetActiveLanguage(const ALanguage: string);
@@ -116,6 +143,12 @@ end;
 procedure TInMemoryLoginPreferencesRepository.SetLastMainOption(const AOption: string);
 begin
   FLastMainOption := AOption;
+end;
+
+procedure TInMemoryLoginPreferencesRepository.WriteGridValue(const AGridKey, AName,
+  AValue: string);
+begin
+  FGridValues.Values[AGridKey + '.' + AName] := AValue;
 end;
 
 end.

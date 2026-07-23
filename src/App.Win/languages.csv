@@ -8,6 +8,7 @@ FrmMain.Caption,Delphi TDD App - FMain,Delphi TDD App - FMain
 FrmMain.BtnDashboard.Caption,Dashboard,Dashboard
 FrmMain.BtnTasks.Caption,Tareas,Tasks
 FrmMain.BtnUsers.Caption,Usuarios,Users
+FrmMain.BtnUsr.Caption,USR,USR
 FrmMain.BtnPreferences.Caption,Preferencias,Preferences
 FrmMain.BtnAbout.Caption,Acerca de,About
 FrmTasks.Caption,Tareas,Tasks
@@ -51,6 +52,16 @@ FrmPreferences.LblLastUsername.Caption,Ultimo usuario,Last username
 FrmPreferences.LblLanguage.Caption,Idioma,Language
 FrmPreferences.LblLastMainOption.Caption,Pantalla de inicio,Startup screen
 FrmPreferences.BtnSave.Caption,Guardar,Save
+FrmCrud.Caption,CRUD,CRUD
+FrmCrud.BtnSearch.Caption,Buscar,Search
+FrmCrud.BtnRefresh.Caption,Reset,Reset
+FrmCrud.BtnNew.Caption,Nuevo,New
+FrmCrud.BtnDelete.Caption,Eliminar,Delete
+FrmCrudDetail.Caption,Detalle,Detail
+FrmCrudDetail.BtnSave.Caption,Guardar,Save
+FrmCrudDetail.BtnCancel.Caption,Cancelar,Cancel
+FrmCrudSearch.Caption,Buscar,Search
+FrmCrudSearch.BtnClear.Caption,Limpiar,Clear
 About.VersionPrefix,Version: ,Version: 
 About.ExecutableVersionPrefix,Version del ejecutable: ,Executable version: 
 About.CommitPrefix,"Commit GitHub: ","GitHub commit: "
@@ -58,3 +69,12 @@ About.OperatingSystemPrefix,Sistema operativo: ,Operating system:
 About.ArchitecturePrefix,Arquitectura: ,Architecture: 
 About.BuildDatePrefix,Fecha de compilacion: ,Build date: 
 About.DatabasePrefix,Base de datos: ,Database: 
+Crud.FilterDialog.Caption,Filtro,Filter
+Crud.DeleteConfirm.Message,Esta seguro de que desea eliminar este registro?,Are you sure you want to delete this record?
+Crud.USR.username.Caption,Usuario,Username
+Crud.USR.displayName.Caption,Nombre visible,Display name
+Crud.USR.email.Caption,Email,Email
+Crud.USR.role.Caption,Rol,Role
+Crud.USR.active.Caption,Activo,Active
+Crud.USR.locked.Caption,Bloqueado,Locked
+Crud.USR.password.Caption,Contrase�a,Password

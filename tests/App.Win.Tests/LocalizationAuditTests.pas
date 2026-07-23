@@ -14,6 +14,9 @@ uses
   Forms,
   StdCtrls,
   AboutForm,
+  CrudDetailForm,
+  CrudForm,
+  CrudSearchForm,
   MainForm,
   TaskForm,
   UserForm,
@@ -255,6 +258,42 @@ begin
   end;
 end;
 
+procedure LocalizationAuditAcceptsCrudFormCsv;
+var
+  LForm: TFrmCrud;
+begin
+  LForm := TFrmCrud.Create(nil);
+  try
+    AuditLocalizationCsvForForm(LanguagesCsvPath, 'es', 'en', LForm);
+  finally
+    LForm.Free;
+  end;
+end;
+
+procedure LocalizationAuditAcceptsCrudDetailFormCsv;
+var
+  LForm: TFrmCrudDetail;
+begin
+  LForm := TFrmCrudDetail.Create(nil);
+  try
+    AuditLocalizationCsvForForm(LanguagesCsvPath, 'es', 'en', LForm);
+  finally
+    LForm.Free;
+  end;
+end;
+
+procedure LocalizationAuditAcceptsCrudSearchFormCsv;
+var
+  LForm: TFrmCrudSearch;
+begin
+  LForm := TFrmCrudSearch.Create(nil);
+  try
+    AuditLocalizationCsvForForm(LanguagesCsvPath, 'es', 'en', LForm);
+  finally
+    LForm.Free;
+  end;
+end;
+
 procedure LocalizationAuditRejectsMissingCsv;
 var
   LForm: TFrmLogin;
@@ -405,6 +444,9 @@ begin
   RunTest('LocalizationAudit_accepts_user_form_csv', LocalizationAuditAcceptsUserFormCsv, AFailures);
   RunTest('LocalizationAudit_accepts_about_form_csv', LocalizationAuditAcceptsAboutFormCsv, AFailures);
   RunTest('LocalizationAudit_accepts_preferences_form_csv', LocalizationAuditAcceptsPreferencesFormCsv, AFailures);
+  RunTest('LocalizationAudit_accepts_crud_form_csv', LocalizationAuditAcceptsCrudFormCsv, AFailures);
+  RunTest('LocalizationAudit_accepts_crud_detail_form_csv', LocalizationAuditAcceptsCrudDetailFormCsv, AFailures);
+  RunTest('LocalizationAudit_accepts_crud_search_form_csv', LocalizationAuditAcceptsCrudSearchFormCsv, AFailures);
   RunTest('LocalizationAudit_rejects_missing_csv', LocalizationAuditRejectsMissingCsv, AFailures);
   RunTest('LocalizationAudit_rejects_missing_columns', LocalizationAuditRejectsMissingColumns, AFailures);
   RunTest('LocalizationAudit_rejects_unknown_component', LocalizationAuditRejectsUnknownComponent, AFailures);

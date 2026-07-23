@@ -51,13 +51,23 @@ object FrmMain: TFrmMain
       TabOrder = 2
       OnClick = BtnUsersClick
     end
-    object BtnPreferences: TButton
+    object BtnUsr: TButton
       Left = 12
       Top = 136
       Width = 124
       Height = 32
-      Caption = 'Preferencias'
+      Caption = 'USR'
       TabOrder = 3
+      OnClick = BtnUsrClick
+    end
+    object BtnPreferences: TButton
+      Left = 12
+      Top = 408
+      Width = 124
+      Height = 32
+      Anchors = [akLeft, akBottom]
+      Caption = 'Preferencias'
+      TabOrder = 4
       OnClick = BtnPreferencesClick
     end
     object BtnAbout: TButton
@@ -65,8 +75,9 @@ object FrmMain: TFrmMain
       Top = 448
       Width = 124
       Height = 32
+      Anchors = [akLeft, akBottom]
       Caption = 'Acerca de'
-      TabOrder = 4
+      TabOrder = 5
       OnClick = BtnAboutClick
     end
   end
