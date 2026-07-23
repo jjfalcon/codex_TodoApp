@@ -13,6 +13,7 @@ uses
   SysUtils,
   CrudForm,
   CrudDetailForm,
+  CrudPreviewForm,
   AppCoreCrud,
   AppCoreLocalization,
   AppCorePreferencesFileRepository;
@@ -307,6 +308,61 @@ begin
   end;
 end;
 
+procedure CrudFormPreviewButtonIsAvailable;
+var
+  LForm: TFrmCrud;
+begin
+  LForm := TFrmCrud.Create(nil);
+  try
+    LForm.Configure(TFakeCrudProvider.Create, emDetail);
+    AssertTrue(LForm.BtnPreview.Visible, 'CRUD preview button should be visible.');
+    AssertTrue(LForm.BtnPreview.Enabled, 'CRUD preview button should be enabled.');
+  finally
+    LForm.Free;
+  end;
+end;
+
+procedure CrudFormPreviewDataUsesVisibleGridExactly;
+var
+  LForm: TFrmCrud;
+  LData: TCrudPreviewData;
+begin
+  LForm := TFrmCrud.Create(nil);
+  try
+    LForm.ApplyLocalization(TFakeLocalization.Create, False);
+    LForm.Configure(TFakeCrudProvider.Create, emDetail, nil, 'Test');
+    LForm.SetColumnVisible('name', False);
+    ColumnByField(LForm, 'email').Width := 222;
+    LData := LForm.CreatePreviewData;
+    try
+      AssertEquals(1, LData.ColumnCount, 'Preview should include only visible grid columns.');
+      AssertEquals('E-mail address', LData.ColumnCaption(0), 'Preview should use current grid title caption.');
+      AssertEquals(222, LData.ColumnWidth(0), 'Preview should preserve current grid column width.');
+      AssertEquals(1, LData.RowCount, 'Preview should include currently loaded grid rows.');
+      AssertEquals('first@example.test', LData.Cell(0, 0), 'Preview should use current dataset value.');
+    finally
+      LData.Free;
+    end;
+  finally
+    LForm.Free;
+  end;
+end;
+
+procedure CrudPreviewFormExposesLayoutOptions;
+var
+  LForm: TFrmCrudPreview;
+begin
+  LForm := TFrmCrudPreview.Create(nil);
+  try
+    AssertEquals(2, LForm.CmbOrientation.Items.Count, 'Preview should allow orientation selection.');
+    AssertTrue(LForm.ChkShowTitle.Checked, 'Preview should allow showing title by default.');
+    AssertTrue(LForm.ChkShowDate.Checked, 'Preview should allow showing date by default.');
+    AssertTrue(LForm.ChkShowPageNumber.Checked, 'Preview should allow showing page number by default.');
+  finally
+    LForm.Free;
+  end;
+end;
+
 function TFakeCrudProvider.Schema: TCrudSchema;
 begin
   Result := TCrudSchema.Create;
@@ -357,6 +413,31 @@ begin
     LForm.Configure(TFakeCrudProvider.Create, emDetail);
     AssertTrue(LForm.Grid.ReadOnly, 'emDetail should keep grid read-only.');
     AssertTrue(LForm.BtnNew.Enabled, 'emDetail should allow detail create.');
+  finally
+    LForm.Free;
+  end;
+end;
+
+procedure CrudFormEditModeSelectorChangesMode;
+var
+  LForm: TFrmCrud;
+begin
+  LForm := TFrmCrud.Create(nil);
+  try
+    LForm.Configure(TFakeCrudProvider.Create, emNone);
+    AssertEquals(3, LForm.CmbEditMode.Items.Count, 'Edit mode selector should expose all modes.');
+    AssertEquals(0, LForm.CmbEditMode.ItemIndex, 'Edit mode selector should show current mode.');
+
+    LForm.CmbEditMode.ItemIndex := 1;
+    LForm.CmbEditModeChange(nil);
+    AssertEquals(Ord(emGrid), Ord(LForm.EditMode), 'Selecting grid mode should update edit mode.');
+    AssertFalse(LForm.Grid.ReadOnly, 'Selecting grid mode should allow grid editing.');
+    AssertTrue(LForm.BtnNew.Enabled, 'Selecting grid mode should enable new.');
+
+    LForm.CmbEditMode.ItemIndex := 2;
+    LForm.CmbEditModeChange(nil);
+    AssertEquals(Ord(emDetail), Ord(LForm.EditMode), 'Selecting detail mode should update edit mode.');
+    AssertTrue(LForm.Grid.ReadOnly, 'Selecting detail mode should keep grid read-only.');
   finally
     LForm.Free;
   end;
@@ -415,6 +496,7 @@ begin
   RunTest('CrudForm_emNone_is_read_only', CrudFormEmNoneIsReadOnly, AFailures);
   RunTest('CrudForm_emGrid_allows_grid_editing', CrudFormEmGridAllowsGridEditing, AFailures);
   RunTest('CrudForm_emDetail_keeps_grid_read_only', CrudFormEmDetailKeepsGridReadOnly, AFailures);
+  RunTest('CrudForm_edit_mode_selector_changes_mode', CrudFormEditModeSelectorChangesMode, AFailures);
   RunTest('CrudForm_builds_columns_from_schema', CrudFormBuildsColumnsFromSchema, AFailures);
   RunTest('CrudForm_persists_column_layout', CrudFormPersistsColumnLayout, AFailures);
   RunTest('CrudForm_passes_column_filters_to_provider', CrudFormPassesColumnFiltersToProvider, AFailures);
@@ -424,6 +506,9 @@ begin
   RunTest('CrudForm_persists_column_filters', CrudFormPersistsColumnFilters, AFailures);
   RunTest('CrudForm_localizes_static_texts_and_column_captions', CrudFormLocalizesStaticTextsAndColumnCaptions, AFailures);
   RunTest('CrudDetail_localizes_field_labels', CrudDetailLocalizesFieldLabels, AFailures);
+  RunTest('CrudForm_preview_button_is_available', CrudFormPreviewButtonIsAvailable, AFailures);
+  RunTest('CrudForm_preview_data_uses_visible_grid_exactly', CrudFormPreviewDataUsesVisibleGridExactly, AFailures);
+  RunTest('CrudPreviewForm_exposes_layout_options', CrudPreviewFormExposesLayoutOptions, AFailures);
 end;
 
 initialization

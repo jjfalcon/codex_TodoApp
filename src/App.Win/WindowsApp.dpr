@@ -7,6 +7,7 @@ uses
   AboutForm in 'AboutForm.pas' {FrmAbout},
   CrudDetailForm in 'CrudDetailForm.pas' {FrmCrudDetail},
   CrudForm in 'CrudForm.pas' {FrmCrud},
+  CrudPreviewForm in 'CrudPreviewForm.pas' {FrmCrudPreview},
   CrudSearchForm in 'CrudSearchForm.pas' {FrmCrudSearch},
   LoginForm in 'LoginForm.pas' {FrmLogin},
   MainForm in 'MainForm.pas' {FrmMain},

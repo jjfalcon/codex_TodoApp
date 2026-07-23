@@ -17,7 +17,8 @@ uses
   SysUtils,
   Windows,
   AppCoreCrud,
-  AppCoreLocalization;
+  AppCoreLocalization,
+  CrudPreviewForm;
 
 type
   TFrmCrud = class(TForm)
@@ -25,16 +26,21 @@ type
     EdtSearch: TEdit;
     BtnSearch: TButton;
     BtnRefresh: TButton;
+    BtnPreview: TButton;
     BtnNew: TButton;
     BtnDelete: TButton;
+    LblEditMode: TLabel;
+    CmbEditMode: TComboBox;
     Grid: TDBGrid;
     DataSource: TDataSource;
     ClientDataSet: TClientDataSet;
     procedure BtnSearchClick(Sender: TObject);
     procedure BtnRefreshClick(Sender: TObject);
+    procedure BtnPreviewClick(Sender: TObject);
     procedure BtnNewClick(Sender: TObject);
     procedure BtnDeleteClick(Sender: TObject);
     procedure ClientDataSetAfterPost(DataSet: TDataSet);
+    procedure CmbEditModeChange(Sender: TObject);
     procedure GridDblClick(Sender: TObject);
     procedure GridColumnMoved(Sender: TObject; FromIndex, ToIndex: Longint);
     procedure GridDrawColumnCell(Sender: TObject; const Rect: TRect;
@@ -56,6 +62,7 @@ type
     procedure BuildDataset;
     function ColumnBaseCaption(const AFieldName: string): string;
     function CurrentRecord: TCrudRecord;
+    procedure ApplyEditMode;
     procedure LoadData;
     procedure LoadLayout;
     procedure OpenDetail(AIsNew: Boolean);
@@ -63,6 +70,7 @@ type
     procedure SaveGridConfig;
     procedure SearchChanged(Sender: TObject; const AText: string);
     procedure SetNewRecordDefaults(ARecord: TCrudRecord);
+    procedure SyncEditModeSelector;
     function TextOrDefault(const AKey, ADefault: string): string;
     procedure UpdateColumnTitles;
     procedure RecordToDataset(ARecord: TCrudRecord);
@@ -74,6 +82,7 @@ type
     procedure Configure(const AProvider: ICrudProvider; AEditMode: TCrudEditMode;
       const ALayout: ICrudGridLayoutRepository = nil; const ALayoutKey: string = '');
     function CellMatchesSearch(const AValue: string): Boolean;
+    function CreatePreviewData: TCrudPreviewData;
     procedure SaveLayout;
     procedure SetColumnFilter(const AFieldName, AValue: string);
     procedure SetColumnVisible(const AFieldName: string; AVisible: Boolean);
@@ -95,9 +104,17 @@ procedure TFrmCrud.ApplyLocalization(const ALocalization: ILocalizationService;
 begin
   FLocalization := ALocalization;
   AppWinLocalization.ApplyLocalization(Self, FLocalization, AStrict);
+  SyncEditModeSelector;
   UpdateColumnTitles;
   if FSearchForm <> nil then
     TFrmCrudSearch(FSearchForm).ApplyLocalization(FLocalization, AStrict);
+end;
+
+procedure TFrmCrud.ApplyEditMode;
+begin
+  Grid.ReadOnly := FEditMode <> emGrid;
+  BtnNew.Enabled := FEditMode <> emNone;
+  BtnDelete.Enabled := FEditMode <> emNone;
 end;
 
 destructor TFrmCrud.Destroy;
@@ -126,6 +143,20 @@ procedure TFrmCrud.BtnNewClick(Sender: TObject);
 begin
   if FEditMode <> emNone then
     OpenDetail(True);
+end;
+
+procedure TFrmCrud.BtnPreviewClick(Sender: TObject);
+var
+  LForm: TFrmCrudPreview;
+begin
+  LForm := TFrmCrudPreview.Create(Self);
+  try
+    LForm.ApplyLocalization(FLocalization, False);
+    LForm.Configure(CreatePreviewData);
+    LForm.ShowModal;
+  finally
+    LForm.Free;
+  end;
 end;
 
 procedure TFrmCrud.BtnRefreshClick(Sender: TObject);
@@ -238,19 +269,78 @@ begin
   FSchema := FProvider.Schema;
   FSortField := '';
   FSortAscending := True;
-  Grid.ReadOnly := FEditMode <> emGrid;
-  BtnNew.Enabled := FEditMode <> emNone;
-  BtnDelete.Enabled := FEditMode <> emNone;
+  SyncEditModeSelector;
+  ApplyEditMode;
   BuildDataset;
   LoadLayout;
   UpdateColumnTitles;
   LoadData;
 end;
 
+procedure TFrmCrud.CmbEditModeChange(Sender: TObject);
+begin
+  case CmbEditMode.ItemIndex of
+    0:
+      FEditMode := emNone;
+    1:
+      FEditMode := emGrid;
+  else
+    FEditMode := emDetail;
+  end;
+  ApplyEditMode;
+end;
+
 function TFrmCrud.CellMatchesSearch(const AValue: string): Boolean;
 begin
   Result := (Trim(FSearchText) <> '') and
     (Pos(UpperCase(Trim(FSearchText)), UpperCase(AValue)) > 0);
+end;
+
+function TFrmCrud.CreatePreviewData: TCrudPreviewData;
+var
+  I: Integer;
+  LColumn: TColumn;
+  LValues: TStringList;
+  LBookmark: TBookmark;
+begin
+  Result := TCrudPreviewData.Create;
+  Result.Title := Caption;
+  for I := 0 to Grid.Columns.Count - 1 do
+  begin
+    LColumn := Grid.Columns[I];
+    if LColumn.Visible then
+      Result.AddColumnEx(LColumn.Title.Caption, LColumn.Width);
+  end;
+
+  if (not ClientDataSet.Active) or ClientDataSet.IsEmpty then
+    Exit;
+
+  LBookmark := ClientDataSet.GetBookmark;
+  ClientDataSet.DisableControls;
+  LValues := TStringList.Create;
+  try
+    ClientDataSet.First;
+    while not ClientDataSet.Eof do
+    begin
+      LValues.Clear;
+      for I := 0 to Grid.Columns.Count - 1 do
+      begin
+        LColumn := Grid.Columns[I];
+        if LColumn.Visible then
+          LValues.Add(ClientDataSet.FieldByName(LColumn.FieldName).AsString);
+      end;
+      Result.AddRow(LValues);
+      ClientDataSet.Next;
+    end;
+  finally
+    LValues.Free;
+    if LBookmark <> nil then
+    begin
+      ClientDataSet.GotoBookmark(LBookmark);
+      ClientDataSet.FreeBookmark(LBookmark);
+    end;
+    ClientDataSet.EnableControls;
+  end;
 end;
 
 function TFrmCrud.CurrentRecord: TCrudRecord;
@@ -521,6 +611,25 @@ procedure TFrmCrud.SetSearchText(const AText: string);
 begin
   FSearchText := AText;
   Grid.Invalidate;
+end;
+
+procedure TFrmCrud.SyncEditModeSelector;
+var
+  LIndex: Integer;
+begin
+  if CmbEditMode = nil then
+    Exit;
+  LIndex := Ord(FEditMode);
+  CmbEditMode.Items.BeginUpdate;
+  try
+    CmbEditMode.Items.Clear;
+    CmbEditMode.Items.Add(TextOrDefault('Crud.EditMode.None', 'Sin edicion'));
+    CmbEditMode.Items.Add(TextOrDefault('Crud.EditMode.Grid', 'Grid'));
+    CmbEditMode.Items.Add(TextOrDefault('Crud.EditMode.Detail', 'Detalle'));
+    CmbEditMode.ItemIndex := LIndex;
+  finally
+    CmbEditMode.Items.EndUpdate;
+  end;
 end;
 
 procedure TFrmCrud.UpdateColumnTitles;

@@ -4,6 +4,17 @@
 
 ## Realizadas
 
+### Preview e impresion de tabla generica
+
+- Se agrego boton `Preview` al CRUD generico, disponible en `USR`.
+- Se agrego `src\App.Win\CrudPreviewForm.pas` como preview generico sin dependencia de usuarios ni repositorios.
+- `TFrmCrud.CreatePreviewData` toma un snapshot exacto del grid actual: columnas visibles, captions actuales y filas cargadas en `ClientDataSet`.
+- El preview no reconsulta proveedores ni repositorios; imprime exactamente lo visible en pantalla.
+- El formulario usa QuickReport para generar un informe dinamico con cabeceras y filas tabulares.
+- El usuario puede ajustar orientacion, titulo, fecha y numero de pagina antes de previsualizar o imprimir.
+- Se agregaron claves de localizacion para `FrmCrudPreview` y el boton `FrmCrud.BtnPreview`.
+- Verificacion: `tests\App.Win.Tests\run-tests.bat` termina con `All tests passed`.
+
 ### Crear form CRUD de tabla generica
 
 - Se agrego `src\App.Core\AppCoreCrud.pas` con schema, record generico, modos de edicion e interfaz `ICrudProvider`.

@@ -27,11 +27,15 @@ La UI no accede directamente a tablas ni ficheros de datos. Toda regla de negoci
 - `Ctrl+click` sobre una cabecera abre el filtro de esa columna.
 - El boton `Reset` limpia filtros, busqueda y orden, guarda la configuracion y recarga el grid.
 - El boton `Buscar` abre un formulario no modal. La busqueda no filtra filas: resalta en amarillo las celdas visibles que contienen el texto buscado.
+- El boton `Preview` abre una vista previa generica imprimible de la tabla actual.
+- El preview imprime exactamente lo visible en pantalla: columnas visibles, captions actuales y filas ya cargadas en el grid. No reconsulta repositorios ni proveedores.
 - El click en cabecera cambia el campo de orden y alterna ascendente/descendente. La cabecera muestra `^` para ascendente, `v` para descendente y nada si no hay orden.
 - La cabecera muestra `*` cuando hay un filtro activo sobre ese campo.
 - Nuevo, editar y borrar delegan siempre en el proveedor.
 - Borrar solicita confirmacion antes de llamar al proveedor.
 - `TFrmCrudDetail` genera controles dinamicos a partir del schema y escribe los valores en `TCrudRecord`.
+- `TFrmCrudPreview` recibe un snapshot generico (`TCrudPreviewData`) y genera un informe QuickReport dinamico.
+- El dialogo de preview permite ajustar orientacion, titulo, fecha y numero de pagina antes de abrir la vista previa o imprimir.
 - La cabecera de acciones queda `alTop` y el grid `alClient`, ocupando todo el espacio restante.
 
 ## Layout De Columnas
@@ -65,4 +69,4 @@ No se generan ficheros `usr-grid.layout`.
 ## Verificacion
 
 - `tests\App.Core.Tests`: cubre schema, busqueda, orden, filtros, update del provider de usuarios y layout en secciones `Grid.*`.
-- `tests\App.Win.Tests`: cubre modos de edicion, columnas generadas, escritura de detalle, persistencia de layout/filtros, indicadores de cabecera, paso de filtros y busqueda de celdas sin filtrar filas.
+- `tests\App.Win.Tests`: cubre modos de edicion, columnas generadas, escritura de detalle, persistencia de layout/filtros, indicadores de cabecera, paso de filtros, busqueda de celdas sin filtrar filas y snapshot de preview exacto del grid visible.

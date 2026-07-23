@@ -16,6 +16,7 @@ uses
   AboutForm,
   CrudDetailForm,
   CrudForm,
+  CrudPreviewForm,
   CrudSearchForm,
   MainForm,
   TaskForm,
@@ -294,6 +295,18 @@ begin
   end;
 end;
 
+procedure LocalizationAuditAcceptsCrudPreviewFormCsv;
+var
+  LForm: TFrmCrudPreview;
+begin
+  LForm := TFrmCrudPreview.Create(nil);
+  try
+    AuditLocalizationCsvForForm(LanguagesCsvPath, 'es', 'en', LForm);
+  finally
+    LForm.Free;
+  end;
+end;
+
 procedure LocalizationAuditRejectsMissingCsv;
 var
   LForm: TFrmLogin;
@@ -447,6 +460,7 @@ begin
   RunTest('LocalizationAudit_accepts_crud_form_csv', LocalizationAuditAcceptsCrudFormCsv, AFailures);
   RunTest('LocalizationAudit_accepts_crud_detail_form_csv', LocalizationAuditAcceptsCrudDetailFormCsv, AFailures);
   RunTest('LocalizationAudit_accepts_crud_search_form_csv', LocalizationAuditAcceptsCrudSearchFormCsv, AFailures);
+  RunTest('LocalizationAudit_accepts_crud_preview_form_csv', LocalizationAuditAcceptsCrudPreviewFormCsv, AFailures);
   RunTest('LocalizationAudit_rejects_missing_csv', LocalizationAuditRejectsMissingCsv, AFailures);
   RunTest('LocalizationAudit_rejects_missing_columns', LocalizationAuditRejectsMissingColumns, AFailures);
   RunTest('LocalizationAudit_rejects_unknown_component', LocalizationAuditRejectsUnknownComponent, AFailures);

@@ -13,6 +13,7 @@ uses
   AppWinLocalization in '..\..\src\App.Win\AppWinLocalization.pas',
   CrudDetailForm in '..\..\src\App.Win\CrudDetailForm.pas',
   CrudForm in '..\..\src\App.Win\CrudForm.pas',
+  CrudPreviewForm in '..\..\src\App.Win\CrudPreviewForm.pas',
   LoginForm in '..\..\src\App.Win\LoginForm.pas',
   AppCoreCrud in '..\..\src\App.Core\AppCoreCrud.pas',
   PreferencesForm in '..\..\src\App.Win\PreferencesForm.pas',

@@ -53,13 +53,24 @@ FrmPreferences.LblLanguage.Caption,Idioma,Language
 FrmPreferences.LblLastMainOption.Caption,Pantalla de inicio,Startup screen
 FrmPreferences.BtnSave.Caption,Guardar,Save
 FrmCrud.Caption,CRUD,CRUD
+FrmCrud.LblEditMode.Caption,editMode,editMode
 FrmCrud.BtnSearch.Caption,Buscar,Search
 FrmCrud.BtnRefresh.Caption,Reset,Reset
+FrmCrud.BtnPreview.Caption,Preview,Preview
 FrmCrud.BtnNew.Caption,Nuevo,New
 FrmCrud.BtnDelete.Caption,Eliminar,Delete
 FrmCrudDetail.Caption,Detalle,Detail
 FrmCrudDetail.BtnSave.Caption,Guardar,Save
 FrmCrudDetail.BtnCancel.Caption,Cancelar,Cancel
+FrmCrudPreview.Caption,Vista previa,Preview
+FrmCrudPreview.LblOrientation.Caption,Orientacion,Orientation
+FrmCrudPreview.ChkShowTitle.Caption,Mostrar titulo,Show title
+FrmCrudPreview.ChkShowDate.Caption,Mostrar fecha,Show date
+FrmCrudPreview.ChkShowPageNumber.Caption,Mostrar pagina,Show page
+FrmCrudPreview.BtnPreview.Caption,Vista previa,Preview
+FrmCrudPreview.BtnPrinterSetup.Caption,Configurar,Setup
+FrmCrudPreview.BtnPrint.Caption,Imprimir,Print
+FrmCrudPreview.BtnClose.Caption,Cerrar,Close
 FrmCrudSearch.Caption,Buscar,Search
 FrmCrudSearch.BtnClear.Caption,Limpiar,Clear
 About.VersionPrefix,Version: ,Version: 
@@ -71,6 +82,9 @@ About.BuildDatePrefix,Fecha de compilacion: ,Build date:
 About.DatabasePrefix,Base de datos: ,Database: 
 Crud.FilterDialog.Caption,Filtro,Filter
 Crud.DeleteConfirm.Message,Esta seguro de que desea eliminar este registro?,Are you sure you want to delete this record?
+Crud.EditMode.None,Sin edicion,No edit
+Crud.EditMode.Grid,Grid,Grid
+Crud.EditMode.Detail,Detalle,Detail
 Crud.USR.username.Caption,Usuario,Username
 Crud.USR.displayName.Caption,Nombre visible,Display name
 Crud.USR.email.Caption,Email,Email

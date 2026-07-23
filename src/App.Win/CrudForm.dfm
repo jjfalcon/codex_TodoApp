@@ -30,40 +30,70 @@ object FrmCrud: TFrmCrud
       TabOrder = 0
       Visible = False
     end
+    object LblEditMode: TLabel
+      Left = 12
+      Top = 15
+      Width = 43
+      Height = 13
+      Caption = 'editMode'
+    end
+    object CmbEditMode: TComboBox
+      Left = 64
+      Top = 11
+      Width = 128
+      Height = 21
+      Style = csDropDownList
+      ItemHeight = 13
+      TabOrder = 1
+      OnChange = CmbEditModeChange
+      Items.Strings = (
+        'Sin edicion'
+        'Grid'
+        'Detalle')
+    end
     object BtnSearch: TButton
-      Left = 240
+      Left = 204
       Top = 10
       Width = 80
       Height = 25
       Caption = 'Buscar'
-      TabOrder = 1
+      TabOrder = 2
       OnClick = BtnSearchClick
     end
     object BtnRefresh: TButton
-      Left = 328
+      Left = 292
       Top = 10
       Width = 80
       Height = 25
       Caption = 'Reset'
-      TabOrder = 2
+      TabOrder = 3
       OnClick = BtnRefreshClick
     end
+    object BtnPreview: TButton
+      Left = 380
+      Top = 10
+      Width = 80
+      Height = 25
+      Caption = 'Preview'
+      TabOrder = 4
+      OnClick = BtnPreviewClick
+    end
     object BtnNew: TButton
-      Left = 416
+      Left = 468
       Top = 10
       Width = 80
       Height = 25
       Caption = 'Nuevo'
-      TabOrder = 3
+      TabOrder = 5
       OnClick = BtnNewClick
     end
     object BtnDelete: TButton
-      Left = 504
+      Left = 556
       Top = 10
       Width = 80
       Height = 25
       Caption = 'Eliminar'
-      TabOrder = 4
+      TabOrder = 6
       OnClick = BtnDeleteClick
     end
   end
