@@ -123,6 +123,14 @@ Func FindLoginButton()
     Return ""
 EndFunc
 
+Func FindButton($Title, $Text1, $Text2, $Text3)
+    For $I = 1 To 12
+        Global $Text = ControlGetText($Title, "", "[CLASS:TButton; INSTANCE:" & $I & "]")
+        If ($Text = $Text1) Or ($Text = $Text2) Or ($Text = $Text3) Then Return "[CLASS:TButton; INSTANCE:" & $I & "]"
+    Next
+    Return ""
+EndFunc
+
 If Not WinWait($LoginTitle, "", 10) Then
     ConsoleWrite("Login window was not shown." & @CRLF)
     ProcessClose($Pid)
@@ -160,7 +168,12 @@ If Not WinWait($MainTitle, "", 10) Then
 
     Fail(15, "Main window was not shown after login.")
 EndIf
-If Not ControlClick($MainTitle, "", "[CLASS:TButton; INSTANCE:2]") Then _
+
+Global $TasksButton = FindButton($MainTitle, "Tareas", "Tasks", "")
+If $TasksButton = "" Then _
+    Fail(16, "Could not find Tasks button.")
+
+If Not ControlClick($MainTitle, "", $TasksButton) Then _
     Fail(16, "Could not open Tasks screen.")
 
 If Not WaitForControl($MainTitle, "[CLASS:TListBox; INSTANCE:1]", 5) Then _
@@ -168,10 +181,15 @@ If Not WaitForControl($MainTitle, "[CLASS:TListBox; INSTANCE:1]", 5) Then _
 
 If Not ControlFocus($MainTitle, "", "[CLASS:TEdit; INSTANCE:1]") Then _
     Fail(18, "Could not focus task title.")
-Send("^a")
-Send($TaskTitle)
+For $I = 1 To 4
+    ControlSetText($MainTitle, "", "[CLASS:TEdit; INSTANCE:" & $I & "]", $TaskTitle)
+Next
 
-If Not ControlClick($MainTitle, "", "[CLASS:TButton; INSTANCE:5]") Then _
+Global $AddButton = FindButton($MainTitle, "A" & Chr(241) & "adir", "Anadir", "Add")
+If $AddButton = "" Then _
+    Fail(19, "Could not find Add task button.")
+
+If Not ControlClick($MainTitle, "", $AddButton) Then _
     Fail(19, "Could not click Add task.")
 
 Sleep(500)
@@ -179,7 +197,11 @@ If ControlCommand($MainTitle, "", "[CLASS:TListBox; INSTANCE:1]", "FindString", 
     Fail(20, "Created task was not listed as pending.")
 
 ControlCommand($MainTitle, "", "[CLASS:TListBox; INSTANCE:1]", "SelectString", "[ ] " & $TaskTitle)
-If Not ControlClick($MainTitle, "", "[CLASS:TButton; INSTANCE:7]") Then _
+Global $CompleteButton = FindButton($MainTitle, "Completar", "Complete", "")
+If $CompleteButton = "" Then _
+    Fail(21, "Could not find Complete task button.")
+
+If Not ControlClick($MainTitle, "", $CompleteButton) Then _
     Fail(21, "Could not click Complete task.")
 
 Sleep(500)

@@ -17,8 +17,10 @@ __history__/
 *.~*
 tasks.json
 users.json
+logs/
 autoit-v3.zip
 tests/App.Core.Tests/coverage/
+tests/App.Core.Tests/diagnostics-test/
 tests/App.Win.Tests/coverage/
 tests/App.Win.Visual/actual/
 tests/App.Win.Visual/diff/

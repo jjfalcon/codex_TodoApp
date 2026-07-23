@@ -14,14 +14,23 @@
 - Acordar columnas, acciones, validaciones y puntos de extension.
 - Separar reglas de negocio en `src\App.Core` y mantener la UI como capa fina.
 
-### Monitorizar funcionamiento de la aplicacion
-
-- Definir indicadores para detectar errores y degradacion de la aplicacion.
-- Registrar fallos relevantes, excepciones y eventos de diagnostico.
-- Acordar donde se almacenan los logs o metricas y como se revisan.
-- Incluir senales de salud para detectar degradacion antes de que afecte al usuario.
-
 ## Realizadas
+
+### Monitorizacion local de errores y degradacion
+
+- Se agrego `src\App.Core\AppCoreDiagnostics.pas`.
+- Se agrego `TFileDiagnosticsLogger` para escribir `logs\application.log`.
+- Se agrego `TDiagnosticTimer` para medir duracion de operaciones en milisegundos.
+- Se sanean valores sensibles como `password=`, `pwd=`, `token=`, `secret=` y `connectionstring=`.
+- `WindowsApp.dpr` registra `App.Start`, `App.Stop` y `App.UnhandledException`.
+- `TFrmLogin` registra `Auth.Login` con resultado y duracion.
+- `TFrmMain` registra apertura de `Tareas`.
+- `TFrmTasks` registra `Task.Create` y `Task.Complete` con resultado y duracion.
+- El E2E verifica que se genera `logs\application.log` y contiene `App.Start`, `Auth.Login`, `Task.Create` y `Task.Complete`.
+- Se documento el formato y los eventos en `docs\MONITORING.md`.
+- Verificacion: `AppCoreTests.exe` termina con `All tests passed`.
+- Verificacion: `tests\App.Win.Tests\run-tests.bat` termina con `All tests passed`.
+- Verificacion: `tests\App.Win.E2E\run-smoke-login.bat` termina con `Smoke login and task CRUD flow passed`.
 
 ### Version y build number trazables a GitHub
 

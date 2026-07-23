@@ -11,6 +11,7 @@ uses
   UserForm in 'UserForm.pas' {FrmUsers},
   AppCoreAbout in '..\App.Core\AppCoreAbout.pas',
   AppCoreBuildInfo in '..\App.Core\AppCoreBuildInfo.pas',
+  AppCoreDiagnostics in '..\App.Core\AppCoreDiagnostics.pas',
   AppCoreAuth in '..\App.Core\AppCoreAuth.pas',
   AppCoreClock in '..\App.Core\AppCoreClock.pas',
   AppCoreConfiguration in '..\App.Core\AppCoreConfiguration.pas',
@@ -28,13 +29,44 @@ uses
   AppCoreUserRepository in '..\App.Core\AppCoreUserRepository.pas',
   AppCoreUserService in '..\App.Core\AppCoreUserService.pas';
 
+type
+  TApplicationExceptionHandler = class
+  private
+    FDiagnostics: IDiagnosticsLogger;
+  public
+    constructor Create(const ADiagnostics: IDiagnosticsLogger);
+    procedure HandleException(Sender: TObject; E: Exception);
+  end;
+
 var
   LConfig: TAppConfiguration;
   LFactory: IRepositoryFactory;
   LLocalization: ILocalizationService;
+  LDiagnostics: IDiagnosticsLogger;
+  LExceptionHandler: TApplicationExceptionHandler;
+
+constructor TApplicationExceptionHandler.Create(
+  const ADiagnostics: IDiagnosticsLogger);
+begin
+  inherited Create;
+  FDiagnostics := ADiagnostics;
+end;
+
+procedure TApplicationExceptionHandler.HandleException(Sender: TObject;
+  E: Exception);
+begin
+  if FDiagnostics <> nil then
+    FDiagnostics.Error('App.UnhandledException', E.ClassName + ': ' + E.Message);
+end;
+
 begin
   Application.Initialize;
   Application.Title := 'Delphi TDD App';
+  LDiagnostics := TFileDiagnosticsLogger.Create(
+    ExtractFilePath(Application.ExeName) + 'logs\application.log');
+  LDiagnostics.Info('App.Start', 'Application started');
+  LExceptionHandler := TApplicationExceptionHandler.Create(LDiagnostics);
+  Application.OnException := LExceptionHandler.HandleException;
 
   LConfig := TAppConfiguration.Create(
     ExtractFilePath(Application.ExeName) + 'app.config');
@@ -54,6 +86,7 @@ begin
   FrmLogin := TFrmLogin.Create(Application);
   try
     FrmLogin.Configure(LFactory);
+    FrmLogin.ConfigureDiagnostics(LDiagnostics);
     FrmLogin.ApplyLocalization(LLocalization, False);
 
     if FrmLogin.ShowModal = mrOk then
@@ -62,12 +95,15 @@ begin
       FrmMain.UserRole := FrmLogin.LoggedInRole;
       FrmMain.ConfigureServices(LFactory, FrmLogin.SessionService,
         TSystemClock.Create, FrmLogin.PasswordHasher, FrmLogin.LoggedInUserId,
-        LLocalization);
+        LLocalization, LDiagnostics);
       FrmLogin.Free;
       FrmLogin := nil;
       Application.Run;
     end;
   finally
+    if LDiagnostics <> nil then
+      LDiagnostics.Info('App.Stop', 'Application stopped');
     FrmLogin.Free;
+    LExceptionHandler.Free;
   end;
 end.

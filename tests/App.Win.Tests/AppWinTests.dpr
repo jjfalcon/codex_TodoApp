@@ -12,6 +12,7 @@ uses
   LoginForm in '..\..\src\App.Win\LoginForm.pas',
   AppCoreAuth in '..\..\src\App.Core\AppCoreAuth.pas',
   AppCoreClock in '..\..\src\App.Core\AppCoreClock.pas',
+  AppCoreDiagnostics in '..\..\src\App.Core\AppCoreDiagnostics.pas',
   AppCoreLocalization in '..\..\src\App.Core\AppCoreLocalization.pas',
   AppCorePreferences in '..\..\src\App.Core\AppCorePreferences.pas',
   AppCoreRepositoryFactory in '..\..\src\App.Core\AppCoreRepositoryFactory.pas',

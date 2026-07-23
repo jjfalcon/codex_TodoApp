@@ -10,6 +10,7 @@ uses
   StdCtrls,
   ExtCtrls,
   Dialogs,
+  AppCoreDiagnostics,
   AppCoreLocalization,
   AppCoreRepositoryFactory,
   AppCoreTaskItem,
@@ -37,6 +38,7 @@ type
     procedure BtnPendingClick(Sender: TObject);
   private
     FService: ITaskService;
+    FDiagnostics: IDiagnosticsLogger;
     FCurrentTasks: TTaskItemArray;
 
     procedure RefreshList(const ATasks: TTaskItemArray);
@@ -44,6 +46,7 @@ type
   public
     procedure ApplyLocalization(const ALocalization: ILocalizationService; AStrict: Boolean = True);
     procedure Configure(const AFactory: IRepositoryFactory);
+    procedure ConfigureDiagnostics(const ADiagnostics: IDiagnosticsLogger);
   end;
 
 implementation
@@ -66,30 +69,62 @@ begin
   RefreshList(FService.ListTasks);
 end;
 
+procedure TFrmTasks.ConfigureDiagnostics(const ADiagnostics: IDiagnosticsLogger);
+begin
+  FDiagnostics := ADiagnostics;
+  if FDiagnostics <> nil then
+    FDiagnostics.Info('Task.DiagnosticsConfigured', 'Diagnostics logger configured');
+end;
+
 procedure TFrmTasks.FormCreate(Sender: TObject);
 begin
   FService := nil;
+  FDiagnostics := nil;
 end;
 
 procedure TFrmTasks.BtnAddClick(Sender: TObject);
+var
+  LTimer: TDiagnosticTimer;
 begin
+  LTimer := TDiagnosticTimer.Create;
   try
-    FService.CreateTask(EdtTitle.Text);
-    EdtTitle.Clear;
-    RefreshList(FService.ListTasks);
-  except
-    on E: ETaskValidationError do
-      MessageDlg(E.Message, mtWarning, [mbOK], 0);
+    try
+      LTimer.Start;
+      FService.CreateTask(EdtTitle.Text);
+      EdtTitle.Clear;
+      RefreshList(FService.ListTasks);
+      if FDiagnostics <> nil then
+        FDiagnostics.Timing('Task.Create', 'result=ok', LTimer.ElapsedMs);
+    except
+      on E: ETaskValidationError do
+      begin
+        if FDiagnostics <> nil then
+          FDiagnostics.Timing('Task.Create', 'result=validation_error', LTimer.ElapsedMs);
+        MessageDlg(E.Message, mtWarning, [mbOK], 0);
+      end;
+    end;
+  finally
+    LTimer.Free;
   end;
 end;
 
 procedure TFrmTasks.BtnCompleteClick(Sender: TObject);
+var
+  LTimer: TDiagnosticTimer;
 begin
   if LstTasks.ItemIndex < 0 then
     Exit;
 
-  FService.CompleteTask(SelectedTask.Id);
-  RefreshList(FService.ListTasks);
+  LTimer := TDiagnosticTimer.Create;
+  try
+    LTimer.Start;
+    FService.CompleteTask(SelectedTask.Id);
+    RefreshList(FService.ListTasks);
+    if FDiagnostics <> nil then
+      FDiagnostics.Timing('Task.Complete', 'result=ok', LTimer.ElapsedMs);
+  finally
+    LTimer.Free;
+  end;
 end;
 
 procedure TFrmTasks.BtnDeleteClick(Sender: TObject);

@@ -31,4 +31,36 @@ copy /Y "%APP_DIR%\app.config" "%RUNTIME%\app.config" >nul
 copy /Y "%APP_DIR%\languages.csv" "%RUNTIME%\languages.csv" >nul
 
 "%AUTOIT%" "%~dp0smoke_login.au3" "%RUNTIME%\WindowsApp.exe" "%RUNTIME%" "%DIAGNOSTICS%"
-exit /b %ERRORLEVEL%
+set E2E_RESULT=%ERRORLEVEL%
+if not "%E2E_RESULT%"=="0" exit /b %E2E_RESULT%
+
+if not exist "%RUNTIME%\logs\application.log" (
+  echo Diagnostics log was not generated.
+  exit /b 30
+)
+
+findstr /C:"INFO App.Start" "%RUNTIME%\logs\application.log" >nul
+if errorlevel 1 (
+  echo App.Start was not written to diagnostics log.
+  exit /b 31
+)
+
+findstr /C:"TIMING Auth.Login" "%RUNTIME%\logs\application.log" >nul
+if errorlevel 1 (
+  echo Auth.Login timing was not written to diagnostics log.
+  exit /b 32
+)
+
+findstr /C:"TIMING Task.Create" "%RUNTIME%\logs\application.log" >nul
+if errorlevel 1 (
+  echo Task.Create timing was not written to diagnostics log.
+  exit /b 33
+)
+
+findstr /C:"TIMING Task.Complete" "%RUNTIME%\logs\application.log" >nul
+if errorlevel 1 (
+  echo Task.Complete timing was not written to diagnostics log.
+  exit /b 34
+)
+
+exit /b 0

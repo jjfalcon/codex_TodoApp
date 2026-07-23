@@ -8,6 +8,7 @@ uses
   AppCoreAboutServiceTests in 'AppCoreAboutServiceTests.pas',
   AppCoreAuthServiceTests in 'AppCoreAuthServiceTests.pas',
   AppCoreConfigurationTests in 'AppCoreConfigurationTests.pas',
+  AppCoreDiagnosticsTests in 'AppCoreDiagnosticsTests.pas',
   AppCoreLocalizationTests in 'AppCoreLocalizationTests.pas',
   AppCorePreferencesFileRepositoryTests in 'AppCorePreferencesFileRepositoryTests.pas',
   AppCoreRepositoryFactoryTests in 'AppCoreRepositoryFactoryTests.pas',
@@ -18,6 +19,7 @@ uses
   AppCoreAuth in '..\..\src\App.Core\AppCoreAuth.pas',
   AppCoreClock in '..\..\src\App.Core\AppCoreClock.pas',
   AppCoreConfiguration in '..\..\src\App.Core\AppCoreConfiguration.pas',
+  AppCoreDiagnostics in '..\..\src\App.Core\AppCoreDiagnostics.pas',
   AppCoreJsonUtils in '..\..\src\App.Core\AppCoreJsonUtils.pas',
   AppCoreLocalization in '..\..\src\App.Core\AppCoreLocalization.pas',
   AppCorePreferences in '..\..\src\App.Core\AppCorePreferences.pas',
@@ -43,6 +45,7 @@ begin
     RunUserServiceTests(Failures);
     RunTaskServiceTests(Failures);
     RunConfigurationTests(Failures);
+    RunDiagnosticsTests(Failures);
     RunLocalizationTests(Failures);
     RunRepositoryFactoryTests(Failures);
     RunPreferencesFileRepositoryTests(Failures);

@@ -11,6 +11,7 @@ uses
   AppCoreLocalization,
   AppCoreAuth,
   AppCoreClock,
+  AppCoreDiagnostics,
   AppCorePreferences,
   AppCoreRepositoryFactory,
   AppCoreUser,
@@ -33,10 +34,12 @@ type
     FPreferences: ILoginPreferencesRepository;
     FSession: ISessionService;
     FHasher: IPasswordHasher;
+    FDiagnostics: IDiagnosticsLogger;
     FLoggedInRole: TUserRole;
     FLoggedInUserId: string;
   public
     procedure Configure(const AFactory: IRepositoryFactory);
+    procedure ConfigureDiagnostics(const ADiagnostics: IDiagnosticsLogger);
     procedure ConfigureForTests(const AAuth: IAuthService);
     procedure ApplyLanguage(const ALanguage: string);
     procedure ApplyLocalization(const ALocalization: ILocalizationService; AStrict: Boolean = True);
@@ -59,22 +62,52 @@ uses
 procedure TFrmLogin.BtnLoginClick(Sender: TObject);
 var
   LUser: TUser;
+  LTimer: TDiagnosticTimer;
 begin
   LblMessage.Caption := '';
+  LTimer := TDiagnosticTimer.Create;
   try
-    LUser := FAuth.Login(EdtUsername.Text, EdtPassword.Text);
-    FLoggedInRole := LUser.Role;
-    FLoggedInUserId := LUser.Id;
-    ModalResult := mrOk;
-  except
-    on E: ELoginValidationError do
-      LblMessage.Caption := E.Message;
-    on E: EAuthenticationError do
-      LblMessage.Caption := E.Message;
-    on E: EInactiveUserError do
-      LblMessage.Caption := E.Message;
-    on E: EUserLockedError do
-      LblMessage.Caption := E.Message;
+    try
+      LTimer.Start;
+      LUser := FAuth.Login(EdtUsername.Text, EdtPassword.Text);
+      FLoggedInRole := LUser.Role;
+      FLoggedInUserId := LUser.Id;
+      if FDiagnostics <> nil then
+        FDiagnostics.Timing('Auth.Login', 'result=ok username=' + EdtUsername.Text,
+          LTimer.ElapsedMs);
+      ModalResult := mrOk;
+    except
+      on E: ELoginValidationError do
+      begin
+        if FDiagnostics <> nil then
+          FDiagnostics.Timing('Auth.Login', 'result=validation_error username=' + EdtUsername.Text,
+            LTimer.ElapsedMs);
+        LblMessage.Caption := E.Message;
+      end;
+      on E: EAuthenticationError do
+      begin
+        if FDiagnostics <> nil then
+          FDiagnostics.Timing('Auth.Login', 'result=authentication_error username=' + EdtUsername.Text,
+            LTimer.ElapsedMs);
+        LblMessage.Caption := E.Message;
+      end;
+      on E: EInactiveUserError do
+      begin
+        if FDiagnostics <> nil then
+          FDiagnostics.Timing('Auth.Login', 'result=inactive_user username=' + EdtUsername.Text,
+            LTimer.ElapsedMs);
+        LblMessage.Caption := E.Message;
+      end;
+      on E: EUserLockedError do
+      begin
+        if FDiagnostics <> nil then
+          FDiagnostics.Timing('Auth.Login', 'result=locked_user username=' + EdtUsername.Text,
+            LTimer.ElapsedMs);
+        LblMessage.Caption := E.Message;
+      end;
+    end;
+  finally
+    LTimer.Free;
   end;
 end;
 
@@ -120,6 +153,11 @@ begin
   FAuth := TAuthService.Create(LUsers, FSession, FPreferences, FHasher);
 
   EdtUsername.Text := FPreferences.LastUsername;
+end;
+
+procedure TFrmLogin.ConfigureDiagnostics(const ADiagnostics: IDiagnosticsLogger);
+begin
+  FDiagnostics := ADiagnostics;
 end;
 
 procedure TFrmLogin.ConfigureForTests(const AAuth: IAuthService);

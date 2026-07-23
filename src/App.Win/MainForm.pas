@@ -12,6 +12,7 @@ uses
   Graphics,
   AppCoreAuth,
   AppCoreClock,
+  AppCoreDiagnostics,
   AppCoreLocalization,
   AppCoreRepositoryFactory,
   AppCoreUser,
@@ -43,6 +44,7 @@ type
     FClock: IClock;
     FHasher: IPasswordHasher;
     FLocalization: ILocalizationService;
+    FDiagnostics: IDiagnosticsLogger;
 
     procedure ApplyLocalization;
     procedure ClearContent;
@@ -56,7 +58,8 @@ type
     procedure ConfigureServices(const AFactory: IRepositoryFactory;
       const ASession: ISessionService; const AClock: IClock;
       const AHasher: IPasswordHasher; const ACurrentUserId: string;
-      const ALocalization: ILocalizationService);
+      const ALocalization: ILocalizationService;
+      const ADiagnostics: IDiagnosticsLogger);
     property UserRole: TUserRole read FUserRole write SetUserRole;
   end;
 
@@ -114,7 +117,8 @@ end;
 procedure TFrmMain.ConfigureServices(const AFactory: IRepositoryFactory;
   const ASession: ISessionService; const AClock: IClock;
   const AHasher: IPasswordHasher; const ACurrentUserId: string;
-  const ALocalization: ILocalizationService);
+  const ALocalization: ILocalizationService;
+  const ADiagnostics: IDiagnosticsLogger);
 begin
   FFactory := AFactory;
   FSession := ASession;
@@ -122,6 +126,7 @@ begin
   FHasher := AHasher;
   FCurrentUserId := ACurrentUserId;
   FLocalization := ALocalization;
+  FDiagnostics := ADiagnostics;
   ApplyLocalization;
   ClearContent;
   LoadOption(noDashboard);
@@ -191,8 +196,11 @@ begin
         EmbedForm(CreatePlaceholderForm('Dashboard', 'Panel principal de la aplicacion.'));
     noTasks:
       begin
+        if FDiagnostics <> nil then
+          FDiagnostics.Info('Navigation.Tasks', 'Opening tasks screen');
         EmbedForm(TFrmTasks.Create(Self));
         TFrmTasks(FCurrentForm).ApplyLocalization(FLocalization, False);
+        TFrmTasks(FCurrentForm).ConfigureDiagnostics(FDiagnostics);
         TFrmTasks(FCurrentForm).Configure(FFactory);
       end;
     noUsers:
