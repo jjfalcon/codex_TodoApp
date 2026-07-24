@@ -191,14 +191,14 @@ If Not WinWait($MainTitle, "", 10) Then
     Fail(15, "Main window was not shown after login.")
 EndIf
 
-Global $TasksButton = FindButton($MainTitle, "Tareas", "Tasks", "")
-If $TasksButton = "" Then _
-    Fail(16, "Could not find Tasks button.")
+Global $TskButton = FindButton($MainTitle, "Tareas", "Tasks", "")
+If $TskButton = "" Then _
+    Fail(16, "Could not find TSK button.")
 
-ControlClick($MainTitle, "", $TasksButton)
+ControlClick($MainTitle, "", $TskButton)
 
 If Not WaitForControl($MainTitle, "[CLASS:TDBGrid; INSTANCE:1]", 5) Then _
-    Fail(17, "Tasks grid was not shown.")
+    Fail(17, "TSK grid was not shown.")
 
 Global $NewButton = FindButton($MainTitle, "Nuevo", "New", "")
 If $NewButton = "" Then _

@@ -13,7 +13,7 @@ Esta especificacion define el comportamiento esperado. No describe todavia detal
 La primera version de `FMain` debe permitir:
 
 - Mostrar una barra lateral izquierda de navegacion.
-- Mostrar las opciones iniciales `Dashboard`, `Tareas` y `Usuarios`.
+- Mostrar las opciones iniciales `Dashboard`, `TSK` y `USR`.
 - Cargar automaticamente `Dashboard` al abrir la pantalla principal.
 - Incrustar en la zona central el formulario asociado a la opcion seleccionada.
 - Mantener una unica opcion activa en cada momento.
@@ -54,8 +54,8 @@ Debe mostrar las opciones disponibles para el usuario autenticado.
 Opciones iniciales:
 
 - `Dashboard`
-- `Tareas`
-- `Usuarios`
+- `TSK`
+- `USR`
 
 La barra lateral izquierda no debe incluir una opcion `Ayuda`.
 
@@ -110,8 +110,8 @@ Estado que indica que un usuario esta autenticado y puede acceder a funcionalida
 
 - La barra lateral debe construir sus opciones segun la sesion y permisos del usuario autenticado.
 - `Dashboard` debe estar disponible para cualquier usuario autenticado.
-- `Tareas` debe estar disponible para cualquier usuario autenticado.
-- `Usuarios` debe estar disponible solo para usuarios administradores.
+- `TSK` debe estar disponible para cualquier usuario autenticado.
+- `USR` debe estar disponible solo para usuarios administradores.
 - Las opciones no permitidas deben ocultarse o mostrarse deshabilitadas segun la decision de implementacion, pero no deben poder ejecutarse.
 - La UI no debe decidir permisos por su cuenta; debe consultar al nucleo o servicio de permisos.
 - La barra lateral izquierda no debe mostrar `Ayuda`.
@@ -137,8 +137,8 @@ Estado que indica que un usuario esta autenticado y puede acceder a funcionalida
 ### Formularios iniciales
 
 - `Dashboard` sera la vista inicial y punto de entrada tras login.
-- `Tareas` reutilizara o migrara la funcionalidad actual de lista de tareas de la aplicacion.
-- `Usuarios` sera una vista protegida para administracion de usuarios.
+- `TSK` usa `TFrmCrud` y `TTaskCrudProvider` para gestionar tareas.
+- `USR` usa `TFrmCrud` y `TUserCrudProvider` como vista protegida de administracion de usuarios.
 - El detalle funcional de cada formulario podra definirse en especificaciones separadas.
 
 ### Gestion de errores
@@ -175,17 +175,17 @@ Estado que indica que un usuario esta autenticado y puede acceder a funcionalida
 5. La aplicacion incrusta el formulario asociado a la nueva opcion.
 6. La barra lateral marca la nueva opcion como activa.
 
-### Acceso a Usuarios como administrador
+### Acceso a USR como administrador
 
 1. Un usuario administrador inicia sesion correctamente.
-2. `FMain` muestra la opcion `Usuarios`.
-3. El administrador selecciona `Usuarios`.
+2. `FMain` muestra la opcion `USR`.
+3. El administrador selecciona `USR`.
 4. La zona central muestra el formulario de administracion de usuarios.
 
-### Acceso a Usuarios como usuario normal
+### Acceso a USR como usuario normal
 
 1. Un usuario normal inicia sesion correctamente.
-2. `FMain` no permite ejecutar la opcion `Usuarios`.
+2. `FMain` no permite ejecutar la opcion `USR`.
 3. Si la opcion se muestra deshabilitada, no debe poder activarse.
 4. Si se intenta acceder por una ruta no visual, el sistema debe denegar el acceso.
 
@@ -213,11 +213,11 @@ Los textos definitivos pueden ajustarse en la implementacion, pero deben respeta
 - Dado que no existe sesion activa, cuando se intenta abrir `FMain`, entonces debe bloquearse el acceso y mostrarse el login.
 - Dado un usuario autenticado, cuando se abre `FMain`, entonces se muestra la barra lateral izquierda.
 - Dado un usuario autenticado, cuando se abre `FMain`, entonces se carga `Dashboard` en la zona central.
-- Dado un usuario autenticado, cuando se muestra la barra lateral, entonces aparecen las opciones permitidas `Dashboard` y `Tareas`.
-- Dado un administrador autenticado, cuando se muestra la barra lateral, entonces aparece la opcion `Usuarios`.
-- Dado un usuario normal autenticado, cuando se muestra la barra lateral, entonces la opcion `Usuarios` no puede ejecutarse.
+- Dado un usuario autenticado, cuando se muestra la barra lateral, entonces aparecen las opciones permitidas `Dashboard` y `TSK`.
+- Dado un administrador autenticado, cuando se muestra la barra lateral, entonces aparece la opcion `USR`.
+- Dado un usuario normal autenticado, cuando se muestra la barra lateral, entonces la opcion `USR` no puede ejecutarse.
 - Dado cualquier usuario autenticado, cuando se muestra la barra lateral izquierda, entonces no aparece la opcion `Ayuda`.
-- Dado que `Dashboard` esta activo, cuando el usuario selecciona `Tareas`, entonces la zona central muestra el formulario de tareas.
+- Dado que `Dashboard` esta activo, cuando el usuario selecciona `TSK`, entonces la zona central muestra el CRUD de tareas.
 - Dado que una opcion esta activa, cuando se selecciona otra opcion, entonces solo queda activo el formulario de la nueva opcion.
 - Dado que una opcion esta activa, cuando el usuario vuelve a seleccionar la misma opcion, entonces no se crean formularios duplicados.
 - Dado que el usuario no tiene permisos para una opcion, cuando intenta acceder a ella, entonces se deniega el acceso.
@@ -230,7 +230,7 @@ Los primeros tests deben cubrir el nucleo o los servicios de navegacion sin abri
 
 - `Main_requires_active_session`
 - `Main_loads_dashboard_by_default`
-- `Main_lists_dashboard_tasks_and_users_options`
+- `Main_lists_dashboard_tsk_and_usr_options`
 - `Main_does_not_show_help_in_sidebar`
 - `Main_lists_only_allowed_options_for_user`
 - `Main_allows_admin_to_access_users`
@@ -270,14 +270,14 @@ Usuario administrador:
 
 - Usuario: `admin`
 - Rol: administrador
-- Opciones permitidas: `Dashboard`, `Tareas`, `Usuarios`
+- Opciones permitidas: `Dashboard`, `TSK`, `USR`
 - Vista inicial: `Dashboard`
 
 Usuario normal:
 
 - Usuario: `user`
 - Rol: usuario normal
-- Opciones permitidas: `Dashboard`, `Tareas`
+- Opciones permitidas: `Dashboard`, `TSK`
 - Vista inicial: `Dashboard`
 
 Sesion inexistente:
@@ -296,16 +296,16 @@ Sesion expirada:
 
 - `FMain` sera la pantalla principal tras login correcto.
 - `FMain` tendra barra lateral izquierda y zona central de contenido.
-- La barra lateral inicial tendra `Dashboard`, `Tareas` y `Usuarios`.
+- La barra lateral inicial tendra `Dashboard`, `TSK` y `USR`.
 - La barra lateral izquierda no incluira `Ayuda`.
 - `Dashboard` sera la opcion inicial por defecto.
-- `Usuarios` sera una opcion administrativa.
+- `USR` sera una opcion administrativa.
 - `FMain` estara protegida por sesion activa y permisos.
 
 ## Preguntas pendientes
 
 - Deben ocultarse las opciones no permitidas o mostrarse deshabilitadas?
 - Cual sera el contenido funcional exacto de `Dashboard`?
-- Que operaciones concretas incluira el formulario `Usuarios`?
+- Que operaciones concretas adicionales necesitara el CRUD `USR`?
 - Donde se ubicara finalmente el acceso a `Acerca de`?
 - Debe recordarse la ultima opcion activa entre sesiones?

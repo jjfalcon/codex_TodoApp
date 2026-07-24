@@ -41,23 +41,11 @@ Las preferencias de pantalla inicial validas son solo `Dashboard`, `TSK` y `USR`
 Antes de cerrar cambios:
 
 ```bat
-cd tests\App.Core.Tests
-AppCoreTests.exe
-
-cd ..\App.Win.Tests
-run-tests.bat
+run-all-tests.bat
 ```
 
-Para cambios de integracion UI/Core:
+Para incluir mutation testing, el arbol Git debe estar limpio:
 
 ```bat
-cd tests\App.Win.E2E
-run-smoke-login.bat
-```
-
-Para reglas criticas:
-
-```bat
-cd tests\App.Core.Tests
-mutation.bat
+run-all-tests.bat mutation
 ```

@@ -4,7 +4,7 @@
 
 La gestion de usuarios esta implementada con reglas de negocio en `App.Core` y una pantalla VCL fina en `App.Win`.
 
-El nucleo concentra validaciones, roles, bloqueo, eliminacion logica, cambio de contraseña, busqueda y filtros. La pantalla `FUser` se incrusta dentro de `FMain` mediante la opcion `Usuarios`, visible solo para administradores.
+El nucleo concentra validaciones, roles, bloqueo, eliminacion logica, cambio de contraseña, busqueda y filtros. La pantalla `USR` se incrusta dentro de `FMain` mediante `TFrmCrud` y `TUserCrudProvider`, visible solo para administradores.
 
 La persistencia queda aislada tras `IUserRepository`. La implementacion actual usa memoria, compartida por login y gestion de usuarios durante la ejecucion de la aplicacion.
 
@@ -122,21 +122,18 @@ Integraciones relevantes:
 - Los cambios de estado activo, bloqueo y eliminacion logica afectan al siguiente login.
 - El cambio de contraseña afecta al siguiente intento de login.
 
-### `UserForm.pas`
+### `AppCoreUserCrudProvider.pas`
 
-Formulario VCL `TFrmUsers`.
+Adaptador de usuarios para el CRUD generico.
 
 Responsabilidades:
 
-- Mostrar el listado de usuarios.
-- Buscar por texto.
-- Mostrar usuarios eliminados solo al activar `Mostrar eliminados`.
-- Crear usuarios.
-- Guardar cambios de usuario seleccionado.
-- Cambiar contraseña.
-- Desbloquear usuarios.
-- Eliminar logicamente con confirmacion.
-- Mostrar mensajes de validacion procedentes del nucleo.
+- Exponer el schema `USR`.
+- Listar usuarios con busqueda, orden y filtros.
+- Crear usuarios desde registros genericos.
+- Actualizar usuarios desde registros genericos.
+- Eliminar usuarios con las reglas del nucleo.
+- Mostrar mensajes de validacion procedentes del nucleo a traves del CRUD generico.
 
 La pantalla recibe desde `FMain`:
 
@@ -147,9 +144,9 @@ La pantalla recibe desde `FMain`:
 
 ### `MainForm.pas`
 
-`FMain` carga `TFrmUsers` al seleccionar `Usuarios`.
+`FMain` carga `TFrmCrud` con `TUserCrudProvider` al seleccionar `USR`.
 
-La opcion `Usuarios` se oculta para usuarios normales y solo se permite a administradores.
+La opcion `USR` se oculta para usuarios normales y solo se permite a administradores.
 
 ### `LoginForm.pas`
 
@@ -183,7 +180,7 @@ Al arrancar por primera vez el administrador inicial se crea automaticamente via
 ### Edicion
 
 - Se pueden modificar nombre de usuario, nombre visible, email, estado activo, rol y bloqueo.
-- No se puede modificar el usuario autenticado desde `FUser`.
+- No se puede modificar el usuario autenticado desde `USR`.
 - No se puede editar, activar, desbloquear ni cambiar contraseña de un usuario eliminado.
 - No se modifica `CreatedAt`.
 
@@ -259,7 +256,7 @@ dcc32 "-U..\App.Core" WindowsApp.dpr
 - No hay auditoria administrativa.
 - No hay doble factor ni recuperacion de contraseña.
 - No hay logout visual desde `FMain`.
-- La UI de `FUser` es funcional y basica.
+- La UI `USR` usa el CRUD generico y cubre las operaciones principales de administracion.
 
 ## Evolucion Recomendada
 

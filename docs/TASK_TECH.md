@@ -1,8 +1,10 @@
 # Documentacion tecnica: Tareas
 
+> Nota: la pantalla clasica `TFrmTasks` fue sustituida por la opcion `TSK` basada en `TFrmCrud` y `TTaskCrudProvider`. Esta documentacion mantiene detalles del nucleo de tareas; para la UI vigente, usar `docs\CRUD_FORM_SPEC.md` y `docs\TASK_USER_MANUAL.md`.
+
 ## Resumen
 
-La funcionalidad de tareas esta implementada en el nucleo `App.Core` y expuesta en VCL mediante `TFrmTasks`.
+La funcionalidad de tareas esta implementada en el nucleo `App.Core` y expuesta en VCL mediante `TSK`, que usa el CRUD generico.
 
 El servicio de negocio no depende de la UI ni del tipo de persistencia. Las tareas se guardan mediante `ITaskRepository`, con dos implementaciones disponibles:
 

@@ -1,5 +1,7 @@
 # Especificacion funcional: Gestion de usuarios
 
+> Nota: esta especificacion conserva el diseno inicial de `FUser`. La implementacion vigente esta simplificada en `USR` mediante `TFrmCrud` y `TUserCrudProvider`; para el contrato actual, usar `docs\ARCHITECTURE.md`, `docs\USER_TECH.md` y `docs\USER_MANUAL.md`.
+
 ## Objetivo
 
 Incorporar una pantalla `FUser` para administrar los usuarios de la aplicacion Windows desde `FMain`.

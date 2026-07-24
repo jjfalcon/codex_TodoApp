@@ -6,6 +6,19 @@
 
 ## Realizadas
 
+### Mejoras de sostenibilidad pendientes
+
+- Se actualizo `docs\USER_PREFERENCES_SPEC.md` para usar `Dashboard`, `TSK` y `USR` como valores internos vigentes.
+- Se actualizo `docs\FMAIN_SPEC.md` para describir la navegacion viva `Dashboard`/`TSK`/`USR`.
+- Se actualizaron manuales y documentacion tecnica de tareas y usuarios para reflejar el CRUD generico actual.
+- Se ajusto el E2E para nombrar internamente la opcion como `TSK`, conservando los textos visibles localizados `Tareas`/`Tasks`.
+- Se elimino el hint de compilacion en `CrudFormTests.pas` evitando una asignacion inicial innecesaria.
+- Se agrego `run-all-tests.bat` en la raiz para ejecutar Core coverage, App.Win coverage, visual y E2E desde una sola convencion.
+- `run-all-tests.bat mutation` documenta y permite incluir mutation testing cuando el arbol Git esta limpio.
+- Se actualizo `docs\ARCHITECTURE.md` para recomendar el wrapper raiz como verificacion principal.
+- Verificacion: `run-all-tests.bat` termina con `All requested checks passed`.
+- Verificacion: `tests\App.Core.Tests\mutation.bat` termina con `Summary: 17 tested, 17 killed, 0 survived`.
+
 ### Refactorizacion de arquitectura minima
 
 - Se agrego `docs\ARCHITECTURE.md` con las reglas simples de capas y ubicacion de codigo.

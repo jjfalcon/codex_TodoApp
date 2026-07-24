@@ -1,5 +1,7 @@
 # Especificacion funcional: Tareas
 
+> Nota: esta especificacion conserva el diseno inicial de la pantalla clasica de tareas. La implementacion vigente esta simplificada en `TSK` mediante `TFrmCrud` y `TTaskCrudProvider`; para el contrato actual, usar `docs\ARCHITECTURE.md`, `docs\CRUD_FORM_SPEC.md` y `docs\TASK_USER_MANUAL.md`.
+
 ## Estado
 
 Completada el 2026-06-02.
@@ -8,7 +10,7 @@ Implementacion principal:
 
 - Nucleo: `src/App.Core/AppCoreTaskItem.pas`, `src/App.Core/AppCoreTaskRepository.pas`, `src/App.Core/AppCoreTaskService.pas`.
 - Persistencia: `src/App.Core/AppCoreTaskFileRepository.pas`.
-- UI VCL: `src/App.Win/TaskForm.pas`, `src/App.Win/TaskForm.dfm`.
+- UI VCL vigente: `src\App.Win\CrudForm.pas` con `TTaskCrudProvider`.
 - Pruebas: `tests/App.Core.Tests/AppCoreTaskServiceTests.pas`.
 
 ## Objetivo

@@ -78,7 +78,6 @@ function ColumnByField(AForm: TFrmCrud; const AFieldName: string): TColumn;
 var
   I: Integer;
 begin
-  Result := nil;
   for I := 0 to AForm.Grid.Columns.Count - 1 do
     if SameText(AForm.Grid.Columns[I].FieldName, AFieldName) then
     begin

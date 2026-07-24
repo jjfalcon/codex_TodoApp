@@ -1,31 +1,32 @@
-# Manual de usuario: Usuarios
+# Manual de usuario: USR
 
 ## Objetivo
 
-La pantalla `Usuarios` permite a un administrador gestionar las cuentas de acceso a la aplicacion.
+La pantalla `USR` permite a un administrador gestionar las cuentas de acceso a la aplicacion.
 
 Desde esta pantalla se pueden crear usuarios, editar sus datos, cambiar contraseñas, activar o desactivar cuentas, desbloquear usuarios y eliminar usuarios de forma logica.
 
-## Acceder a Usuarios
+## Acceder a USR
 
 1. Inicie sesion con un usuario administrador.
 2. Se abrira la pantalla principal `FMain`.
-3. En la barra lateral izquierda, pulse `Usuarios`.
+3. En la barra lateral izquierda, pulse `Usuarios` / `Users`.
 4. La pantalla de gestion de usuarios se mostrara en la zona central.
 
-Los usuarios normales no ven la opcion `Usuarios`.
+Los usuarios normales no ven la opcion `USR`.
 
 ## Crear un usuario
 
-1. Rellene los campos:
+1. Pulse `Nuevo`.
+2. Rellene los campos del detalle:
    - `Usuario`
    - `Nombre visible`
    - `Email`
    - `Contraseña`
    - Rol
-2. Marque `Activo` si la cuenta debe poder iniciar sesion.
-3. Pulse `Crear`.
-4. El listado se refrescara y seleccionara el usuario creado.
+3. Marque `Activo` si la cuenta debe poder iniciar sesion.
+4. Acepte el detalle.
+5. El grid se refrescara.
 
 El usuario nuevo queda no bloqueado y no eliminado.
 
@@ -49,16 +50,18 @@ La contraseña debe tener mas de 4 caracteres.
 ## Editar un usuario
 
 1. Seleccione un usuario en la lista.
-2. Modifique los campos necesarios.
-3. Pulse `Guardar`.
+2. Pulse `Editar`.
+3. Modifique los campos necesarios en el detalle.
+4. Acepte los cambios.
 
 No puede modificarse a si mismo desde esta pantalla. Los cambios sobre un administrador deben realizarlos otros administradores.
 
 ## Cambiar contraseña
 
 1. Seleccione un usuario.
-2. Escriba la nueva contraseña.
-3. Pulse `Cambiar contraseña`.
+2. Pulse `Editar`.
+3. Escriba la nueva contraseña en el detalle.
+4. Acepte los cambios.
 
 La nueva contraseña sera valida para el siguiente intento de login.
 
@@ -67,8 +70,9 @@ La nueva contraseña sera valida para el siguiente intento de login.
 Para cambiar el estado de una cuenta:
 
 1. Seleccione el usuario.
-2. Marque o desmarque `Activo`.
-3. Pulse `Guardar`.
+2. Pulse `Editar`.
+3. Marque o desmarque `Activo`.
+4. Acepte los cambios.
 
 Un usuario inactivo no podra iniciar sesion a partir del siguiente login.
 
@@ -76,16 +80,10 @@ Si el usuario ya tenia una sesion activa, esa sesion no se cierra automaticament
 
 ## Bloquear o desbloquear
 
-Para bloquear un usuario:
-
 1. Seleccione el usuario.
-2. Marque `Bloqueado`.
-3. Pulse `Guardar`.
-
-Para desbloquearlo:
-
-1. Seleccione el usuario bloqueado.
-2. Pulse `Desbloquear`.
+2. Pulse `Editar`.
+3. Marque o desmarque `Bloqueado`.
+4. Acepte los cambios.
 
 Al desbloquear, se reinician los fallos consecutivos de login.
 
@@ -116,11 +114,13 @@ La busqueda compara contra:
 
 La busqueda no distingue entre mayusculas y minusculas.
 
+Tambien puede filtrar por columna con `Ctrl+click` sobre la cabecera de la columna.
+
 ## Usuarios eliminados
 
 Los usuarios eliminados no aparecen en el listado por defecto.
 
-Para verlos, active `Mostrar eliminados`.
+Para verlos, use los filtros disponibles de la pantalla.
 
 Al activar este filtro, el listado mostrara usuarios eliminados compatibles con la busqueda actual.
 
@@ -130,8 +130,8 @@ La aplicacion distingue dos roles:
 
 | Rol | Acceso |
 | --- | --- |
-| Administrador | Puede acceder a `Usuarios` y gestionar cuentas. |
-| Usuario normal | Puede usar funcionalidades generales permitidas, pero no ve `Usuarios`. |
+| Administrador | Puede acceder a `USR` y gestionar cuentas. |
+| Usuario normal | Puede usar funcionalidades generales permitidas, pero no ve `USR`. |
 
 Si cambia el rol de un usuario, el cambio se aplica a partir del siguiente login de ese usuario.
 

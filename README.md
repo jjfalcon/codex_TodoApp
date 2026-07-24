@@ -41,6 +41,18 @@ cd ..\..\src\App.Win
 dcc32 "-U..\App.Core" WindowsApp.dpr
 ```
 
+Para ejecutar la verificacion habitual desde la raiz:
+
+```bat
+run-all-tests.bat
+```
+
+Para incluir mutation testing cuando el arbol Git este limpio:
+
+```bat
+run-all-tests.bat mutation
+```
+
 ## Niveles de test
 
 La taxonomia de verificacion del proyecto esta documentada en `docs/TESTING.md`:

@@ -32,14 +32,14 @@ LastUsername=admin
 Language=es
 
 [Main]
-LastOption=Tasks
+LastOption=TSK
 ```
 
 Valores definidos:
 
 - `Login.LastUsername`: ultimo nombre de usuario no vacio usado en un intento de login.
 - `Localization.Language`: idioma activo, por ejemplo `es` o `en`.
-- `Main.LastOption`: ultima opcion principal abierta. Valores internos: `Dashboard`, `Tasks`, `Users`.
+- `Main.LastOption`: ultima opcion principal abierta. Valores internos: `Dashboard`, `TSK`, `USR`.
 
 ## Aplicacion
 
@@ -56,7 +56,7 @@ Campos visibles:
 
 - Ultimo usuario: solo lectura.
 - Idioma: editable mediante combo con valores `es` y `en`.
-- Pantalla de inicio: editable mediante combo con valores internos `Dashboard`, `Tasks` y `Users`.
+- Pantalla de inicio: editable mediante combo con valores internos `Dashboard`, `TSK` y `USR`.
 
 Al guardar, la UI llama a `TPreferencesService`; las validaciones permanecen en `src\App.Core`.
 
@@ -67,7 +67,7 @@ Al guardar, la UI llama a `TPreferencesService`; las validaciones permanecen en 
 - Si el fichero no existe, las preferencias devuelven cadena vacia.
 - La UI solo lee o escribe preferencias a traves de la interfaz del nucleo.
 - Solo se aceptan idiomas `es` y `en` desde la pantalla de preferencias.
-- Solo se aceptan opciones iniciales `Dashboard`, `Tasks` y `Users`.
+- Solo se aceptan opciones iniciales `Dashboard`, `TSK` y `USR`.
 
 ## Componentes
 
