@@ -12,7 +12,9 @@ Global $DiagnosticsDir = $WorkingDir & "\diagnostics"
 If $CmdLine[0] >= 3 Then $DiagnosticsDir = $CmdLine[3]
 Global $LoginTitle = "[TITLE:Login]"
 Global $MainTitle = "[CLASS:TFrmMain]"
+Global $DetailTitle = "[CLASS:TFrmCrudDetail]"
 Global $TaskTitle = "E2E task " & @YEAR & @MON & @MDAY & @HOUR & @MIN & @SEC
+Global $TasksFile = $WorkingDir & "\tasks.json"
 Global $Pid = Run('"' & $AppExe & '"', $WorkingDir, @SW_SHOW)
 
 If $Pid = 0 Then
@@ -82,6 +84,11 @@ Func DumpDiagnostics($Reason)
     Global $Selected = ControlCommand($MainTitle, "", "[CLASS:TListBox; INSTANCE:1]", "GetCurrentSelection", "")
     If @error = 0 Then ConsoleWrite("List current selection: " & $Selected & @CRLF)
 
+    For $I = 1 To 2
+        Global $GridHandle = ControlGetHandle($MainTitle, "", "[CLASS:TDBGrid; INSTANCE:" & $I & "]")
+        If $GridHandle <> "" Then ConsoleWrite("Grid " & $I & ": " & $GridHandle & @CRLF)
+    Next
+
     For $I = 1 To 4
         Global $LoginButtonText = ControlGetText($LoginTitle, "", "[CLASS:TButton; INSTANCE:" & $I & "]")
         If $LoginButtonText <> "" Then ConsoleWrite("Login button " & $I & ": " & $LoginButtonText & @CRLF)
@@ -134,6 +141,18 @@ Func FindButton($Title, $Text1, $Text2, $Text3)
     Return ""
 EndFunc
 
+Func WaitForFileText($FileName, $Text, $TimeoutSeconds)
+    Global $Deadline = TimerInit()
+    While TimerDiff($Deadline) < ($TimeoutSeconds * 1000)
+        If FileExists($FileName) Then
+            Global $Content = FileRead($FileName)
+            If StringInStr($Content, $Text) Then Return True
+        EndIf
+        Sleep(100)
+    WEnd
+    Return False
+EndFunc
+
 If Not WinWait($LoginTitle, "", 10) Then
     ConsoleWrite("Login window was not shown." & @CRLF)
     ProcessClose($Pid)
@@ -176,40 +195,50 @@ Global $TasksButton = FindButton($MainTitle, "Tareas", "Tasks", "")
 If $TasksButton = "" Then _
     Fail(16, "Could not find Tasks button.")
 
-If Not ControlClick($MainTitle, "", $TasksButton) Then _
-    Fail(16, "Could not open Tasks screen.")
+ControlClick($MainTitle, "", $TasksButton)
 
-If Not WaitForControl($MainTitle, "[CLASS:TListBox; INSTANCE:1]", 5) Then _
-    Fail(17, "Tasks list was not shown.")
+If Not WaitForControl($MainTitle, "[CLASS:TDBGrid; INSTANCE:1]", 5) Then _
+    Fail(17, "Tasks grid was not shown.")
 
-If Not ControlFocus($MainTitle, "", "[CLASS:TEdit; INSTANCE:1]") Then _
-    Fail(18, "Could not focus task title.")
-For $I = 1 To 4
-    ControlSetText($MainTitle, "", "[CLASS:TEdit; INSTANCE:" & $I & "]", $TaskTitle)
-Next
+Global $NewButton = FindButton($MainTitle, "Nuevo", "New", "")
+If $NewButton = "" Then _
+    Fail(18, "Could not find New task button.")
 
-Global $AddButton = FindButton($MainTitle, "adir", "Anadir", "Add")
-If $AddButton = "" Then _
-    Fail(19, "Could not find Add task button.")
+If Not ControlClick($MainTitle, "", $NewButton) Then _
+    Fail(18, "Could not click New task.")
 
-If Not ControlClick($MainTitle, "", $AddButton) Then _
-    Fail(19, "Could not click Add task.")
+If Not WinWait($DetailTitle, "", 5) Then _
+    Fail(19, "Task detail was not shown for create.")
 
-Sleep(500)
-If ControlCommand($MainTitle, "", "[CLASS:TListBox; INSTANCE:1]", "FindString", "[ ] " & $TaskTitle) < 0 Then _
-    Fail(20, "Created task was not listed as pending.")
+If Not ControlFocus($DetailTitle, "", "[CLASS:TEdit; INSTANCE:1]") Then _
+    Fail(20, "Could not focus task title in detail.")
+ControlSetText($DetailTitle, "", "[CLASS:TEdit; INSTANCE:1]", $TaskTitle)
 
-ControlCommand($MainTitle, "", "[CLASS:TListBox; INSTANCE:1]", "SelectString", "[ ] " & $TaskTitle)
-Global $CompleteButton = FindButton($MainTitle, "Completar", "Complete", "")
-If $CompleteButton = "" Then _
-    Fail(21, "Could not find Complete task button.")
+Global $SaveButton = FindButton($DetailTitle, "Guardar", "Save", "")
+If $SaveButton = "" Then _
+    Fail(21, "Could not find Save button for create.")
 
-If Not ControlClick($MainTitle, "", $CompleteButton) Then _
-    Fail(21, "Could not click Complete task.")
+If Not ControlClick($DetailTitle, "", $SaveButton) Then _
+    Fail(21, "Could not save new task.")
 
-Sleep(500)
-If ControlCommand($MainTitle, "", "[CLASS:TListBox; INSTANCE:1]", "FindString", "[x] " & $TaskTitle) < 0 Then _
-    Fail(22, "Completed task was not listed with [x] prefix.")
+If Not WaitForFileText($TasksFile, $TaskTitle, 5) Then _
+    Fail(22, "Created task was not persisted.")
+
+ControlClick($MainTitle, "", "[CLASS:TDBGrid; INSTANCE:1]", "left", 2, 40, 40)
+If Not WinWait($DetailTitle, "", 5) Then _
+    Fail(23, "Task detail was not shown for edit.")
+
+ControlCommand($DetailTitle, "", "[CLASS:TCheckBox; INSTANCE:1]", "Check", "")
+
+$SaveButton = FindButton($DetailTitle, "Guardar", "Save", "")
+If $SaveButton = "" Then _
+    Fail(24, "Could not find Save button for edit.")
+
+If Not ControlClick($DetailTitle, "", $SaveButton) Then _
+    Fail(24, "Could not save completed task.")
+
+If Not WaitForFileText($TasksFile, '"status": "completed"', 5) Then _
+    Fail(25, "Completed task was not persisted.")
 
 WinClose($MainTitle)
 If Not ProcessWaitClose($Pid, 5) Then

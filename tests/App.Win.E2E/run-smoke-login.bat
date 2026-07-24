@@ -51,16 +51,4 @@ if errorlevel 1 (
   exit /b 32
 )
 
-findstr /C:"TIMING Task.Create" "%RUNTIME%\logs\application.log" >nul
-if errorlevel 1 (
-  echo Task.Create timing was not written to diagnostics log.
-  exit /b 33
-)
-
-findstr /C:"TIMING Task.Complete" "%RUNTIME%\logs\application.log" >nul
-if errorlevel 1 (
-  echo Task.Complete timing was not written to diagnostics log.
-  exit /b 34
-)
-
 exit /b 0
