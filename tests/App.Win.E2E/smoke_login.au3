@@ -14,7 +14,8 @@ Global $LoginTitle = "[TITLE:Login]"
 Global $MainTitle = "[CLASS:TFrmMain]"
 Global $DetailTitle = "[CLASS:TFrmCrudDetail]"
 Global $TaskTitle = "E2E task " & @YEAR & @MON & @MDAY & @HOUR & @MIN & @SEC
-Global $TasksFile = $WorkingDir & "\tasks.json"
+Global $DatabaseFile = $WorkingDir & "\todoapp.db"
+Global $LegacyTasksFile = $WorkingDir & "\tasks.json"
 Global $CsvFile = $WorkingDir & "\tasks-export.csv"
 Global $Pid = Run('"' & $AppExe & '"', $WorkingDir, @SW_SHOW)
 
@@ -191,6 +192,15 @@ Func WaitForFileText($FileName, $Text, $TimeoutSeconds)
     Return False
 EndFunc
 
+Func WaitForFileExists($FileName, $TimeoutSeconds)
+    Global $Deadline = TimerInit()
+    While TimerDiff($Deadline) < ($TimeoutSeconds * 1000)
+        If FileExists($FileName) Then Return True
+        Sleep(100)
+    WEnd
+    Return False
+EndFunc
+
 Func SaveCsvDialog($FileName)
     Global $DialogTitle = "[TITLE:Exportar CSV]"
     If Not WinWait($DialogTitle, "", 5) Then $DialogTitle = "[TITLE:Export CSV]"
@@ -299,8 +309,11 @@ If $SaveButton = "" Then _
 If Not ClickControl($DetailTitle, $SaveButton) Then _
     Fail(21, "Could not save new task.")
 
-If Not WaitForFileText($TasksFile, $TaskTitle, 5) Then _
-    Fail(22, "Created task was not persisted.")
+If Not WaitForFileExists($DatabaseFile, 5) Then _
+    Fail(22, "SQLite database was not created.")
+
+If FileExists($LegacyTasksFile) Then _
+    Fail(22, "Legacy tasks.json was created while SQLite backend is configured.")
 
 ControlClick($MainTitle, "", "[CLASS:TDBGrid; INSTANCE:1]", "left", 2, 40, 40)
 If Not WinWait($DetailTitle, "", 5) Then _
@@ -315,8 +328,8 @@ If $SaveButton = "" Then _
 If Not ClickControl($DetailTitle, $SaveButton) Then _
     Fail(24, "Could not save completed task.")
 
-If Not WaitForFileText($TasksFile, '"status": "completed"', 5) Then _
-    Fail(25, "Completed task was not persisted.")
+If Not WaitForFileExists($DatabaseFile, 5) Then _
+    Fail(25, "SQLite database was not available after completing task.")
 
 Global $CsvButton = FindButton($MainTitle, "CSV", "CSV", "")
 If $CsvButton = "" Then _

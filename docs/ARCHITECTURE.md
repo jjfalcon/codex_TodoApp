@@ -39,9 +39,9 @@ Las preferencias de pantalla inicial validas son solo `Dashboard`, `TSK` y `USR`
 `app.config` guarda configuracion tecnica y preferencias de aplicacion local. Las preferencias personales del usuario autenticado viven en `TUser.PreferencesText` dentro del repositorio de usuarios.
 
 La persistencia de datos de dominio se selecciona con `[Persistence] Backend`:
-`json` mantiene los ficheros `tasks.json`/`users.json`, y `sqlite` usa una base
-local SQLite indicada por `DatabaseFile`. Las preferencias de aplicacion no se
-mueven a SQLite.
+`sqlite` es el backend por defecto y usa una base local SQLite indicada por
+`DatabaseFile`. `json` mantiene los ficheros `tasks.json`/`users.json` como
+backend alternativo. Las preferencias de aplicacion no se mueven a SQLite.
 
 ## Verificacion
 

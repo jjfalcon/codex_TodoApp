@@ -17,8 +17,9 @@ Separar configuracion de aplicacion y preferencias personales sin mezclar reglas
 
 ```ini
 [Persistence]
-Backend=json
+Backend=sqlite
 DataPath=.
+DatabaseFile=todoapp.db
 
 [Localization]
 Language=es

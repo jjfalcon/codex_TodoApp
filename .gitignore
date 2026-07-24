@@ -17,6 +17,9 @@ __history__/
 *.~*
 tasks.json
 users.json
+todoapp.db
+*.db-wal
+*.db-shm
 logs/
 autoit-v3.zip
 tests/App.Core.Tests/coverage/

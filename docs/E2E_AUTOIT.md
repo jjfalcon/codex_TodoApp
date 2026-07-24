@@ -39,9 +39,9 @@ El runner:
 - Verifica que aparece la ventana principal.
 - Abre `Tareas`, implementada mediante el CRUD generico `TSK`.
 - Crea una tarea con titulo unico desde el formulario de detalle.
-- Verifica que la tarea se guarda en `tasks.json`.
+- Verifica que la tarea se guarda en el backend configurado en `app.config`.
 - Marca la tarea como completada desde el detalle.
-- Verifica que `tasks.json` conserva el estado `completed`.
+- Verifica que el backend configurado conserva el estado `completed`.
 - Exporta el grid de `Tareas` a CSV desde el boton `CSV`.
 - Verifica que el CSV contiene la tarea creada y usa separador `;`.
 - Emite diagnosticos con listado de ventanas, clases y controles si falla.
@@ -65,5 +65,5 @@ El runner descomprime el ultimo ZIP de `releases\` en `runtime-release`, valida 
 - El runtime esta ignorado por Git.
 - `runtime-release` esta ignorado por Git.
 - El ZIP de descarga `autoit-v3.zip` esta ignorado por Git.
-- El login crea el administrador por defecto si no existe `users.json`.
-- El test usa un runtime aislado para que `users.json`, `tasks.json` y `app.config` no contaminen el entorno de desarrollo.
+- El login crea el administrador por defecto si no existen usuarios en el backend configurado.
+- El test usa un runtime aislado para que los datos locales y `app.config` no contaminen el entorno de desarrollo.

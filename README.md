@@ -91,13 +91,13 @@ La persistencia se elige en `app.config` desde `[Persistence]`.
 
 ```ini
 [Persistence]
-Backend=json
+Backend=sqlite
 DataPath=.
 DatabaseFile=todoapp.db
 ```
 
-- `Backend=json`: usa `tasks.json` y `users.json`.
-- `Backend=sqlite`: usa SQLite local en `DatabaseFile`.
+- `Backend=sqlite`: usa SQLite local en `DatabaseFile` y es la opcion por defecto.
+- `Backend=json`: usa `tasks.json` y `users.json` como backend alternativo.
 - Las preferencias de aplicacion, como `LastUsername`, siguen en `app.config`.
 - Las preferencias de usuario se guardan con el usuario, en `PreferencesText`.
 
