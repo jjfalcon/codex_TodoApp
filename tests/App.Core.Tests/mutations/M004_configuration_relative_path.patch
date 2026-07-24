@@ -1,11 +1,9 @@
 diff --git a/src/App.Core/AppCoreConfiguration.pas b/src/App.Core/AppCoreConfiguration.pas
 --- a/src/App.Core/AppCoreConfiguration.pas
 +++ b/src/App.Core/AppCoreConfiguration.pas
-@@ -35,7 +35,7 @@ begin
-   FDataPath := '.';
-   FConnectionString := '';
-   FLanguage := 'es';
-   FLanguageFile := 'languages.csv';
+@@ -58,7 +58,7 @@ begin
+   FUpdateManifestUrl := '';
+   FUpdateDownloadDir := 'updates';
  
 -  LFileName := ExpandFileName(AFileName);
 +  LFileName := AFileName;
