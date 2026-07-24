@@ -42,6 +42,7 @@ type
 
 var
   GLastFilters: TStringList;
+  GIncludeCsvSpecialRecord: Boolean;
 
 procedure AssertEquals(AExpected, AActual: Integer; const AMessage: string); overload;
 begin
@@ -107,6 +108,7 @@ begin
   begin
     AKeys.Add('FrmCrud.Caption');
     AKeys.Add('FrmCrud.BtnSearch.Caption');
+    AKeys.Add('FrmCrud.BtnExportCsv.Caption');
   end;
 end;
 
@@ -119,7 +121,8 @@ begin
   Result := SameText(AKey, 'Crud.Test.email.Caption') or
     SameText(AKey, 'Crud.Test.name.Caption') or
     SameText(AKey, 'FrmCrud.Caption') or
-    SameText(AKey, 'FrmCrud.BtnSearch.Caption');
+    SameText(AKey, 'FrmCrud.BtnSearch.Caption') or
+    SameText(AKey, 'FrmCrud.BtnExportCsv.Caption');
 end;
 
 function TFakeLocalization.Language: string;
@@ -137,6 +140,8 @@ begin
     Result := 'Records'
   else if SameText(AKey, 'FrmCrud.BtnSearch.Caption') then
     Result := 'Find'
+  else if SameText(AKey, 'FrmCrud.BtnExportCsv.Caption') then
+    Result := 'CSV'
   else
     Result := '';
 end;
@@ -162,6 +167,14 @@ begin
   LRecord.SetValue('name', 'First');
   LRecord.SetValue('email', 'first@example.test');
   Result.Add(LRecord);
+  if GIncludeCsvSpecialRecord then
+  begin
+    LRecord := TCrudRecord.Create;
+    LRecord.SetValue('id', '2');
+    LRecord.SetValue('name', 'Second; quoted');
+    LRecord.SetValue('email', 'second "mail"'#13#10'next@example.test');
+    Result.Add(LRecord);
+  end;
 end;
 
 procedure CrudFormPassesColumnFiltersToProvider;
@@ -378,6 +391,29 @@ begin
   end;
 end;
 
+procedure CrudFormCsvExportUsesVisibleGridAndSemicolon;
+var
+  LForm: TFrmCrud;
+  LCsv: string;
+begin
+  GIncludeCsvSpecialRecord := True;
+  LForm := TFrmCrud.Create(nil);
+  try
+    LForm.ApplyLocalization(TFakeLocalization.Create, False);
+    LForm.Configure(TFakeCrudProvider.Create, emDetail, nil, 'Test');
+    LForm.SetColumnVisible('name', False);
+    LCsv := LForm.CreateCsvText;
+    AssertEquals('E-mail address' + sLineBreak +
+      'first@example.test' + sLineBreak +
+      '"second ""mail""' + sLineBreak +
+      'next@example.test"' + sLineBreak,
+      LCsv, 'CSV should export visible grid state with semicolon CSV escaping.');
+  finally
+    LForm.Free;
+    GIncludeCsvSpecialRecord := False;
+  end;
+end;
+
 procedure CrudPreviewFormExposesLayoutOptions;
 var
   LForm: TFrmCrudPreview;
@@ -539,6 +575,7 @@ begin
   RunTest('CrudDetail_localizes_field_labels', CrudDetailLocalizesFieldLabels, AFailures);
   RunTest('CrudForm_preview_button_is_available', CrudFormPreviewButtonIsAvailable, AFailures);
   RunTest('CrudForm_preview_data_uses_visible_grid_exactly', CrudFormPreviewDataUsesVisibleGridExactly, AFailures);
+  RunTest('CrudForm_csv_export_uses_visible_grid_and_semicolon', CrudFormCsvExportUsesVisibleGridAndSemicolon, AFailures);
   RunTest('CrudPreviewForm_exposes_layout_options', CrudPreviewFormExposesLayoutOptions, AFailures);
 end;
 

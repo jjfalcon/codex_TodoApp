@@ -78,22 +78,31 @@ object FrmCrud: TFrmCrud
       TabOrder = 4
       OnClick = BtnPreviewClick
     end
-    object BtnNew: TButton
+    object BtnExportCsv: TButton
       Left = 468
       Top = 10
       Width = 80
       Height = 25
-      Caption = 'Nuevo'
+      Caption = 'CSV'
       TabOrder = 5
+      OnClick = BtnExportCsvClick
+    end
+    object BtnNew: TButton
+      Left = 556
+      Top = 10
+      Width = 64
+      Height = 25
+      Caption = 'Nuevo'
+      TabOrder = 6
       OnClick = BtnNewClick
     end
     object BtnDelete: TButton
-      Left = 556
+      Left = 624
       Top = 10
-      Width = 80
+      Width = 64
       Height = 25
       Caption = 'Eliminar'
-      TabOrder = 6
+      TabOrder = 7
       OnClick = BtnDeleteClick
     end
   end

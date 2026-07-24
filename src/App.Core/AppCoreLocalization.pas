@@ -35,11 +35,55 @@ type
     procedure ChangeLanguage(const ALanguage: string);
   end;
 
-procedure ParseCsvLine(const ALine: string; AValues: TStrings);
+function DetectCsvSeparator(const AHeaderLine: string): Char;
+procedure ParseCsvLine(const ALine: string; AValues: TStrings); overload;
+procedure ParseCsvLine(const ALine: string; AValues: TStrings;
+  ASeparator: Char); overload;
 
 implementation
 
+function DetectCsvSeparator(const AHeaderLine: string): Char;
+var
+  I: Integer;
+  LCommaCount: Integer;
+  LSemicolonCount: Integer;
+  LInQuotes: Boolean;
+begin
+  LCommaCount := 0;
+  LSemicolonCount := 0;
+  LInQuotes := False;
+  I := 1;
+  while I <= Length(AHeaderLine) do
+  begin
+    if AHeaderLine[I] = '"' then
+    begin
+      if LInQuotes and (I < Length(AHeaderLine)) and (AHeaderLine[I + 1] = '"') then
+        Inc(I)
+      else
+        LInQuotes := not LInQuotes;
+    end
+    else if not LInQuotes then
+    begin
+      if AHeaderLine[I] = ',' then
+        Inc(LCommaCount)
+      else if AHeaderLine[I] = ';' then
+        Inc(LSemicolonCount);
+    end;
+    Inc(I);
+  end;
+  if LSemicolonCount > LCommaCount then
+    Result := ';'
+  else
+    Result := ',';
+end;
+
 procedure ParseCsvLine(const ALine: string; AValues: TStrings);
+begin
+  ParseCsvLine(ALine, AValues, ',');
+end;
+
+procedure ParseCsvLine(const ALine: string; AValues: TStrings;
+  ASeparator: Char);
 var
   I: Integer;
   LValue: string;
@@ -61,7 +105,7 @@ begin
       else
         LInQuotes := not LInQuotes;
     end
-    else if (ALine[I] = ',') and not LInQuotes then
+    else if (ALine[I] = ASeparator) and not LInQuotes then
     begin
       AValues.Add(LValue);
       LValue := '';
@@ -127,6 +171,7 @@ var
   I: Integer;
   LKey: string;
   LText: string;
+  LSeparator: Char;
 begin
   if not FileExists(AFileName) then
     Exit;
@@ -139,7 +184,8 @@ begin
     if LLines.Count = 0 then
       Exit;
 
-    ParseCsvLine(LLines[0], LHeaders);
+    LSeparator := DetectCsvSeparator(LLines[0]);
+    ParseCsvLine(LLines[0], LHeaders, LSeparator);
     LKeyColumn := FindColumn(LHeaders, 'key');
     if LKeyColumn < 0 then
       raise Exception.Create('Localization CSV must contain key column.');
@@ -151,7 +197,7 @@ begin
 
     for I := 1 to LLines.Count - 1 do
     begin
-      ParseCsvLine(LLines[I], LValues);
+      ParseCsvLine(LLines[I], LValues, LSeparator);
       LKey := ValueAt(LValues, LKeyColumn);
       if LKey = '' then
         Continue;

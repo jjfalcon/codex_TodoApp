@@ -109,6 +109,32 @@ begin
   DeleteFile(LTestLocalizationFile);
 end;
 
+procedure LoadsSemicolonSeparatedLocalizationFile;
+var
+  LFile: TStringList;
+  LLocalization: ILocalizationService;
+begin
+  LFile := TStringList.Create;
+  try
+    LFile.Add('key;es;en');
+    LFile.Add('FrmLogin.BtnLogin.Caption;Entrar;Sign in');
+    LFile.Add('FrmLogin.LblMessage.Caption;"Hola; mundo";"Hello; world"');
+    LFile.Add('FrmLogin.LblQuoted.Caption;"Texto ""citado""";"Quoted ""text"""');
+    LFile.SaveToFile(LTestLocalizationFile);
+  finally
+    LFile.Free;
+  end;
+
+  LLocalization := TCsvLocalizationService.Create(LTestLocalizationFile, 'en', 'es');
+  AssertEquals('Sign in', LLocalization.Text('FrmLogin.BtnLogin.Caption'),
+    'Should load selected language from semicolon separated CSV.');
+  AssertEquals('Hello; world', LLocalization.Text('FrmLogin.LblMessage.Caption'),
+    'Should parse quoted semicolon values.');
+  AssertEquals('Quoted "text"', LLocalization.Text('FrmLogin.LblQuoted.Caption'),
+    'Should parse escaped quotes in semicolon CSV.');
+  DeleteFile(LTestLocalizationFile);
+end;
+
 procedure LoadsGlobalTextKey;
 var
   LLocalization: ILocalizationService;
@@ -161,6 +187,7 @@ begin
   RunTest('Localization_loads_text_for_selected_language', LoadsTextForSelectedLanguage, AFailures);
   RunTest('Localization_falls_back_to_default_language_when_selected_text_is_empty', FallsBackToDefaultLanguageWhenSelectedTextIsEmpty, AFailures);
   RunTest('Localization_parses_quoted_csv_values', ParsesQuotedCsvValues, AFailures);
+  RunTest('Localization_loads_semicolon_separated_localization_file', LoadsSemicolonSeparatedLocalizationFile, AFailures);
   RunTest('Localization_loads_global_text_key', LoadsGlobalTextKey, AFailures);
   RunTest('Localization_returns_only_keys_for_requested_form', ReturnsOnlyKeysForRequestedForm, AFailures);
   RunTest('Localization_changes_language_and_reloads_texts', ChangesLanguageAndReloadsTexts, AFailures);

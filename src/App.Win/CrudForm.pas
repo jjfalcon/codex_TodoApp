@@ -27,6 +27,7 @@ type
     BtnSearch: TButton;
     BtnRefresh: TButton;
     BtnPreview: TButton;
+    BtnExportCsv: TButton;
     BtnNew: TButton;
     BtnDelete: TButton;
     LblEditMode: TLabel;
@@ -37,6 +38,7 @@ type
     procedure BtnSearchClick(Sender: TObject);
     procedure BtnRefreshClick(Sender: TObject);
     procedure BtnPreviewClick(Sender: TObject);
+    procedure BtnExportCsvClick(Sender: TObject);
     procedure BtnNewClick(Sender: TObject);
     procedure BtnDeleteClick(Sender: TObject);
     procedure ClientDataSetAfterPost(DataSet: TDataSet);
@@ -83,6 +85,7 @@ type
       const ALayout: ICrudGridLayoutRepository = nil; const ALayoutKey: string = '');
     function CellMatchesSearch(const AValue: string): Boolean;
     function CreatePreviewData: TCrudPreviewData;
+    function CreateCsvText: string;
     procedure SaveLayout;
     procedure SetColumnFilter(const AFieldName, AValue: string);
     procedure SetColumnVisible(const AFieldName: string; AVisible: Boolean);
@@ -156,6 +159,34 @@ begin
     LForm.ShowModal;
   finally
     LForm.Free;
+  end;
+end;
+
+procedure TFrmCrud.BtnExportCsvClick(Sender: TObject);
+var
+  LDialog: TSaveDialog;
+  LLines: TStringList;
+begin
+  LDialog := TSaveDialog.Create(Self);
+  try
+    LDialog.Title := TextOrDefault('Crud.ExportCsvDialog.Title', 'Exportar CSV');
+    LDialog.Filter := TextOrDefault('Crud.ExportCsvDialog.Filter',
+      'CSV (*.csv)|*.csv|Todos los ficheros (*.*)|*.*');
+    LDialog.DefaultExt := 'csv';
+    if LDialog.Execute then
+    begin
+      LLines := TStringList.Create;
+      try
+        LLines.Text := CreateCsvText;
+        LLines.SaveToFile(LDialog.FileName);
+      finally
+        LLines.Free;
+      end;
+      ShowMessage(TextOrDefault('Crud.ExportCsv.Success',
+        'CSV exportado correctamente.'));
+    end;
+  finally
+    LDialog.Free;
   end;
 end;
 
@@ -340,6 +371,52 @@ begin
       ClientDataSet.FreeBookmark(LBookmark);
     end;
     ClientDataSet.EnableControls;
+  end;
+end;
+
+function CsvEscape(const AValue: string): string;
+begin
+  Result := StringReplace(AValue, '"', '""', [rfReplaceAll]);
+  if (Pos(';', Result) > 0) or (Pos('"', AValue) > 0) or
+    (Pos(#13, Result) > 0) or (Pos(#10, Result) > 0) then
+    Result := '"' + Result + '"';
+end;
+
+function TFrmCrud.CreateCsvText: string;
+var
+  LData: TCrudPreviewData;
+  LLines: TStringList;
+  LLine: string;
+  I: Integer;
+  J: Integer;
+begin
+  LData := CreatePreviewData;
+  LLines := TStringList.Create;
+  try
+    LLine := '';
+    for I := 0 to LData.ColumnCount - 1 do
+    begin
+      if I > 0 then
+        LLine := LLine + ';';
+      LLine := LLine + CsvEscape(LData.ColumnCaption(I));
+    end;
+    LLines.Add(LLine);
+
+    for I := 0 to LData.RowCount - 1 do
+    begin
+      LLine := '';
+      for J := 0 to LData.ColumnCount - 1 do
+      begin
+        if J > 0 then
+          LLine := LLine + ';';
+        LLine := LLine + CsvEscape(LData.Cell(I, J));
+      end;
+      LLines.Add(LLine);
+    end;
+    Result := LLines.Text;
+  finally
+    LLines.Free;
+    LData.Free;
   end;
 end;
 

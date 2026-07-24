@@ -1,75 +1,79 @@
-key,es,en
-FrmLogin.Caption,Login,Login
-FrmLogin.LblUsername.Caption,Usuario,Username
-FrmLogin.LblPassword.Caption,Contraseï¿½a,Password
-FrmLogin.BtnLogin.Caption,Entrar,Sign in
-FrmLogin.BtnCancel.Caption,Cancelar,Cancel
-FrmMain.Caption,Delphi TDD App - FMain,Delphi TDD App - FMain
-FrmMain.BtnDashboard.Caption,Dashboard,Dashboard
-FrmMain.BtnTsk.Caption,Tareas,Tasks
-FrmMain.BtnUsr.Caption,Usuarios,Users
-FrmMain.BtnPreferences.Caption,Preferencias,Preferences
-FrmMain.BtnAbout.Caption,Acerca de,About
-FrmAbout.Caption,Acerca de,About
-FrmAbout.LblTitle.Caption,Delphi TDD App,Delphi TDD App
-FrmAbout.LblAppName.Caption,Aplicacion Windows,Windows application
-FrmAbout.LblVersion.Caption,Version: 1.0.0,Version: 1.0.0
-FrmAbout.LblDescription.Caption,Aplicacion Windows desarrollada en Delphi siguiendo principios TDD.,Windows application developed in Delphi following TDD principles.
-FrmAbout.LblCopyright.Caption,Copyright 2026,Copyright 2026
-FrmAbout.LblTechHeader.Caption,Informacion tecnica,Technical information
-FrmAbout.LblExecVersion.Caption,Version del ejecutable: No disponible,Executable version: Not available
-FrmAbout.LblCommit.Caption,Commit GitHub: No disponible,GitHub commit: Not available
-FrmAbout.LblOS.Caption,Sistema operativo: Windows,Operating system: Windows
-FrmAbout.LblArch.Caption,Arquitectura: No disponible,Architecture: Not available
-FrmAbout.LblBuildDate.Caption,Fecha de compilacion: No disponible,Build date: Not available
-FrmAbout.LblDbPath.Caption,Base de datos: No disponible,Database: Not available
-FrmAbout.BtnAccept.Caption,Aceptar,OK
-FrmPreferences.Caption,Preferencias,Preferences
-FrmPreferences.LblTitle.Caption,Preferencias,Preferences
-FrmPreferences.LblLastUsername.Caption,Ultimo usuario,Last username
-FrmPreferences.LblLanguage.Caption,Idioma,Language
-FrmPreferences.LblLastMainOption.Caption,Pantalla de inicio,Startup screen
-FrmPreferences.BtnSave.Caption,Guardar,Save
-FrmCrud.Caption,CRUD,CRUD
-FrmCrud.LblEditMode.Caption,editMode,editMode
-FrmCrud.BtnSearch.Caption,Buscar,Search
-FrmCrud.BtnRefresh.Caption,Reset,Reset
-FrmCrud.BtnPreview.Caption,Preview,Preview
-FrmCrud.BtnNew.Caption,Nuevo,New
-FrmCrud.BtnDelete.Caption,Eliminar,Delete
-FrmCrudDetail.Caption,Detalle,Detail
-FrmCrudDetail.BtnSave.Caption,Guardar,Save
-FrmCrudDetail.BtnCancel.Caption,Cancelar,Cancel
-FrmCrudPreview.Caption,Vista previa,Preview
-FrmCrudPreview.LblOrientation.Caption,Orientacion,Orientation
-FrmCrudPreview.ChkShowTitle.Caption,Mostrar titulo,Show title
-FrmCrudPreview.ChkShowDate.Caption,Mostrar fecha,Show date
-FrmCrudPreview.ChkShowPageNumber.Caption,Mostrar pagina,Show page
-FrmCrudPreview.BtnPreview.Caption,Vista previa,Preview
-FrmCrudPreview.BtnPrinterSetup.Caption,Configurar,Setup
-FrmCrudPreview.BtnPrint.Caption,Imprimir,Print
-FrmCrudPreview.BtnClose.Caption,Cerrar,Close
-FrmCrudSearch.Caption,Buscar,Search
-FrmCrudSearch.BtnClear.Caption,Limpiar,Clear
-About.VersionPrefix,Version: ,Version: 
-About.ExecutableVersionPrefix,Version del ejecutable: ,Executable version: 
-"About.CommitPrefix,""Commit GitHub: "",""GitHub commit: """
-About.OperatingSystemPrefix,Sistema operativo: ,Operating system: 
-About.ArchitecturePrefix,Arquitectura: ,Architecture: 
-About.BuildDatePrefix,Fecha de compilacion: ,Build date: 
-About.DatabasePrefix,Base de datos: ,Database: 
-Crud.FilterDialog.Caption,Filtro,Filter
-Crud.DeleteConfirm.Message,Esta seguro de que desea eliminar este registro?,Are you sure you want to delete this record?
-Crud.EditMode.None,Sin edicion,No edit
-Crud.EditMode.Grid,Grid,Grid
-Crud.EditMode.Detail,Detalle,Detail
-Crud.USR.username.Caption,Usuario,Username
-Crud.USR.displayName.Caption,Nombre visible,Display name
-Crud.USR.email.Caption,Email,Email
-Crud.USR.role.Caption,Rol,Role
-Crud.USR.active.Caption,Activo,Active
-Crud.USR.locked.Caption,Bloqueado,Locked
-Crud.USR.password.Caption,Contraseï¿½a,Password
-Crud.TSK.title.Caption,Titulo,Title
-Crud.TSK.completed.Caption,Completada,Completed
-Crud.TSK.createdAt.Caption,Creada,Created
+key;es;en
+FrmLogin.Caption;Login;Login
+FrmLogin.LblUsername.Caption;Usuario;Username
+FrmLogin.LblPassword.Caption;Contraseña;Password
+FrmLogin.BtnLogin.Caption;Entrar;Sign in
+FrmLogin.BtnCancel.Caption;Cancelar;Cancel
+FrmMain.Caption;Delphi TDD App - FMain;Delphi TDD App - FMain
+FrmMain.BtnDashboard.Caption;Dashboard;Dashboard
+FrmMain.BtnTsk.Caption;Tareas;Tasks
+FrmMain.BtnUsr.Caption;Usuarios;Users
+FrmMain.BtnPreferences.Caption;Preferencias;Preferences
+FrmMain.BtnAbout.Caption;Acerca de;About
+FrmAbout.Caption;Acerca de;About
+FrmAbout.LblTitle.Caption;Delphi TDD App;Delphi TDD App
+FrmAbout.LblAppName.Caption;Aplicacion Windows;Windows application
+FrmAbout.LblVersion.Caption;Version: 1.0.0;Version: 1.0.0
+FrmAbout.LblDescription.Caption;Aplicacion Windows desarrollada en Delphi siguiendo principios TDD.;Windows application developed in Delphi following TDD principles.
+FrmAbout.LblCopyright.Caption;Copyright 2026;Copyright 2026
+FrmAbout.LblTechHeader.Caption;Informacion tecnica;Technical information
+FrmAbout.LblExecVersion.Caption;Version del ejecutable: No disponible;Executable version: Not available
+FrmAbout.LblCommit.Caption;Commit GitHub: No disponible;GitHub commit: Not available
+FrmAbout.LblOS.Caption;Sistema operativo: Windows;Operating system: Windows
+FrmAbout.LblArch.Caption;Arquitectura: No disponible;Architecture: Not available
+FrmAbout.LblBuildDate.Caption;Fecha de compilacion: No disponible;Build date: Not available
+FrmAbout.LblDbPath.Caption;Base de datos: No disponible;Database: Not available
+FrmAbout.BtnAccept.Caption;Aceptar;OK
+FrmPreferences.Caption;Preferencias;Preferences
+FrmPreferences.LblTitle.Caption;Preferencias;Preferences
+FrmPreferences.LblLastUsername.Caption;Ultimo usuario;Last username
+FrmPreferences.LblLanguage.Caption;Idioma;Language
+FrmPreferences.LblLastMainOption.Caption;Pantalla de inicio;Startup screen
+FrmPreferences.BtnSave.Caption;Guardar;Save
+FrmCrud.Caption;CRUD;CRUD
+FrmCrud.LblEditMode.Caption;editMode;editMode
+FrmCrud.BtnSearch.Caption;Buscar;Search
+FrmCrud.BtnRefresh.Caption;Reset;Reset
+FrmCrud.BtnPreview.Caption;Preview;Preview
+FrmCrud.BtnExportCsv.Caption;CSV;CSV
+FrmCrud.BtnNew.Caption;Nuevo;New
+FrmCrud.BtnDelete.Caption;Eliminar;Delete
+FrmCrudDetail.Caption;Detalle;Detail
+FrmCrudDetail.BtnSave.Caption;Guardar;Save
+FrmCrudDetail.BtnCancel.Caption;Cancelar;Cancel
+FrmCrudPreview.Caption;Vista previa;Preview
+FrmCrudPreview.LblOrientation.Caption;Orientacion;Orientation
+FrmCrudPreview.ChkShowTitle.Caption;Mostrar titulo;Show title
+FrmCrudPreview.ChkShowDate.Caption;Mostrar fecha;Show date
+FrmCrudPreview.ChkShowPageNumber.Caption;Mostrar pagina;Show page
+FrmCrudPreview.BtnPreview.Caption;Vista previa;Preview
+FrmCrudPreview.BtnPrinterSetup.Caption;Configurar;Setup
+FrmCrudPreview.BtnPrint.Caption;Imprimir;Print
+FrmCrudPreview.BtnClose.Caption;Cerrar;Close
+FrmCrudSearch.Caption;Buscar;Search
+FrmCrudSearch.BtnClear.Caption;Limpiar;Clear
+About.VersionPrefix;Version: ;Version: 
+About.ExecutableVersionPrefix;Version del ejecutable: ;Executable version: 
+About.CommitPrefix;Commit GitHub: ;GitHub commit: 
+About.OperatingSystemPrefix;Sistema operativo: ;Operating system: 
+About.ArchitecturePrefix;Arquitectura: ;Architecture: 
+About.BuildDatePrefix;Fecha de compilacion: ;Build date: 
+About.DatabasePrefix;Base de datos: ;Database: 
+Crud.FilterDialog.Caption;Filtro;Filter
+Crud.DeleteConfirm.Message;Esta seguro de que desea eliminar este registro?;Are you sure you want to delete this record?
+Crud.ExportCsvDialog.Title;Exportar CSV;Export CSV
+Crud.ExportCsvDialog.Filter;CSV (*.csv)|*.csv|Todos los ficheros (*.*)|*.*;CSV (*.csv)|*.csv|All files (*.*)|*.*
+Crud.ExportCsv.Success;CSV exportado correctamente.;CSV exported successfully.
+Crud.EditMode.None;Sin edicion;No edit
+Crud.EditMode.Grid;Grid;Grid
+Crud.EditMode.Detail;Detalle;Detail
+Crud.USR.username.Caption;Usuario;Username
+Crud.USR.displayName.Caption;Nombre visible;Display name
+Crud.USR.email.Caption;Email;Email
+Crud.USR.role.Caption;Rol;Role
+Crud.USR.active.Caption;Activo;Active
+Crud.USR.locked.Caption;Bloqueado;Locked
+Crud.USR.password.Caption;Contraseña;Password
+Crud.TSK.title.Caption;Titulo;Title
+Crud.TSK.completed.Caption;Completada;Completed
+Crud.TSK.createdAt.Caption;Creada;Created

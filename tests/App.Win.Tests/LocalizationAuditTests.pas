@@ -75,6 +75,7 @@ var
   I: Integer;
   LKey: string;
   LPrefix: string;
+  LSeparator: Char;
 begin
   LLines := TStringList.Create;
   LHeaders := TStringList.Create;
@@ -84,12 +85,13 @@ begin
     if LLines.Count = 0 then
       raise Exception.Create('Localization CSV is empty.');
 
-    ParseCsvLine(LLines[0], LHeaders);
+    LSeparator := DetectCsvSeparator(LLines[0]);
+    ParseCsvLine(LLines[0], LHeaders, LSeparator);
     LKeyColumn := ColumnIndex(LHeaders, 'key');
     LPrefix := AFormName + '.';
     for I := 1 to LLines.Count - 1 do
     begin
-      ParseCsvLine(LLines[I], LValues);
+      ParseCsvLine(LLines[I], LValues, LSeparator);
       if (LKeyColumn >= 0) and (LKeyColumn < LValues.Count) then
       begin
         LKey := LValues[LKeyColumn];
@@ -150,6 +152,7 @@ var
   LHeaders: TStringList;
   LKeys: TStringList;
   LLocalization: ILocalizationService;
+  LSeparator: Char;
 begin
   if not FileExists(AFileName) then
     raise Exception.Create('Localization CSV was not found: ' + AFileName);
@@ -162,7 +165,8 @@ begin
     if LLines.Count = 0 then
       raise Exception.Create('Localization CSV is empty.');
 
-    ParseCsvLine(LLines[0], LHeaders);
+    LSeparator := DetectCsvSeparator(LLines[0]);
+    ParseCsvLine(LLines[0], LHeaders, LSeparator);
     RequireColumn(LHeaders, 'key');
     RequireColumn(LHeaders, ADefaultLanguage);
     RequireColumn(LHeaders, AActiveLanguage);

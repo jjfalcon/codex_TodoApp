@@ -105,12 +105,12 @@ Los textos visibles del login se cargan desde `src\App.Win\languages.csv`.
 Formato:
 
 ```csv
-key,es,en
-FrmLogin.Caption,Login,Login
-FrmLogin.LblUsername.Caption,Usuario,Username
-FrmLogin.LblPassword.Caption,Contraseña,Password
-FrmLogin.BtnLogin.Caption,Entrar,Sign in
-FrmLogin.BtnCancel.Caption,Cancelar,Cancel
+key;es;en
+FrmLogin.Caption;Login;Login
+FrmLogin.LblUsername.Caption;Usuario;Username
+FrmLogin.LblPassword.Caption;Contraseña;Password
+FrmLogin.BtnLogin.Caption;Entrar;Sign in
+FrmLogin.BtnCancel.Caption;Cancelar;Cancel
 ```
 
 La clave usa la nomenclatura:
@@ -125,7 +125,7 @@ Para propiedades del propio formulario:
 FormName.PropertyName
 ```
 
-`AppCoreLocalization.TCsvLocalizationService` lee el CSV, selecciona la columna de idioma configurada y usa `es` como fallback. `AppWinLocalization.ApplyLocalization` no recorre todas las propiedades del formulario: aplica solo las claves del CSV que empiezan por el nombre del form actual.
+`AppCoreLocalization.TCsvLocalizationService` lee el CSV, autodetecta separador `;` o `,`, selecciona la columna de idioma configurada y usa `es` como fallback. El fichero real usa `;` como separador para encajar mejor con Excel en configuracion regional espanola. `AppWinLocalization.ApplyLocalization` no recorre todas las propiedades del formulario: aplica solo las claves del CSV que empiezan por el nombre del form actual.
 
 Configuracion:
 

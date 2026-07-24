@@ -2,10 +2,35 @@
 
 ## Pendientes
 
-- Agregar exportacion a fichero CSV desde `CrudForm`, usando el estado visible actual del grid.
 - Agregar update automatico/manual del programa desde servidor usando GitHub: consultar fichero de ultima version, descargar paquete publicado, validar hash del fichero descargado y aplicar actualizacion solo si la verificacion es correcta.
 
 ## Realizadas
+
+### Separador punto y coma en languages.csv
+
+- Se migro `src\App.Win\languages.csv` para usar `;` como separador.
+- Se agrego autodeteccion de separador `;` o `,` en `AppCoreLocalization`.
+- `ParseCsvLine` mantiene compatibilidad con coma y agrega sobrecarga con separador explicito.
+- `TCsvLocalizationService` detecta el separador desde la cabecera del fichero.
+- La auditoria estricta de localizacion en App.Win usa la misma autodeteccion.
+- Se agrego prueba Core para cargar CSV separado por `;`, incluyendo valores entrecomillados con `;` y comillas escapadas.
+- Se documento el formato de localizacion en `docs\LOGIN_TECH.md`.
+- Verificacion: `AppCoreTests.exe` termina con `All tests passed`.
+- Verificacion: `tests\App.Win.Tests\run-tests.bat` termina con `All tests passed`.
+- Verificacion: `dcc32 "-U..\App.Core" -B WindowsApp.dpr` termina sin errores.
+
+### Exportacion CSV desde CrudForm
+
+- Se agrego boton `CSV` a `TFrmCrud`.
+- La exportacion usa el snapshot visible actual del grid mediante `CreatePreviewData`.
+- El fichero exportado usa `;` como separador.
+- Se exportan captions actuales como cabeceras.
+- Se exportan solo columnas visibles y filas actualmente cargadas en el grid.
+- Se escapan comillas, separadores y saltos de linea segun formato CSV.
+- Se agregaron claves de localizacion para el boton, dialogo y mensaje de exito.
+- Se corrigio la clave `About.CommitPrefix` del CSV de localizacion para que la suite estricta pueda leerla correctamente.
+- Verificacion: `tests\App.Win.Tests\run-tests.bat` termina con `All tests passed`.
+- Verificacion: `dcc32 "-U..\App.Core" -B WindowsApp.dpr` termina sin errores.
 
 ### Eliminacion de pantalla Usuarios (dejando solo USR)
 
