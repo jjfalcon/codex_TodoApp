@@ -233,7 +233,8 @@ begin
   Result := Result + '"failedAttempts": ' + IntToStr(AUser.FailedAttempts) + ',';
   Result := Result + '"locked": ' + BoolToJson(AUser.Locked) + ',';
   Result := Result + '"createdAt": ' + DateTimeToJson(AUser.CreatedAt) + ',';
-  Result := Result + '"lastLoginAt": ' + NullOrDateTimeToJson(AUser.LastLoginAt);
+  Result := Result + '"lastLoginAt": ' + NullOrDateTimeToJson(AUser.LastLoginAt) + ',';
+  Result := Result + '"preferencesText": "' + EscapeJson(AUser.PreferencesText) + '"';
   Result := Result + '}';
 end;
 
@@ -245,6 +246,7 @@ var
   LRole: TUserRole;
   LFailedAttempts: Integer;
   LCreatedAt, LLastLoginAt: TDateTime;
+  LPreferencesText: string;
 begin
   LId := ExtractJsonString(AJson, 'id');
   LUsername := ExtractJsonString(AJson, 'username');
@@ -259,6 +261,7 @@ begin
   LLocked := ExtractJsonBool(AJson, 'locked');
   LCreatedAt := ExtractJsonDate(AJson, 'createdAt');
   LLastLoginAt := ExtractJsonDate(AJson, 'lastLoginAt');
+  LPreferencesText := ExtractJsonString(AJson, 'preferencesText');
 
   Result := TUser.Create(LId, LUsername, LDisplayName, LPasswordHash, LSalt,
     LActive, LRole, LEmail, LCreatedAt);
@@ -266,6 +269,7 @@ begin
   Result.FailedAttempts := LFailedAttempts;
   Result.Locked := LLocked;
   Result.LastLoginAt := LLastLoginAt;
+  Result.PreferencesText := LPreferencesText;
 end;
 
 end.

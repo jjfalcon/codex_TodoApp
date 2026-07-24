@@ -2,9 +2,9 @@
 
 ## Objetivo
 
-Preparar una comprobacion manual de actualizaciones desde GitHub Releases sin modificar la instalacion actual.
+Preparar una comprobacion manual de actualizaciones desde GitHub Releases y aplicar el paquete verificado.
 
-El flujo actual solo descarga y valida un paquete candidato. No instala, reemplaza ni ejecuta archivos descargados.
+El flujo descarga y valida un paquete candidato antes de programar cualquier reemplazo de archivos.
 
 ## Manifest
 
@@ -73,7 +73,16 @@ El formulario `Acerca de` incluye el boton `Buscar actualizacion`.
 
 Al pulsarlo, la ventana usa el checker configurado desde `FMain`, lee `[Updates]` en `app.config`, consulta el manifest, descarga el ZIP candidato en `DownloadDir` y valida su SHA-256.
 
-El resultado se muestra en una sola linea dentro del propio formulario. El flujo no instala, reemplaza ni ejecuta archivos descargados.
+El resultado se muestra en una sola linea dentro del propio formulario.
+
+Cuando hay una version superior y el ZIP pasa la validacion SHA-256, la aplicacion crea un `.bat` temporal que:
+
+- Espera a que termine el proceso actual.
+- Extrae el ZIP verificado en una carpeta temporal.
+- Copia los archivos extraidos sobre el directorio de instalacion.
+- Relanza `WindowsApp.exe`.
+
+Despues de crear el aplicador externo, la aplicacion se cierra para que el ejecutable pueda reemplazarse.
 
 ## Publicacion real
 

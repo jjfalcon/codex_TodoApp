@@ -20,6 +20,7 @@ type
     FLocked: Boolean;
     FCreatedAt: TDateTime;
     FLastLoginAt: TDateTime;
+    FPreferencesText: string;
   public
     constructor Create(const AId, AUsername, ADisplayName, APasswordHash,
       ASalt: string; AActive: Boolean; ARole: TUserRole;
@@ -38,6 +39,7 @@ type
     property Locked: Boolean read FLocked write FLocked;
     property CreatedAt: TDateTime read FCreatedAt write FCreatedAt;
     property LastLoginAt: TDateTime read FLastLoginAt write FLastLoginAt;
+    property PreferencesText: string read FPreferencesText write FPreferencesText;
   end;
 
 implementation
@@ -60,6 +62,7 @@ begin
   FLocked := False;
   FCreatedAt := ACreatedAt;
   FLastLoginAt := 0;
+  FPreferencesText := '';
 end;
 
 end.

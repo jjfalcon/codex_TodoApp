@@ -36,6 +36,8 @@ tests
 
 Las preferencias de pantalla inicial validas son solo `Dashboard`, `TSK` y `USR`.
 
+`app.config` guarda configuracion tecnica y preferencias de aplicacion local. Las preferencias personales del usuario autenticado viven en `TUser.PreferencesText` dentro del repositorio de usuarios.
+
 ## Verificacion
 
 Antes de cerrar cambios:

@@ -2,9 +2,21 @@
 
 ## Pendientes
 
-- Agregar update automatico/manual del programa desde servidor usando GitHub: consultar fichero de ultima version, descargar paquete publicado, validar hash del fichero descargado y aplicar actualizacion solo si la verificacion es correcta.
+- Ampliar E2E para abrir `Acerca de`, pulsar `Buscar actualizacion` y verificar un resultado funcional del updater.
 
 ## Realizadas
+
+### Preferencias personales dentro del repositorio de usuarios
+
+- Se agrego `TUser.PreferencesText` con formato INI para preferencias personales extensibles.
+- `users.json` persiste `preferencesText` dentro de cada usuario.
+- `app.config` conserva solo preferencias de aplicacion como `LastUsername`.
+- Se elimino `Main.LastOption` de `app.config` y `app.default.config`; no hay migracion desde claves antiguas.
+- `TPreferencesService` guarda idioma y pantalla inicial en el usuario activo.
+- `FrmMain` carga y guarda la pantalla inicial desde `[User] LastMainOption`.
+- Los filtros, orden y layout de cada tabla se guardan por usuario en secciones `[Grid.<clave>]`.
+- `FrmPreferences` mantiene `Ultimo usuario` como dato de app en solo lectura y guarda idioma/pantalla en el usuario.
+- Se actualizaron tests Core, App.Win y documentacion de preferencias.
 
 ### Boton Buscar actualizacion en Acerca de
 
@@ -14,10 +26,12 @@
 - `FMain` conecta el formulario con `TAboutUpdateChecker`, que lee `[Updates]` desde `app.config`.
 - Si el `app.config` local no tiene seccion `[Updates]`, el checker usa `app.default.config` como fallback.
 - El checker descarga `latest.json`, resuelve paquetes relativos, descarga el ZIP candidato y valida SHA-256.
+- Si el ZIP esta verificado, el checker crea un aplicador externo `.bat`, cierra la app y relanza `WindowsApp.exe` tras copiar la nueva version.
 - `app.default.config` apunta por defecto a `https://github.com/jjfalcon/codex_TodoApp/releases/latest/download/latest.json`.
 - Si no hay updater configurado, el formulario informa `Actualizador no configurado.` en una sola linea.
 - Se agregaron claves de localizacion ES/EN para el boton y el estado.
-- Se cubrio con tests App.Win la localizacion del boton, estado sin checker y resultado inyectado.
+- Se cubrio con tests Core la aplicacion solo tras hash valido.
+- Se cubrio con tests App.Win la localizacion del boton, estado sin checker, resultado inyectado, cierre solicitado y script de aplicacion externo.
 - Verificacion: `run-all-tests.bat` termina con `All requested checks passed`.
 
 ### Publicacion de release en GitHub
@@ -219,14 +233,14 @@
 - Se agrego `src\App.Win\CrudForm.pas` con `TClientDataSet`, busqueda, orden por cabecera, alta, borrado y edicion segun modo.
 - Se agrego `src\App.Win\CrudDetailForm.pas` para alta/edicion dinamica desde el schema.
 - Se definieron modos `emNone`, `emGrid` y `emDetail`.
-- Se agrego persistencia opcional de layout de columnas en `app.config`, con una seccion `Grid.<clave>` por grid.
+- Se agrego persistencia opcional de layout de columnas por usuario, con una seccion `Grid.<clave>` dentro de `TUser.PreferencesText`.
 - Se corrigio `USR` para crear el servicio de usuarios despues de embeber el formulario, evitando que `ClearContent` lo liberase antes de cargar datos.
 - Se agregaron filtros por columna delegados a `ICrudProvider.List`.
 - Se reemplazo la busqueda inline por un formulario no modal que resalta en amarillo las celdas coincidentes sin filtrar filas.
 - Se agrego confirmacion antes de eliminar registros desde el CRUD generico.
 - Se corrigio la escritura de campos en `CrudDetailForm`, reparando crear/editar en modo detalle.
 - Se agregaron indicadores de orden (`^`/`v`) y filtro (`*`) en cabeceras.
-- Se persisten filtros y orden junto al layout en la seccion `Grid.<clave>` de `app.config`.
+- Se persisten filtros y orden junto al layout en la seccion `Grid.<clave>` de `TUser.PreferencesText`.
 - El formulario CRUD usa cabecera `alTop` y grid `alClient` para ocupar el espacio restante.
 - Se elimino el boton `Filtrar`; los filtros se abren con `Ctrl+click` sobre la cabecera.
 - Se cambio el texto de `Refrescar` a `Reset`.

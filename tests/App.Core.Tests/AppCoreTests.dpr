@@ -10,6 +10,7 @@ uses
   AppCoreConfigurationTests in 'AppCoreConfigurationTests.pas',
   AppCoreCrudTests in 'AppCoreCrudTests.pas',
   AppCoreDiagnosticsTests in 'AppCoreDiagnosticsTests.pas',
+  AppCoreIniTextTests in 'AppCoreIniTextTests.pas',
   AppCoreLocalizationTests in 'AppCoreLocalizationTests.pas',
   AppCorePreferencesFileRepositoryTests in 'AppCorePreferencesFileRepositoryTests.pas',
   AppCorePreferencesServiceTests in 'AppCorePreferencesServiceTests.pas',
@@ -24,6 +25,7 @@ uses
   AppCoreConfiguration in '..\..\src\App.Core\AppCoreConfiguration.pas',
   AppCoreCrud in '..\..\src\App.Core\AppCoreCrud.pas',
   AppCoreDiagnostics in '..\..\src\App.Core\AppCoreDiagnostics.pas',
+  AppCoreIniText in '..\..\src\App.Core\AppCoreIniText.pas',
   AppCoreJsonUtils in '..\..\src\App.Core\AppCoreJsonUtils.pas',
   AppCoreLocalization in '..\..\src\App.Core\AppCoreLocalization.pas',
   AppCorePreferences in '..\..\src\App.Core\AppCorePreferences.pas',
@@ -38,6 +40,7 @@ uses
   AppCoreUser in '..\..\src\App.Core\AppCoreUser.pas',
   AppCoreUserCrudProvider in '..\..\src\App.Core\AppCoreUserCrudProvider.pas',
   AppCoreUserFileRepository in '..\..\src\App.Core\AppCoreUserFileRepository.pas',
+  AppCoreUserPreferencesRepository in '..\..\src\App.Core\AppCoreUserPreferencesRepository.pas',
   AppCoreUserRepository in '..\..\src\App.Core\AppCoreUserRepository.pas',
   AppCoreUserService in '..\..\src\App.Core\AppCoreUserService.pas';
 
@@ -54,6 +57,7 @@ begin
     RunTaskServiceTests(Failures);
     RunConfigurationTests(Failures);
     RunDiagnosticsTests(Failures);
+    RunIniTextTests(Failures);
     RunLocalizationTests(Failures);
     RunRepositoryFactoryTests(Failures);
     RunPreferencesFileRepositoryTests(Failures);

@@ -10,7 +10,10 @@ uses
   SysUtils,
   Forms,
   PreferencesForm,
-  AppCorePreferences;
+  AppCoreIniText,
+  AppCorePreferences,
+  AppCoreUser,
+  AppCoreUserRepository;
 
 type
   TTestProc = procedure;
@@ -63,17 +66,31 @@ begin
   end;
 end;
 
-procedure PreferencesFormLoadsCurrentValues;
+function CreatePreferencesService(const ALastUsername, AActiveLanguage,
+  ALastMainOption: string; out AUser: TUser): TPreferencesService;
 var
   LRepo: ILoginPreferencesRepository;
+  LUsers: TInMemoryUserRepository;
+begin
+  LRepo := TInMemoryLoginPreferencesRepository.Create;
+  LRepo.SetLastUsername(ALastUsername);
+  LUsers := TInMemoryUserRepository.Create;
+  AUser := TUser.Create('user-1', 'admin', 'Admin', 'hash', 'salt', True, urAdmin);
+  AUser.PreferencesText := IniTextWriteValue('', 'User', 'ActiveLanguage',
+    AActiveLanguage);
+  AUser.PreferencesText := IniTextWriteValue(AUser.PreferencesText, 'User',
+    'LastMainOption', ALastMainOption);
+  LUsers.Add(AUser);
+  Result := TPreferencesService.Create(LRepo, LUsers, 'user-1');
+end;
+
+procedure PreferencesFormLoadsCurrentValues;
+var
+  LUser: TUser;
   LService: TPreferencesService;
   LForm: TFrmPreferences;
 begin
-  LRepo := TInMemoryLoginPreferencesRepository.Create;
-  LRepo.SetLastUsername('admin');
-  LRepo.SetActiveLanguage('en');
-  LRepo.SetLastMainOption('TSK');
-  LService := TPreferencesService.Create(LRepo);
+  LService := CreatePreferencesService('admin', 'en', 'TSK', LUser);
   LForm := TFrmPreferences.Create(nil);
   try
     LForm.Configure(LService);
@@ -89,12 +106,11 @@ end;
 
 procedure PreferencesFormSavesValues;
 var
-  LRepo: ILoginPreferencesRepository;
+  LUser: TUser;
   LService: TPreferencesService;
   LForm: TFrmPreferences;
 begin
-  LRepo := TInMemoryLoginPreferencesRepository.Create;
-  LService := TPreferencesService.Create(LRepo);
+  LService := CreatePreferencesService('', '', '', LUser);
   LForm := TFrmPreferences.Create(nil);
   try
     LForm.Configure(LService);
@@ -102,8 +118,10 @@ begin
     LForm.CmbLastMainOption.Text := 'USR';
     LForm.BtnSaveClick(nil);
 
-    AssertEquals('en', LRepo.ActiveLanguage, 'Form should save language.');
-    AssertEquals('USR', LRepo.LastMainOption, 'Form should save last main option.');
+    AssertEquals('en', IniTextReadValue(LUser.PreferencesText, 'User',
+      'ActiveLanguage'), 'Form should save language on user.');
+    AssertEquals('USR', IniTextReadValue(LUser.PreferencesText, 'User',
+      'LastMainOption'), 'Form should save last main option on user.');
   finally
     LForm.Free;
   end;
@@ -111,13 +129,12 @@ end;
 
 procedure PreferencesFormNotifiesSavedLanguage;
 var
-  LRepo: ILoginPreferencesRepository;
+  LUser: TUser;
   LService: TPreferencesService;
   LForm: TFrmPreferences;
   LSink: TLanguageEventSink;
 begin
-  LRepo := TInMemoryLoginPreferencesRepository.Create;
-  LService := TPreferencesService.Create(LRepo);
+  LService := CreatePreferencesService('', '', '', LUser);
   LForm := TFrmPreferences.Create(nil);
   LSink := TLanguageEventSink.Create;
   try
@@ -137,13 +154,11 @@ end;
 
 procedure PreferencesFormLoadsTskMainOption;
 var
-  LRepo: ILoginPreferencesRepository;
+  LUser: TUser;
   LService: TPreferencesService;
   LForm: TFrmPreferences;
 begin
-  LRepo := TInMemoryLoginPreferencesRepository.Create;
-  LRepo.SetLastMainOption('TSK');
-  LService := TPreferencesService.Create(LRepo);
+  LService := CreatePreferencesService('', '', 'TSK', LUser);
   LForm := TFrmPreferences.Create(nil);
   try
     LForm.Configure(LService);

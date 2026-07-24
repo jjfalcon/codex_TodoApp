@@ -15,6 +15,7 @@ uses
 type
   TAboutUpdateCheckResult = record
     MessageText: string;
+    ShouldCloseApplication: Boolean;
   end;
 
   IAboutUpdateChecker = interface
@@ -44,12 +45,14 @@ type
     FService: IAboutService;
     FLocalization: ILocalizationService;
     FUpdateChecker: IAboutUpdateChecker;
+    FCloseRequestedAfterUpdate: Boolean;
     function LocalizedText(const AKey, ADefaultValue: string;
       AStrict: Boolean): string;
     procedure LoadAboutInfo;
   public
     procedure ApplyLocalization(const ALocalization: ILocalizationService; AStrict: Boolean = True);
     procedure ConfigureUpdateChecker(const AUpdateChecker: IAboutUpdateChecker);
+    property CloseRequestedAfterUpdate: Boolean read FCloseRequestedAfterUpdate;
     constructor Create(AOwner: TComponent); override;
   end;
 
@@ -72,6 +75,7 @@ constructor TFrmAbout.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
   FService := TAboutService.Create;
+  FCloseRequestedAfterUpdate := False;
   LoadAboutInfo;
 end;
 
@@ -134,6 +138,11 @@ begin
   try
     LResult := FUpdateChecker.CheckForUpdate;
     LblUpdateStatus.Caption := LResult.MessageText;
+    if LResult.ShouldCloseApplication then
+    begin
+      FCloseRequestedAfterUpdate := True;
+      Application.Terminate;
+    end;
   except
     on E: Exception do
       LblUpdateStatus.Caption := E.Message;

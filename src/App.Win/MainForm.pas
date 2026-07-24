@@ -52,6 +52,7 @@ type
     FLocalization: ILocalizationService;
     FDiagnostics: IDiagnosticsLogger;
     FPreferences: ILoginPreferencesRepository;
+    FUsers: IUserRepository;
     FCrudUserService: TUserService;
 
     procedure ApplyLocalization;
@@ -60,7 +61,9 @@ type
     function CreatePlaceholderForm(const ATitle, AMessage: string): TForm;
     function NavigationOptionToPreference(AOption: TNavigationOption): string;
     function PreferenceToNavigationOption(const AValue: string): TNavigationOption;
+    function PreferencesService: TPreferencesService;
     procedure PreferencesLanguageSaved(Sender: TObject; const ALanguage: string);
+    procedure SaveLastMainOption(AOption: TNavigationOption);
     procedure LoadOption(AOption: TNavigationOption);
     procedure SetActiveButton(AOption: TNavigationOption);
     procedure SetUserRole(AValue: TUserRole);
@@ -87,6 +90,7 @@ uses
   CrudForm,
   PreferencesForm,
   AppCoreUserCrudProvider,
+  AppCoreUserPreferencesRepository,
   AppCoreTaskCrudProvider,
   AppWinLocalization;
 
@@ -141,6 +145,9 @@ procedure TFrmMain.ConfigureServices(const AFactory: IRepositoryFactory;
   const AHasher: IPasswordHasher; const ACurrentUserId: string;
   const ALocalization: ILocalizationService;
   const ADiagnostics: IDiagnosticsLogger);
+var
+  LService: TPreferencesService;
+  LPreferences: TPreferencesView;
 begin
   FFactory := AFactory;
   FSession := ASession;
@@ -150,9 +157,18 @@ begin
   FLocalization := ALocalization;
   FDiagnostics := ADiagnostics;
   FPreferences := FFactory.CreateLoginPreferencesRepository;
+  FUsers := FFactory.CreateUserRepository;
+  LService := PreferencesService;
+  try
+    LPreferences := LService.GetPreferences;
+    if (FLocalization <> nil) and (LPreferences.ActiveLanguage <> '') then
+      FLocalization.ChangeLanguage(LPreferences.ActiveLanguage);
+  finally
+    LService.Free;
+  end;
   ApplyLocalization;
   ClearContent;
-  LoadOption(PreferenceToNavigationOption(FPreferences.LastMainOption));
+  LoadOption(PreferenceToNavigationOption(LPreferences.LastMainOption));
 end;
 
 function TFrmMain.CreatePlaceholderForm(const ATitle, AMessage: string): TForm;
@@ -223,29 +239,30 @@ begin
         TFrmCrud(FCurrentForm).ApplyLocalization(FLocalization, False);
         TFrmCrud(FCurrentForm).Configure(TTaskCrudProvider.Create(
           TTaskService.Create(FFactory.CreateTaskRepository, FClock)), emDetail,
-          FPreferences as ICrudGridLayoutRepository, 'TSK');
+          TUserGridLayoutRepository.Create(FUsers, FCurrentUserId), 'TSK');
       end;
     noUsr:
       begin
         EmbedForm(TFrmCrud.Create(Self));
         TFrmCrud(FCurrentForm).ApplyLocalization(FLocalization, False);
-        FCrudUserService := TUserService.Create(FFactory.CreateUserRepository, FClock, FHasher);
+        FCrudUserService := TUserService.Create(FUsers, FClock, FHasher);
         TFrmCrud(FCurrentForm).Configure(TUserCrudProvider.Create(FCrudUserService,
-          FCurrentUserId), emDetail, FPreferences as ICrudGridLayoutRepository, 'USR');
+          FCurrentUserId), emDetail,
+          TUserGridLayoutRepository.Create(FUsers, FCurrentUserId), 'USR');
       end;
     noPreferences:
       begin
         EmbedForm(TFrmPreferences.Create(Self));
         TFrmPreferences(FCurrentForm).ApplyLocalization(FLocalization, False);
-        TFrmPreferences(FCurrentForm).Configure(TPreferencesService.Create(FPreferences));
+        TFrmPreferences(FCurrentForm).Configure(PreferencesService);
         TFrmPreferences(FCurrentForm).OnLanguageSaved := PreferencesLanguageSaved;
       end;
   end;
 
   FActiveOption := AOption;
   SetActiveButton(AOption);
-  if (FPreferences <> nil) and (AOption <> noPreferences) then
-    FPreferences.SetLastMainOption(NavigationOptionToPreference(AOption));
+  if AOption <> noPreferences then
+    SaveLastMainOption(AOption);
 end;
 
 function TFrmMain.NavigationOptionToPreference(AOption: TNavigationOption): string;
@@ -270,6 +287,11 @@ begin
     Result := noDashboard;
 end;
 
+function TFrmMain.PreferencesService: TPreferencesService;
+begin
+  Result := TPreferencesService.Create(FPreferences, FUsers, FCurrentUserId);
+end;
+
 procedure TFrmMain.PreferencesLanguageSaved(Sender: TObject;
   const ALanguage: string);
 begin
@@ -281,6 +303,27 @@ begin
       TFrmPreferences(FCurrentForm).ApplyLocalization(FLocalization, False);
     if FCurrentForm is TFrmCrud then
       TFrmCrud(FCurrentForm).ApplyLocalization(FLocalization, False);
+  end;
+end;
+
+procedure TFrmMain.SaveLastMainOption(AOption: TNavigationOption);
+var
+  LService: TPreferencesService;
+  LPreferences: TPreferencesView;
+  LLanguage: string;
+begin
+  if (FPreferences = nil) or (FUsers = nil) then
+    Exit;
+
+  LService := PreferencesService;
+  try
+    LPreferences := LService.GetPreferences;
+    LLanguage := LPreferences.ActiveLanguage;
+    if LLanguage = '' then
+      LLanguage := 'es';
+    LService.SavePreferences(LLanguage, NavigationOptionToPreference(AOption));
+  finally
+    LService.Free;
   end;
 end;
 

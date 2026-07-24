@@ -5,17 +5,13 @@ interface
 uses
   SysUtils,
   Classes,
-  AppCoreCrud,
   AppCorePreferences;
 
 type
-  TFileLoginPreferencesRepository = class(TInterfacedObject, ILoginPreferencesRepository,
-    ICrudGridLayoutRepository)
+  TFileLoginPreferencesRepository = class(TInterfacedObject, ILoginPreferencesRepository)
   private
     FFileName: string;
     FLastUsername: string;
-    FActiveLanguage: string;
-    FLastMainOption: string;
     procedure LoadFromFile;
     procedure SaveToFile;
     procedure SaveValue(const ASection, AKey, AValue: string);
@@ -23,12 +19,6 @@ type
     constructor Create(const AFileName: string);
     function LastUsername: string;
     procedure SetLastUsername(const AUsername: string);
-    function ActiveLanguage: string;
-    procedure SetActiveLanguage(const ALanguage: string);
-    function LastMainOption: string;
-    procedure SetLastMainOption(const AOption: string);
-    function ReadGridValue(const AGridKey, AName: string): string;
-    procedure WriteGridValue(const AGridKey, AName, AValue: string);
   end;
 
 implementation
@@ -38,24 +28,12 @@ begin
   inherited Create;
   FFileName := AFileName;
   FLastUsername := '';
-  FActiveLanguage := '';
-  FLastMainOption := '';
   LoadFromFile;
-end;
-
-function TFileLoginPreferencesRepository.ActiveLanguage: string;
-begin
-  Result := FActiveLanguage;
 end;
 
 function TFileLoginPreferencesRepository.LastUsername: string;
 begin
   Result := FLastUsername;
-end;
-
-function TFileLoginPreferencesRepository.LastMainOption: string;
-begin
-  Result := FLastMainOption;
 end;
 
 procedure TFileLoginPreferencesRepository.LoadFromFile;
@@ -89,10 +67,6 @@ begin
         LValue := Copy(LLine, LSeparator + 1, MaxInt);
         if (LSection = 'Login') and (LKey = 'LastUsername') then
           FLastUsername := LValue;
-        if (LSection = 'Localization') and (LKey = 'Language') then
-          FActiveLanguage := LValue;
-        if (LSection = 'Main') and (LKey = 'LastOption') then
-          FLastMainOption := LValue;
       end;
     end;
   finally
@@ -158,68 +132,10 @@ begin
   end;
 end;
 
-function TFileLoginPreferencesRepository.ReadGridValue(const AGridKey,
-  AName: string): string;
-var
-  LFile: TStringList;
-  I: Integer;
-  LLine: string;
-  LSection: string;
-  LSeparator: Integer;
-begin
-  Result := '';
-  if not FileExists(FFileName) then
-    Exit;
-
-  LFile := TStringList.Create;
-  try
-    LFile.LoadFromFile(FFileName);
-    LSection := '';
-    for I := 0 to LFile.Count - 1 do
-    begin
-      LLine := Trim(LFile[I]);
-      if LLine = '' then
-        Continue;
-      if (LLine[1] = '[') and (LLine[Length(LLine)] = ']') then
-      begin
-        LSection := Copy(LLine, 2, Length(LLine) - 2);
-        Continue;
-      end;
-      LSeparator := Pos('=', LLine);
-      if (LSection = 'Grid.' + AGridKey) and (LSeparator > 0) and
-        (Copy(LLine, 1, LSeparator - 1) = AName) then
-      begin
-        Result := Copy(LLine, LSeparator + 1, MaxInt);
-        Exit;
-      end;
-    end;
-  finally
-    LFile.Free;
-  end;
-end;
-
-procedure TFileLoginPreferencesRepository.WriteGridValue(const AGridKey, AName,
-  AValue: string);
-begin
-  SaveValue('Grid.' + AGridKey, AName, AValue);
-end;
-
-procedure TFileLoginPreferencesRepository.SetActiveLanguage(const ALanguage: string);
-begin
-  FActiveLanguage := ALanguage;
-  SaveValue('Localization', 'Language', FActiveLanguage);
-end;
-
 procedure TFileLoginPreferencesRepository.SetLastUsername(const AUsername: string);
 begin
   FLastUsername := AUsername;
   SaveToFile;
-end;
-
-procedure TFileLoginPreferencesRepository.SetLastMainOption(const AOption: string);
-begin
-  FLastMainOption := AOption;
-  SaveValue('Main', 'LastOption', FLastMainOption);
 end;
 
 end.

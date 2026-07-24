@@ -20,6 +20,7 @@ type
   TUpdateCheckResult = record
     Available: Boolean;
     Verified: Boolean;
+    Applied: Boolean;
     Latest: TUpdateInfo;
     PackageFileName: string;
   end;
@@ -39,6 +40,11 @@ type
     function Sha256File(const AFileName: string): string;
   end;
 
+  IUpdateApplier = interface
+    ['{03F4985E-25EF-4E4A-98AB-68FEA756BB39}']
+    procedure ApplyPackage(const APackageFileName: string);
+  end;
+
   TUpdateService = class
   private
     FManifestClient: IUpdateManifestClient;
@@ -46,13 +52,19 @@ type
     FHashCalculator: IHashCalculator;
     FCurrentVersion: string;
     FDownloadDirectory: string;
+    FApplier: IUpdateApplier;
     function IsNewerVersion(const ALatestVersion: string): Boolean;
     procedure ValidateManifest(const AInfo: TUpdateInfo);
   public
     constructor Create(const AManifestClient: IUpdateManifestClient;
       const ADownloader: IUpdateDownloader; const AHashCalculator: IHashCalculator;
       const ACurrentVersion, ADownloadDirectory: string);
+    constructor CreateWithApplier(const AManifestClient: IUpdateManifestClient;
+      const ADownloader: IUpdateDownloader; const AHashCalculator: IHashCalculator;
+      const AApplier: IUpdateApplier; const ACurrentVersion,
+      ADownloadDirectory: string);
     function CheckAndDownload: TUpdateCheckResult;
+    function CheckDownloadAndApply: TUpdateCheckResult;
   end;
 
 implementation
@@ -101,6 +113,16 @@ begin
   FHashCalculator := AHashCalculator;
   FCurrentVersion := Trim(ACurrentVersion);
   FDownloadDirectory := ADownloadDirectory;
+end;
+
+constructor TUpdateService.CreateWithApplier(
+  const AManifestClient: IUpdateManifestClient; const ADownloader: IUpdateDownloader;
+  const AHashCalculator: IHashCalculator; const AApplier: IUpdateApplier;
+  const ACurrentVersion, ADownloadDirectory: string);
+begin
+  Create(AManifestClient, ADownloader, AHashCalculator, ACurrentVersion,
+    ADownloadDirectory);
+  FApplier := AApplier;
 end;
 
 function TUpdateService.IsNewerVersion(const ALatestVersion: string): Boolean;
@@ -152,6 +174,18 @@ begin
     raise EUpdateHashError.Create('Downloaded package hash does not match latest manifest.');
 
   Result.Verified := True;
+end;
+
+function TUpdateService.CheckDownloadAndApply: TUpdateCheckResult;
+begin
+  Result := CheckAndDownload;
+  if Result.Available and Result.Verified then
+  begin
+    if FApplier = nil then
+      raise EUpdateError.Create('Update applier is not configured.');
+    FApplier.ApplyPackage(Result.PackageFileName);
+    Result.Applied := True;
+  end;
 end;
 
 end.

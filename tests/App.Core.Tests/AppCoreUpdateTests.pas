@@ -31,6 +31,12 @@ type
     function Sha256File(const AFileName: string): string;
   end;
 
+  TFakeApplier = class(TInterfacedObject, IUpdateApplier)
+  public
+    AppliedPackageFileName: string;
+    procedure ApplyPackage(const APackageFileName: string);
+  end;
+
 procedure AssertEquals(const AExpected, AActual: string; const AMessage: string); overload;
 begin
   if AExpected <> AActual then
@@ -80,6 +86,11 @@ end;
 function TFakeHashCalculator.Sha256File(const AFileName: string): string;
 begin
   Result := Hash;
+end;
+
+procedure TFakeApplier.ApplyPackage(const APackageFileName: string);
+begin
+  AppliedPackageFileName := APackageFileName;
 end;
 
 procedure SameVersionDoesNotOfferUpdate;
@@ -214,6 +225,65 @@ begin
   end;
 end;
 
+procedure HigherVersionAppliesOnlyAfterHashVerification;
+var
+  LClient: TFakeManifestClient;
+  LDownloader: TFakeDownloader;
+  LHash: TFakeHashCalculator;
+  LApplier: TFakeApplier;
+  LService: TUpdateService;
+  LResult: TUpdateCheckResult;
+begin
+  LClient := TFakeManifestClient.Create;
+  LDownloader := TFakeDownloader.Create;
+  LHash := TFakeHashCalculator.Create;
+  LApplier := TFakeApplier.Create;
+  LClient.Manifest.Version := '1.0.0.54';
+  LClient.Manifest.PackageUrl := 'https://example.test/TodoApp.zip';
+  LClient.Manifest.Sha256 := 'abc';
+  LHash.Hash := 'abc';
+
+  LService := TUpdateService.CreateWithApplier(LClient, LDownloader, LHash,
+    LApplier, '1.0.0.53', 'updates');
+  try
+    LResult := LService.CheckDownloadAndApply;
+    AssertTrue(LResult.Applied, 'Verified package should be marked as applied.');
+    AssertEquals('updates\package.zip', LApplier.AppliedPackageFileName,
+      'Applier should receive the verified package.');
+  finally
+    LService.Free;
+  end;
+end;
+
+procedure SameVersionDoesNotApply;
+var
+  LClient: TFakeManifestClient;
+  LDownloader: TFakeDownloader;
+  LHash: TFakeHashCalculator;
+  LApplier: TFakeApplier;
+  LService: TUpdateService;
+  LResult: TUpdateCheckResult;
+begin
+  LClient := TFakeManifestClient.Create;
+  LDownloader := TFakeDownloader.Create;
+  LHash := TFakeHashCalculator.Create;
+  LApplier := TFakeApplier.Create;
+  LClient.Manifest.Version := '1.0.0.53';
+  LClient.Manifest.PackageUrl := 'https://example.test/TodoApp.zip';
+  LClient.Manifest.Sha256 := 'abc';
+
+  LService := TUpdateService.CreateWithApplier(LClient, LDownloader, LHash,
+    LApplier, '1.0.0.53', 'updates');
+  try
+    LResult := LService.CheckDownloadAndApply;
+    AssertFalse(LResult.Applied, 'Same version should not apply anything.');
+    AssertEquals('', LApplier.AppliedPackageFileName,
+      'Applier should not be called when there is no update.');
+  finally
+    LService.Free;
+  end;
+end;
+
 procedure RunUpdateTests(var AFailures: Integer);
 begin
   RunTest('Update_same_version_does_not_offer_update', SameVersionDoesNotOfferUpdate, AFailures);
@@ -221,6 +291,8 @@ begin
   RunTest('Update_higher_version_downloads_and_validates_hash', HigherVersionDownloadsAndValidatesHash, AFailures);
   RunTest('Update_hash_mismatch_rejects_package', HashMismatchRejectsPackage, AFailures);
   RunTest('Update_invalid_manifest_fails_clearly', InvalidManifestFailsClearly, AFailures);
+  RunTest('Update_higher_version_applies_only_after_hash_verification', HigherVersionAppliesOnlyAfterHashVerification, AFailures);
+  RunTest('Update_same_version_does_not_apply', SameVersionDoesNotApply, AFailures);
 end;
 
 end.

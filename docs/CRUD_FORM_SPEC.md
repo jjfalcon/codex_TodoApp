@@ -47,7 +47,8 @@ Si `Configure` recibe un `ICrudGridLayoutRepository` y una clave de grid, `TFrmC
 - ancho de columnas
 - visibilidad de columnas
 
-La persistencia se guarda en `app.config` usando una seccion por grid. Ejemplo:
+En la aplicacion Windows, la persistencia se guarda dentro de `TUser.PreferencesText`
+del usuario autenticado, usando una seccion por grid. Ejemplo:
 
 ```ini
 [Grid.USR]
@@ -59,7 +60,8 @@ Sort.Field=email
 Sort.Ascending=1
 ```
 
-No se generan ficheros `usr-grid.layout`.
+No se generan ficheros `usr-grid.layout` ni se guardan secciones `Grid.*` en
+`app.config`.
 
 ## Usuarios USR
 
@@ -77,9 +79,9 @@ El proveedor adapta `ITaskService`, por lo que la UI no accede a repositorios ni
 - `completed`: visible, editable y representado como booleano para checkbox en el detalle.
 - `createdAt`: visible y de solo lectura.
 
-El layout se persiste con la clave `TSK` en la seccion `Grid.TSK`.
+El layout se persiste con la clave `TSK` en la seccion `Grid.TSK` del usuario activo.
 
 ## Verificacion
 
-- `tests\App.Core.Tests`: cubre schema, busqueda, orden, filtros, update del provider de usuarios y layout en secciones `Grid.*`.
+- `tests\App.Core.Tests`: cubre schema, busqueda, orden, filtros, update del provider de usuarios y layout en secciones `Grid.*` por usuario.
 - `tests\App.Win.Tests`: cubre modos de edicion, columnas generadas, escritura de detalle, persistencia de layout/filtros, indicadores de cabecera, paso de filtros, busqueda de celdas sin filtrar filas, snapshot de preview exacto del grid visible y exportacion CSV.

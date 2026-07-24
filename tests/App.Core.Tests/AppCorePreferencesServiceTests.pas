@@ -8,7 +8,12 @@ implementation
 
 uses
   SysUtils,
-  AppCorePreferences;
+  AppCorePreferences,
+  AppCoreIniText,
+  AppCoreCrud,
+  AppCoreUser,
+  AppCoreUserPreferencesRepository,
+  AppCoreUserRepository;
 
 type
   TTestProc = procedure;
@@ -35,18 +40,27 @@ end;
 
 procedure SavePreferencesStoresEditableValues;
 var
-  LRepo: ILoginPreferencesRepository;
+  LAppRepo: ILoginPreferencesRepository;
+  LUsers: TInMemoryUserRepository;
+  LUser: TUser;
   LService: TPreferencesService;
-  LPreferences: TUserPreferences;
+  LPreferences: TPreferencesView;
 begin
-    LRepo := TInMemoryLoginPreferencesRepository.Create;
-  LService := TPreferencesService.Create(LRepo);
+  LAppRepo := TInMemoryLoginPreferencesRepository.Create;
+  LUsers := TInMemoryUserRepository.Create;
+  LUser := TUser.Create('user-1', 'admin', 'Admin', 'hash', 'salt', True, urAdmin);
+  LUsers.Add(LUser);
+  LService := TPreferencesService.Create(LAppRepo, LUsers, 'user-1');
   try
     LService.SavePreferences('en', 'TSK');
     LPreferences := LService.GetPreferences;
 
     AssertEquals('en', LPreferences.ActiveLanguage, 'Language should be saved.');
     AssertEquals('TSK', LPreferences.LastMainOption, 'Last main option should be saved.');
+    AssertEquals('en', IniTextReadValue(LUser.PreferencesText, 'User',
+      'ActiveLanguage'), 'Language should be stored on user.');
+    AssertEquals('TSK', IniTextReadValue(LUser.PreferencesText, 'User',
+      'LastMainOption'), 'Main option should be stored on user.');
   finally
     LService.Free;
   end;
@@ -54,11 +68,14 @@ end;
 
 procedure SavePreferencesRejectsInvalidLanguage;
 var
-  LRepo: ILoginPreferencesRepository;
+  LAppRepo: ILoginPreferencesRepository;
+  LUsers: TInMemoryUserRepository;
   LService: TPreferencesService;
 begin
-  LRepo := TInMemoryLoginPreferencesRepository.Create;
-  LService := TPreferencesService.Create(LRepo);
+  LAppRepo := TInMemoryLoginPreferencesRepository.Create;
+  LUsers := TInMemoryUserRepository.Create;
+  LUsers.Add(TUser.Create('user-1', 'admin', 'Admin', 'hash', 'salt', True, urAdmin));
+  LService := TPreferencesService.Create(LAppRepo, LUsers, 'user-1');
   try
     try
       LService.SavePreferences('fr', 'Dashboard');
@@ -74,11 +91,14 @@ end;
 
 procedure SavePreferencesRejectsInvalidMainOption;
 var
-  LRepo: ILoginPreferencesRepository;
+  LAppRepo: ILoginPreferencesRepository;
+  LUsers: TInMemoryUserRepository;
   LService: TPreferencesService;
 begin
-  LRepo := TInMemoryLoginPreferencesRepository.Create;
-  LService := TPreferencesService.Create(LRepo);
+  LAppRepo := TInMemoryLoginPreferencesRepository.Create;
+  LUsers := TInMemoryUserRepository.Create;
+  LUsers.Add(TUser.Create('user-1', 'admin', 'Admin', 'hash', 'salt', True, urAdmin));
+  LService := TPreferencesService.Create(LAppRepo, LUsers, 'user-1');
   try
     try
       LService.SavePreferences('es', 'About');
@@ -94,13 +114,16 @@ end;
 
 procedure SavePreferencesKeepsLastUsername;
 var
-  LRepo: ILoginPreferencesRepository;
+  LAppRepo: ILoginPreferencesRepository;
+  LUsers: TInMemoryUserRepository;
   LService: TPreferencesService;
-  LPreferences: TUserPreferences;
+  LPreferences: TPreferencesView;
 begin
-  LRepo := TInMemoryLoginPreferencesRepository.Create;
-  LRepo.SetLastUsername('admin');
-  LService := TPreferencesService.Create(LRepo);
+  LAppRepo := TInMemoryLoginPreferencesRepository.Create;
+  LAppRepo.SetLastUsername('admin');
+  LUsers := TInMemoryUserRepository.Create;
+  LUsers.Add(TUser.Create('user-1', 'admin', 'Admin', 'hash', 'salt', True, urAdmin));
+  LService := TPreferencesService.Create(LAppRepo, LUsers, 'user-1');
   try
     LService.SavePreferences('es', 'USR');
     LPreferences := LService.GetPreferences;
@@ -113,11 +136,14 @@ end;
 
 procedure SavePreferencesRejectsLegacyMainOptions;
 var
-  LRepo: ILoginPreferencesRepository;
+  LAppRepo: ILoginPreferencesRepository;
+  LUsers: TInMemoryUserRepository;
   LService: TPreferencesService;
 begin
-  LRepo := TInMemoryLoginPreferencesRepository.Create;
-  LService := TPreferencesService.Create(LRepo);
+  LAppRepo := TInMemoryLoginPreferencesRepository.Create;
+  LUsers := TInMemoryUserRepository.Create;
+  LUsers.Add(TUser.Create('user-1', 'admin', 'Admin', 'hash', 'salt', True, urAdmin));
+  LService := TPreferencesService.Create(LAppRepo, LUsers, 'user-1');
   try
     try
       LService.SavePreferences('es', 'Tasks');
@@ -140,12 +166,15 @@ end;
 
 procedure SavePreferencesAcceptsTskMainOption;
 var
-  LRepo: ILoginPreferencesRepository;
+  LAppRepo: ILoginPreferencesRepository;
+  LUsers: TInMemoryUserRepository;
   LService: TPreferencesService;
-  LPreferences: TUserPreferences;
+  LPreferences: TPreferencesView;
 begin
-  LRepo := TInMemoryLoginPreferencesRepository.Create;
-  LService := TPreferencesService.Create(LRepo);
+  LAppRepo := TInMemoryLoginPreferencesRepository.Create;
+  LUsers := TInMemoryUserRepository.Create;
+  LUsers.Add(TUser.Create('user-1', 'admin', 'Admin', 'hash', 'salt', True, urAdmin));
+  LService := TPreferencesService.Create(LAppRepo, LUsers, 'user-1');
   try
     LService.SavePreferences('es', 'TSK');
     LPreferences := LService.GetPreferences;
@@ -153,6 +182,32 @@ begin
   finally
     LService.Free;
   end;
+end;
+
+procedure UserGridLayoutStoresValuesInCurrentUserPreferencesText;
+var
+  LUsers: TInMemoryUserRepository;
+  LUsersInterface: IUserRepository;
+  LUser1, LUser2: TUser;
+  LLayout: ICrudGridLayoutRepository;
+begin
+  LUsers := TInMemoryUserRepository.Create;
+  LUsersInterface := LUsers;
+  LUser1 := TUser.Create('user-1', 'admin', 'Admin', 'hash', 'salt', True, urAdmin);
+  LUser2 := TUser.Create('user-2', 'other', 'Other', 'hash', 'salt', True, urNormal);
+  LUsers.Add(LUser1);
+  LUsers.Add(LUser2);
+
+  LLayout := TUserGridLayoutRepository.Create(LUsersInterface, 'user-1');
+  LLayout.WriteGridValue('TSK', 'Filter.title', 'urgent');
+  LLayout.WriteGridValue('TSK', 'Sort.Field', 'title');
+
+  AssertEquals('urgent', IniTextReadValue(LUser1.PreferencesText, 'Grid.TSK',
+    'Filter.title'), 'Grid filter should be stored on current user.');
+  AssertEquals('title', IniTextReadValue(LUser1.PreferencesText, 'Grid.TSK',
+    'Sort.Field'), 'Grid sort should be stored on current user.');
+  AssertEquals('', IniTextReadValue(LUser2.PreferencesText, 'Grid.TSK',
+    'Filter.title'), 'Other users should keep independent grid preferences.');
 end;
 
 procedure RunPreferencesServiceTests(var AFailures: Integer);
@@ -163,6 +218,8 @@ begin
   RunTest('PreferencesService_rejects_legacy_main_options', SavePreferencesRejectsLegacyMainOptions, AFailures);
   RunTest('PreferencesService_keeps_last_username', SavePreferencesKeepsLastUsername, AFailures);
   RunTest('PreferencesService_accepts_tsk_main_option', SavePreferencesAcceptsTskMainOption, AFailures);
+  RunTest('UserGridLayout_stores_values_in_current_user_preferences_text',
+    UserGridLayoutStoresValuesInCurrentUserPreferencesText, AFailures);
 end;
 
 end.

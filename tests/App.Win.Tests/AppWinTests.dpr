@@ -22,6 +22,7 @@ uses
   CrudPreviewForm in '..\..\src\App.Win\CrudPreviewForm.pas',
   LoginForm in '..\..\src\App.Win\LoginForm.pas',
   AppCoreCrud in '..\..\src\App.Core\AppCoreCrud.pas',
+  AppCoreIniText in '..\..\src\App.Core\AppCoreIniText.pas',
   PreferencesForm in '..\..\src\App.Win\PreferencesForm.pas',
   AppCoreAuth in '..\..\src\App.Core\AppCoreAuth.pas',
   AppCoreClock in '..\..\src\App.Core\AppCoreClock.pas',
@@ -32,6 +33,7 @@ uses
   AppCoreUpdate in '..\..\src\App.Core\AppCoreUpdate.pas',
   AppCoreUser in '..\..\src\App.Core\AppCoreUser.pas',
   AppCoreUserRepository in '..\..\src\App.Core\AppCoreUserRepository.pas',
+  AppCoreUserPreferencesRepository in '..\..\src\App.Core\AppCoreUserPreferencesRepository.pas',
   AppCoreUserService in '..\..\src\App.Core\AppCoreUserService.pas';
 
 var

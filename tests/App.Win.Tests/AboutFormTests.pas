@@ -8,6 +8,7 @@ implementation
 
 uses
   Classes,
+  Forms,
   SysUtils,
   AboutForm,
   AppCoreLocalization;
@@ -33,6 +34,7 @@ type
   TFakeAboutUpdateChecker = class(TInterfacedObject, IAboutUpdateChecker)
   public
     ResultText: string;
+    ShouldCloseApplication: Boolean;
     function CheckForUpdate: TAboutUpdateCheckResult;
   end;
 
@@ -93,6 +95,7 @@ end;
 function TFakeAboutUpdateChecker.CheckForUpdate: TAboutUpdateCheckResult;
 begin
   Result.MessageText := ResultText;
+  Result.ShouldCloseApplication := ShouldCloseApplication;
 end;
 
 procedure AssertEquals(const AExpected, AActual: string; const AMessage: string);
@@ -303,6 +306,29 @@ begin
   end;
 end;
 
+procedure AboutFormClosesApplicationWhenUpdateRequiresIt;
+var
+  LForm: TFrmAbout;
+  LChecker: TFakeAboutUpdateChecker;
+begin
+  LChecker := TFakeAboutUpdateChecker.Create;
+  LChecker.ResultText := 'Update prepared.';
+  LChecker.ShouldCloseApplication := True;
+
+  LForm := TFrmAbout.Create(nil);
+  try
+    LForm.ConfigureUpdateChecker(LChecker);
+    LForm.BtnCheckUpdateClick(nil);
+
+    AssertEquals('Update prepared.', LForm.LblUpdateStatus.Caption,
+      'Prepared update result should be shown before closing.');
+    if not LForm.CloseRequestedAfterUpdate then
+      raise Exception.Create('Form should request application termination.');
+  finally
+    LForm.Free;
+  end;
+end;
+
 procedure RunAboutFormTests(var AFailures: Integer);
 begin
   RunTest('AboutForm_loads_english_dynamic_texts', AboutFormLoadsEnglishDynamicTexts, AFailures);
@@ -310,6 +336,7 @@ begin
   RunTest('AboutForm_loads_real_csv_english_texts', AboutFormLoadsRealCsvEnglishTexts, AFailures);
   RunTest('AboutForm_shows_message_when_update_checker_is_missing', AboutFormShowsMessageWhenUpdateCheckerIsMissing, AFailures);
   RunTest('AboutForm_shows_update_checker_result', AboutFormShowsUpdateCheckerResult, AFailures);
+  RunTest('AboutForm_closes_application_when_update_requires_it', AboutFormClosesApplicationWhenUpdateRequiresIt, AFailures);
 end;
 
 end.

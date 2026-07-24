@@ -11,8 +11,11 @@ type
   TAboutUpdateChecker = class(TInterfacedObject, IAboutUpdateChecker)
   private
     FConfigFileName: string;
+    FApplyVerifiedUpdates: Boolean;
   public
     constructor Create(const AConfigFileName: string);
+    constructor CreateForTests(const AConfigFileName: string;
+      AApplyVerifiedUpdates: Boolean);
     function CheckForUpdate: TAboutUpdateCheckResult;
   end;
 
@@ -35,11 +38,26 @@ type
     function Sha256File(const AFileName: string): string;
   end;
 
+  TWindowsUpdateApplier = class(TInterfacedObject, IUpdateApplier)
+  private
+    FInstallDirectory: string;
+    FExecutableFileName: string;
+    FProcessId: Cardinal;
+    function ScriptFileName: string;
+    function StagingDirectory: string;
+  public
+    constructor Create(const AInstallDirectory, AExecutableFileName: string;
+      AProcessId: Cardinal);
+    procedure ApplyPackage(const APackageFileName: string);
+    function BuildApplyScript(const APackageFileName: string): string;
+  end;
+
 implementation
 
 uses
   Classes,
   IniFiles,
+  ShellAPI,
   Windows,
   AppCoreBuildInfo,
   AppCoreConfiguration,
@@ -158,10 +176,35 @@ begin
     Result := LDefaultConfigFileName;
 end;
 
+function IsAbsolutePath(const APath: string): Boolean;
+begin
+  Result := (Length(APath) >= 2) and (APath[2] = ':');
+  if not Result then
+    Result := (Length(APath) >= 1) and ((APath[1] = '\') or (APath[1] = '/'));
+end;
+
+function ResolveDownloadDirectory(const AInstallDirectory,
+  ADownloadDirectory: string): string;
+begin
+  if IsAbsolutePath(ADownloadDirectory) then
+    Result := ADownloadDirectory
+  else
+    Result := IncludeTrailingPathDelimiter(AInstallDirectory) + ADownloadDirectory;
+end;
+
 constructor TAboutUpdateChecker.Create(const AConfigFileName: string);
 begin
   inherited Create;
   FConfigFileName := AConfigFileName;
+  FApplyVerifiedUpdates := True;
+end;
+
+constructor TAboutUpdateChecker.CreateForTests(const AConfigFileName: string;
+  AApplyVerifiedUpdates: Boolean);
+begin
+  inherited Create;
+  FConfigFileName := AConfigFileName;
+  FApplyVerifiedUpdates := AApplyVerifiedUpdates;
 end;
 
 function TAboutUpdateChecker.CheckForUpdate: TAboutUpdateCheckResult;
@@ -169,7 +212,9 @@ var
   LConfig: TAppConfiguration;
   LService: TUpdateService;
   LCheck: TUpdateCheckResult;
+  LInstallDirectory: string;
 begin
+  Result.ShouldCloseApplication := False;
   LConfig := TAppConfiguration.Create(EffectiveUpdateConfigFileName(FConfigFileName));
   try
     if (not LConfig.UpdatesEnabled) or (Trim(LConfig.UpdateManifestUrl) = '') then
@@ -178,15 +223,34 @@ begin
       Exit;
     end;
 
-    LService := TUpdateService.Create(
-      TManifestHttpClient.Create(LConfig.UpdateManifestUrl),
-      TWindowsUpdateDownloader.Create,
-      TWindowsSha256Calculator.Create,
-      AppBuildVersion,
-      LConfig.UpdateDownloadDir);
+    LInstallDirectory := IncludeTrailingPathDelimiter(ExtractFilePath(FConfigFileName));
+    if FApplyVerifiedUpdates then
+      LService := TUpdateService.CreateWithApplier(
+        TManifestHttpClient.Create(LConfig.UpdateManifestUrl),
+        TWindowsUpdateDownloader.Create,
+        TWindowsSha256Calculator.Create,
+        TWindowsUpdateApplier.Create(LInstallDirectory, ParamStr(0), GetCurrentProcessId),
+        AppBuildVersion,
+        ResolveDownloadDirectory(LInstallDirectory, LConfig.UpdateDownloadDir))
+    else
+      LService := TUpdateService.Create(
+        TManifestHttpClient.Create(LConfig.UpdateManifestUrl),
+        TWindowsUpdateDownloader.Create,
+        TWindowsSha256Calculator.Create,
+        AppBuildVersion,
+        ResolveDownloadDirectory(LInstallDirectory, LConfig.UpdateDownloadDir));
     try
-      LCheck := LService.CheckAndDownload;
-      if LCheck.Available and LCheck.Verified then
+      if FApplyVerifiedUpdates then
+        LCheck := LService.CheckDownloadAndApply
+      else
+        LCheck := LService.CheckAndDownload;
+
+      if LCheck.Available and LCheck.Verified and LCheck.Applied then
+      begin
+        Result.MessageText := 'Actualizacion ' + LCheck.Latest.Version + ' preparada. La aplicacion se reiniciara.';
+        Result.ShouldCloseApplication := True;
+      end
+      else if LCheck.Available and LCheck.Verified then
         Result.MessageText := 'Actualizacion ' + LCheck.Latest.Version + ' descargada y verificada.'
       else
         Result.MessageText := 'No hay actualizaciones. Version actual: ' + AppBuildVersion + '.';
@@ -303,6 +367,75 @@ begin
   finally
     CryptReleaseContext(LProvider, 0);
   end;
+end;
+
+constructor TWindowsUpdateApplier.Create(const AInstallDirectory,
+  AExecutableFileName: string; AProcessId: Cardinal);
+begin
+  inherited Create;
+  FInstallDirectory := IncludeTrailingPathDelimiter(AInstallDirectory);
+  FExecutableFileName := AExecutableFileName;
+  FProcessId := AProcessId;
+end;
+
+function TWindowsUpdateApplier.ScriptFileName: string;
+begin
+  Result := IncludeTrailingPathDelimiter(GetEnvironmentVariable('TEMP')) +
+    'todoapp-apply-update-' + IntToStr(FProcessId) + '.bat';
+end;
+
+function TWindowsUpdateApplier.StagingDirectory: string;
+begin
+  Result := IncludeTrailingPathDelimiter(GetEnvironmentVariable('TEMP')) +
+    'todoapp-update-' + IntToStr(FProcessId);
+end;
+
+function TWindowsUpdateApplier.BuildApplyScript(
+  const APackageFileName: string): string;
+var
+  LStagingDirectory: string;
+begin
+  LStagingDirectory := StagingDirectory;
+  Result :=
+    '@echo off' + #13#10 +
+    'setlocal' + #13#10 +
+    'set "PID=' + IntToStr(FProcessId) + '"' + #13#10 +
+    'set "PACKAGE=' + APackageFileName + '"' + #13#10 +
+    'set "TARGET=' + FInstallDirectory + '"' + #13#10 +
+    'set "STAGING=' + LStagingDirectory + '"' + #13#10 +
+    'set "EXE=' + FExecutableFileName + '"' + #13#10 +
+    ':wait' + #13#10 +
+    'tasklist /FI "PID eq %PID%" 2>NUL | find "%PID%" >NUL' + #13#10 +
+    'if not errorlevel 1 (' + #13#10 +
+    '  timeout /T 1 /NOBREAK >NUL' + #13#10 +
+    '  goto wait' + #13#10 +
+    ')' + #13#10 +
+    'if exist "%STAGING%" rmdir /S /Q "%STAGING%"' + #13#10 +
+    'mkdir "%STAGING%"' + #13#10 +
+    'powershell -NoProfile -ExecutionPolicy Bypass -Command "Expand-Archive -LiteralPath ''%PACKAGE%'' -DestinationPath ''%STAGING%'' -Force"' + #13#10 +
+    'if errorlevel 1 exit /b 1' + #13#10 +
+    'xcopy "%STAGING%\*" "%TARGET%" /E /I /Y >NUL' + #13#10 +
+    'if errorlevel 1 exit /b 1' + #13#10 +
+    'rmdir /S /Q "%STAGING%"' + #13#10 +
+    'start "" "%EXE%"' + #13#10;
+end;
+
+procedure TWindowsUpdateApplier.ApplyPackage(const APackageFileName: string);
+var
+  LScript: TStringList;
+  LScriptFileName: string;
+begin
+  LScriptFileName := ScriptFileName;
+  LScript := TStringList.Create;
+  try
+    LScript.Text := BuildApplyScript(APackageFileName);
+    LScript.SaveToFile(LScriptFileName);
+  finally
+    LScript.Free;
+  end;
+
+  if ShellExecute(0, 'open', PChar(LScriptFileName), nil, nil, SW_HIDE) <= 32 then
+    raise EUpdateError.Create('No se pudo iniciar el aplicador de actualizacion.');
 end;
 
 end.

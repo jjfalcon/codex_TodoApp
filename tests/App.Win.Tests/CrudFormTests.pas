@@ -16,7 +16,9 @@ uses
   CrudPreviewForm,
   AppCoreCrud,
   AppCoreLocalization,
-  AppCorePreferencesFileRepository;
+  AppCoreUser,
+  AppCoreUserPreferencesRepository,
+  AppCoreUserRepository;
 
 type
   TTestProc = procedure;
@@ -283,24 +285,27 @@ end;
 
 procedure CrudFormPersistsColumnFilters;
 var
-  LFileName: string;
   LForm: TFrmCrud;
   LLayout: ICrudGridLayoutRepository;
+  LUsers: TInMemoryUserRepository;
+  LUsersInterface: IUserRepository;
+  LUser: TUser;
 begin
-  LFileName := IncludeTrailingPathDelimiter(GetEnvironmentVariable('TEMP')) +
-    'crud-form-filter-test.config';
-  DeleteFile(LFileName);
+  LUsers := TInMemoryUserRepository.Create;
+  LUsersInterface := LUsers;
+  LUser := TUser.Create('user-1', 'admin', 'Admin', 'hash', 'salt', True, urAdmin);
+  LUsers.Add(LUser);
 
-  LLayout := TFileLoginPreferencesRepository.Create(LFileName) as ICrudGridLayoutRepository;
+  LLayout := TUserGridLayoutRepository.Create(LUsersInterface, 'user-1');
   LForm := TFrmCrud.Create(nil);
   try
     LForm.Configure(TFakeCrudProvider.Create, emDetail, LLayout, 'Test');
     LForm.SetColumnFilter('email', 'first');
-    AssertEquals('first', LLayout.ReadGridValue('Test', 'Filter.email'), 'Filter should be saved in grid config.');
+    AssertEquals('first', LLayout.ReadGridValue('Test', 'Filter.email'),
+      'Filter should be saved in user grid preferences.');
   finally
     LForm.Free;
     LLayout := nil;
-    DeleteFile(LFileName);
   end;
 end;
 
@@ -524,17 +529,20 @@ end;
 
 procedure CrudFormPersistsColumnLayout;
 var
-  LFileName: string;
   LForm: TFrmCrud;
+  LUsers: TInMemoryUserRepository;
+  LUsersInterface: IUserRepository;
+  LUser: TUser;
 begin
-  LFileName := IncludeTrailingPathDelimiter(GetEnvironmentVariable('TEMP')) +
-    'crud-form-layout-test.layout';
-  DeleteFile(LFileName);
+  LUsers := TInMemoryUserRepository.Create;
+  LUsersInterface := LUsers;
+  LUser := TUser.Create('user-1', 'admin', 'Admin', 'hash', 'salt', True, urAdmin);
+  LUsers.Add(LUser);
 
   LForm := TFrmCrud.Create(nil);
   try
     LForm.Configure(TFakeCrudProvider.Create, emDetail,
-      TFileLoginPreferencesRepository.Create(LFileName) as ICrudGridLayoutRepository, 'Test');
+      TUserGridLayoutRepository.Create(LUsersInterface, 'user-1'), 'Test');
     ColumnByField(LForm, 'email').Width := 222;
     ColumnByField(LForm, 'email').Index := 0;
     LForm.SetColumnVisible('name', False);
@@ -546,13 +554,12 @@ begin
   LForm := TFrmCrud.Create(nil);
   try
     LForm.Configure(TFakeCrudProvider.Create, emDetail,
-      TFileLoginPreferencesRepository.Create(LFileName) as ICrudGridLayoutRepository, 'Test');
+      TUserGridLayoutRepository.Create(LUsersInterface, 'user-1'), 'Test');
     AssertEquals(0, ColumnByField(LForm, 'email').Index, 'Column order should be restored.');
     AssertEquals(222, ColumnByField(LForm, 'email').Width, 'Column width should be restored.');
     AssertFalse(ColumnByField(LForm, 'name').Visible, 'Column visibility should be restored.');
   finally
     LForm.Free;
-    DeleteFile(LFileName);
   end;
 end;
 

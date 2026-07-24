@@ -66,7 +66,7 @@ end;
 
 procedure TFrmPreferences.Configure(AService: TPreferencesService);
 var
-  LPreferences: TUserPreferences;
+  LPreferences: TPreferencesView;
 begin
   FreeAndNil(FService);
   FService := AService;

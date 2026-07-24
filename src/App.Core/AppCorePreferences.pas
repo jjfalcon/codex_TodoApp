@@ -5,80 +5,109 @@ interface
 uses
   SysUtils,
   Classes,
-  AppCoreCrud;
+  AppCoreIniText,
+  AppCoreUser,
+  AppCoreUserRepository;
 
 type
   EPreferencesValidationError = class(Exception);
 
-  TUserPreferences = record
+  TPreferencesView = record
     LastUsername: string;
     ActiveLanguage: string;
     LastMainOption: string;
   end;
 
-  ILoginPreferencesRepository = interface
+  IAppPreferencesRepository = interface
     ['{77BA670A-9CF3-4B57-94B2-6F78D9B7A0F9}']
     function LastUsername: string;
     procedure SetLastUsername(const AUsername: string);
-    function ActiveLanguage: string;
-    procedure SetActiveLanguage(const ALanguage: string);
-    function LastMainOption: string;
-    procedure SetLastMainOption(const AOption: string);
   end;
 
-  TInMemoryLoginPreferencesRepository = class(TInterfacedObject, ILoginPreferencesRepository,
-    ICrudGridLayoutRepository)
+  ILoginPreferencesRepository = IAppPreferencesRepository;
+
+  TInMemoryLoginPreferencesRepository = class(TInterfacedObject,
+    IAppPreferencesRepository)
   private
     FLastUsername: string;
-    FActiveLanguage: string;
-    FLastMainOption: string;
-    FGridValues: TStringList;
   public
     constructor Create;
-    destructor Destroy; override;
     function LastUsername: string;
     procedure SetLastUsername(const AUsername: string);
-    function ActiveLanguage: string;
-    procedure SetActiveLanguage(const ALanguage: string);
-    function LastMainOption: string;
-    procedure SetLastMainOption(const AOption: string);
-    function ReadGridValue(const AGridKey, AName: string): string;
-    procedure WriteGridValue(const AGridKey, AName, AValue: string);
   end;
 
   TPreferencesService = class
   private
-    FRepository: ILoginPreferencesRepository;
+    FAppPreferences: IAppPreferencesRepository;
+    FUsers: IUserRepository;
+    FUserId: string;
+    function CurrentUser: TUser;
     procedure ValidateLanguage(const ALanguage: string);
     procedure ValidateMainOption(const AOption: string);
   public
-    constructor Create(const ARepository: ILoginPreferencesRepository);
-    function GetPreferences: TUserPreferences;
+    constructor Create(const AAppPreferences: IAppPreferencesRepository;
+      const AUsers: IUserRepository; const AUserId: string);
+    function GetPreferences: TPreferencesView;
     procedure SavePreferences(const ALanguage, ALastMainOption: string);
   end;
 
 implementation
 
-constructor TPreferencesService.Create(const ARepository: ILoginPreferencesRepository);
+constructor TPreferencesService.Create(
+  const AAppPreferences: IAppPreferencesRepository; const AUsers: IUserRepository;
+  const AUserId: string);
 begin
   inherited Create;
-  FRepository := ARepository;
+  FAppPreferences := AAppPreferences;
+  FUsers := AUsers;
+  FUserId := AUserId;
 end;
 
-function TPreferencesService.GetPreferences: TUserPreferences;
+function TPreferencesService.CurrentUser: TUser;
 begin
-  Result.LastUsername := FRepository.LastUsername;
-  Result.ActiveLanguage := FRepository.ActiveLanguage;
-  Result.LastMainOption := FRepository.LastMainOption;
+  Result := nil;
+  if FUsers <> nil then
+    Result := FUsers.FindById(FUserId);
+end;
+
+function TPreferencesService.GetPreferences: TPreferencesView;
+var
+  LUser: TUser;
+begin
+  Result.LastUsername := '';
+  Result.ActiveLanguage := '';
+  Result.LastMainOption := '';
+
+  if FAppPreferences <> nil then
+    Result.LastUsername := FAppPreferences.LastUsername;
+
+  LUser := CurrentUser;
+  if LUser <> nil then
+  begin
+    Result.ActiveLanguage := IniTextReadValue(LUser.PreferencesText, 'User',
+      'ActiveLanguage');
+    Result.LastMainOption := IniTextReadValue(LUser.PreferencesText, 'User',
+      'LastMainOption');
+  end;
 end;
 
 procedure TPreferencesService.SavePreferences(const ALanguage,
   ALastMainOption: string);
+var
+  LUser: TUser;
 begin
   ValidateLanguage(ALanguage);
   ValidateMainOption(ALastMainOption);
-  FRepository.SetActiveLanguage(LowerCase(ALanguage));
-  FRepository.SetLastMainOption(ALastMainOption);
+
+  LUser := CurrentUser;
+  if LUser = nil then
+    raise EPreferencesValidationError.Create('Usuario no encontrado.');
+
+  LUser.PreferencesText := IniTextWriteValue(LUser.PreferencesText, 'User',
+    'ActiveLanguage', LowerCase(ALanguage));
+  LUser.PreferencesText := IniTextWriteValue(LUser.PreferencesText, 'User',
+    'LastMainOption', ALastMainOption);
+  FUsers.Save(LUser);
 end;
 
 procedure TPreferencesService.ValidateLanguage(const ALanguage: string);
@@ -96,21 +125,9 @@ begin
     raise EPreferencesValidationError.Create('Opcion principal no valida.');
 end;
 
-function TInMemoryLoginPreferencesRepository.ActiveLanguage: string;
-begin
-  Result := FActiveLanguage;
-end;
-
 constructor TInMemoryLoginPreferencesRepository.Create;
 begin
   inherited Create;
-  FGridValues := TStringList.Create;
-end;
-
-destructor TInMemoryLoginPreferencesRepository.Destroy;
-begin
-  FGridValues.Free;
-  inherited Destroy;
 end;
 
 function TInMemoryLoginPreferencesRepository.LastUsername: string;
@@ -118,36 +135,10 @@ begin
   Result := FLastUsername;
 end;
 
-function TInMemoryLoginPreferencesRepository.LastMainOption: string;
-begin
-  Result := FLastMainOption;
-end;
-
-function TInMemoryLoginPreferencesRepository.ReadGridValue(const AGridKey,
-  AName: string): string;
-begin
-  Result := FGridValues.Values[AGridKey + '.' + AName];
-end;
-
-procedure TInMemoryLoginPreferencesRepository.SetActiveLanguage(const ALanguage: string);
-begin
-  FActiveLanguage := ALanguage;
-end;
-
-procedure TInMemoryLoginPreferencesRepository.SetLastUsername(const AUsername: string);
+procedure TInMemoryLoginPreferencesRepository.SetLastUsername(
+  const AUsername: string);
 begin
   FLastUsername := AUsername;
-end;
-
-procedure TInMemoryLoginPreferencesRepository.SetLastMainOption(const AOption: string);
-begin
-  FLastMainOption := AOption;
-end;
-
-procedure TInMemoryLoginPreferencesRepository.WriteGridValue(const AGridKey, AName,
-  AValue: string);
-begin
-  FGridValues.Values[AGridKey + '.' + AName] := AValue;
 end;
 
 end.

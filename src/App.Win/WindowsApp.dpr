@@ -23,6 +23,7 @@ uses
   AppCoreClock in '..\App.Core\AppCoreClock.pas',
   AppCoreConfiguration in '..\App.Core\AppCoreConfiguration.pas',
   AppCoreCrud in '..\App.Core\AppCoreCrud.pas',
+  AppCoreIniText in '..\App.Core\AppCoreIniText.pas',
   AppCoreLocalization in '..\App.Core\AppCoreLocalization.pas',
   AppCorePreferencesFileRepository in '..\App.Core\AppCorePreferencesFileRepository.pas',
   AppCoreJsonUtils in '..\App.Core\AppCoreJsonUtils.pas',
@@ -37,6 +38,7 @@ uses
   AppCoreUser in '..\App.Core\AppCoreUser.pas',
   AppCoreUserCrudProvider in '..\App.Core\AppCoreUserCrudProvider.pas',
   AppCoreUserFileRepository in '..\App.Core\AppCoreUserFileRepository.pas',
+  AppCoreUserPreferencesRepository in '..\App.Core\AppCoreUserPreferencesRepository.pas',
   AppCoreUserRepository in '..\App.Core\AppCoreUserRepository.pas',
   AppCoreUserService in '..\App.Core\AppCoreUserService.pas';
 

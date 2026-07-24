@@ -379,7 +379,7 @@ Commits relevantes:
 - Se agregaron filtros por columna con `Ctrl+click` sobre cabeceras.
 - Se agregaron indicadores visuales en cabecera para orden (`^`/`v`) y filtro (`*`).
 - Se agrego busqueda no modal que resalta celdas coincidentes sin filtrar filas.
-- Se agrego persistencia de layout, filtros y orden en secciones `Grid.<clave>` de `app.config`.
+- Se agrego persistencia de layout, filtros y orden en secciones `Grid.<clave>` del `PreferencesText` del usuario.
 - Se elimino el boton `Filtrar` y se renombro `Refrescar` a `Reset`.
 
 ### Preview e impresion

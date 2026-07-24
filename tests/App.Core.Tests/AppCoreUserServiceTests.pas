@@ -11,6 +11,7 @@ uses
   SysUtils,
   AppCoreAuth,
   AppCoreClock,
+  AppCoreIniText,
   AppCoreJsonUtils,
   AppCorePreferences,
   AppCoreUser,
@@ -831,6 +832,42 @@ begin
   end;
 end;
 
+procedure FilePersistencePersistsUserPreferences;
+const
+  LTestFileName = 'test_users_preferences.json';
+var
+  LRepository: TFileUserRepository;
+  LUser: TUser;
+begin
+  DeleteFile(LTestFileName);
+  try
+    LRepository := TFileUserRepository.Create(LTestFileName);
+    try
+      LUser := TUser.Create('user1', 'user1', 'User One', 'hash', 'salt',
+        True, urNormal, 'user1@example.com', Now);
+      LUser.PreferencesText := IniTextWriteValue('', 'User', 'ActiveLanguage', 'en');
+      LUser.PreferencesText := IniTextWriteValue(LUser.PreferencesText, 'User',
+        'LastMainOption', 'TSK');
+      LRepository.Save(LUser);
+    finally
+      LRepository.Free;
+    end;
+
+    LRepository := TFileUserRepository.Create(LTestFileName);
+    try
+      LUser := LRepository.FindById('user1');
+      AssertEquals('en', IniTextReadValue(LUser.PreferencesText, 'User', 'ActiveLanguage'),
+        'Active language should persist inside user.');
+      AssertEquals('TSK', IniTextReadValue(LUser.PreferencesText, 'User', 'LastMainOption'),
+        'Last main option should persist inside user.');
+    finally
+      LRepository.Free;
+    end;
+  finally
+    DeleteFile(LTestFileName);
+  end;
+end;
+
 procedure FilePersistenceRoundTripsPasswordHashAndSalt;
 const
   LTestFileName = 'test_users_hash.json';
@@ -993,6 +1030,7 @@ begin
   RunTest('Login_updates_user_last_login_at', LoginUpdatesUserLastLoginAt, AFailures);
   RunTest('FilePersistence_saves_and_loads_users', FilePersistenceSavesAndLoadsUsers, AFailures);
   RunTest('FilePersistence_persists_multiple_fields', FilePersistencePersistsMultipleFields, AFailures);
+  RunTest('FilePersistence_persists_user_preferences', FilePersistencePersistsUserPreferences, AFailures);
   RunTest('FilePersistence_round_trips_password_hash_and_salt', FilePersistenceRoundTripsPasswordHashAndSalt, AFailures);
   RunTest('Login_succeeds_after_file_persistence_create_user', LoginSucceedsAfterFilePersistenceCreateUser, AFailures);
   RunTest('Login_succeeds_after_file_reload', LoginSucceedsAfterFileReload, AFailures);
