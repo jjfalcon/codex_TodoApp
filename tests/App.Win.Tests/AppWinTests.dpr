@@ -7,12 +7,14 @@ uses
   Forms,
   AboutFormTests in 'AboutFormTests.pas',
   AppWinCsvTests in 'AppWinCsvTests.pas',
+  AppWinCrudGridTests in 'AppWinCrudGridTests.pas',
   CrudFormTests in 'CrudFormTests.pas',
   LocalizationAuditTests in 'LocalizationAuditTests.pas',
   LoginFormTests in 'LoginFormTests.pas',
   PreferencesFormTests in 'PreferencesFormTests.pas',
   AppWinLocalization in '..\..\src\App.Win\AppWinLocalization.pas',
   AppWinCsv in '..\..\src\App.Win\AppWinCsv.pas',
+  AppWinCrudGrid in '..\..\src\App.Win\AppWinCrudGrid.pas',
   CrudDetailForm in '..\..\src\App.Win\CrudDetailForm.pas',
   CrudForm in '..\..\src\App.Win\CrudForm.pas',
   CrudPreviewForm in '..\..\src\App.Win\CrudPreviewForm.pas',
@@ -38,6 +40,7 @@ begin
     Application.Initialize;
     RunAboutFormTests(Failures);
     RunAppWinCsvTests(Failures);
+    RunAppWinCrudGridTests(Failures);
     RunCrudFormTests(Failures);
     RunLoginFormTests(Failures);
     RunPreferencesFormTests(Failures);

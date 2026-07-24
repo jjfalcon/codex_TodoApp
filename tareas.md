@@ -6,6 +6,14 @@
 
 ## Realizadas
 
+### Reduccion incremental de CrudForm
+
+- Se agrego `src\App.Win\AppWinCrudGrid.pas` para reglas puras de grid del CRUD.
+- `TFrmCrud.UpdateColumnTitles` delega la composicion de indicadores de filtro y orden en `CrudColumnTitle`.
+- `TFrmCrud.CellMatchesSearch` delega la comparacion de busqueda en `CrudCellMatchesSearch`.
+- Se agrego `tests\App.Win.Tests\AppWinCrudGridTests.pas`.
+- Se mantuvo `CrudForm` como orquestador VCL, sin mover reglas a abstracciones pesadas.
+
 ### Script de release local
 
 - Se agrego `scripts\release-windows.bat`.

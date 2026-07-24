@@ -100,6 +100,7 @@ implementation
 uses
   CrudDetailForm,
   CrudSearchForm,
+  AppWinCrudGrid,
   AppWinCsv,
   AppWinLocalization;
 
@@ -324,8 +325,7 @@ end;
 
 function TFrmCrud.CellMatchesSearch(const AValue: string): Boolean;
 begin
-  Result := (Trim(FSearchText) <> '') and
-    (Pos(UpperCase(Trim(FSearchText)), UpperCase(AValue)) > 0);
+  Result := CrudCellMatchesSearch(AValue, FSearchText);
 end;
 
 function TFrmCrud.CreatePreviewData: TCrudPreviewData;
@@ -702,19 +702,16 @@ var
   I: Integer;
   LColumn: TColumn;
   LCaption: string;
+  LFiltered: Boolean;
 begin
   for I := 0 to Grid.Columns.Count - 1 do
   begin
     LColumn := Grid.Columns[I];
     LCaption := ColumnBaseCaption(LColumn.FieldName);
-    if (FFilters <> nil) and (Trim(FFilters.Values[LColumn.FieldName]) <> '') then
-      LCaption := '* ' + LCaption;
-    if SameText(FSortField, LColumn.FieldName) then
-      if FSortAscending then
-        LCaption := '^ ' + LCaption
-      else
-        LCaption := 'v ' + LCaption;
-    LColumn.Title.Caption := LCaption;
+    LFiltered := (FFilters <> nil) and
+      (Trim(FFilters.Values[LColumn.FieldName]) <> '');
+    LColumn.Title.Caption := CrudColumnTitle(LCaption, LFiltered,
+      SameText(FSortField, LColumn.FieldName), FSortAscending);
   end;
 end;
 
