@@ -75,7 +75,7 @@ Para publicar los artefactos con GitHub CLI:
 scripts\publish-github-release.bat v1.0.0
 ```
 
-Requiere `gh` instalado y autenticado.
+Requiere `gh` instalado y autenticado, o disponible localmente en `.tools\gh\bin\gh.exe`.
 
 Para comprobar manualmente una actualizacion contra un manifest publicado o local:
 

@@ -6,6 +6,18 @@
 
 ## Realizadas
 
+### Publicacion de release en GitHub
+
+- Se genero la release local `TodoApp-1.0.0.54-0ec2256.zip`.
+- Se valido el ZIP con `scripts\release-windows.bat`.
+- Se ejecuto `tests\App.Win.E2E\run-release-smoke.bat` contra el ZIP generado.
+- Se instalo/autentico GitHub CLI para publicar la release.
+- Se ajusto `scripts\publish-github-release.bat` para usar `gh` global o `.tools\gh\bin\gh.exe` si existe localmente.
+- Se publico `v1.0.0.54` en GitHub con ZIP, `.sha256`, manifest versionado y `latest.json`.
+- Se verificaron los assets publicados con `gh release view`.
+- Se probo `scripts\check-update.bat` contra el `latest.json` real de GitHub y termino con `Update available and verified`.
+- URL: `https://github.com/jjfalcon/codex_TodoApp/releases/tag/v1.0.0.54`.
+
 ### Updater manual desde manifest de release
 
 - Se agrego `src\App.Core\AppCoreUpdate.pas` con servicio testeable para comparar version, descargar candidato y validar SHA-256 mediante interfaces.

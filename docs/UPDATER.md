@@ -64,3 +64,24 @@ DownloadDir=updates
 ```
 
 Mientras `Enabled=false` o no exista `ManifestUrl`, la aplicacion no debe consultar actualizaciones.
+
+## Publicacion real
+
+La release `v1.0.0.54` se publico en GitHub con:
+
+- `TodoApp-1.0.0.54-0ec2256.zip`
+- `TodoApp-1.0.0.54-0ec2256.sha256`
+- `TodoApp-1.0.0.54-0ec2256.json`
+- `latest.json`
+
+URL:
+
+```text
+https://github.com/jjfalcon/codex_TodoApp/releases/tag/v1.0.0.54
+```
+
+El updater manual se valido contra:
+
+```text
+https://github.com/jjfalcon/codex_TodoApp/releases/download/v1.0.0.54/latest.json
+```

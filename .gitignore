@@ -39,3 +39,4 @@ updates-test*/
 
 !.tools/
 !.tools/**
+.tools/gh/

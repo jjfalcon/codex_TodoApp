@@ -3,6 +3,7 @@ setlocal
 
 set ROOT=%~dp0..
 set RELEASES=%ROOT%\releases
+set GH=gh
 set TAG=%~1
 
 if "%TAG%"=="" (
@@ -10,10 +11,14 @@ if "%TAG%"=="" (
   exit /b 1
 )
 
-where gh >nul 2>nul
-if errorlevel 1 (
-  echo GitHub CLI gh was not found. Install gh and authenticate with gh auth login.
-  exit /b 2
+if exist "%ROOT%\.tools\gh\bin\gh.exe" set GH=%ROOT%\.tools\gh\bin\gh.exe
+
+if not exist "%GH%" (
+  where "%GH%" >nul 2>nul
+  if errorlevel 1 (
+    echo GitHub CLI gh was not found. Install gh or extract it to .tools\gh\bin\gh.exe and authenticate with gh auth login.
+    exit /b 2
+  )
 )
 
 for /f "delims=" %%i in ('powershell -NoProfile -Command "Get-ChildItem '%RELEASES%\TodoApp-*.zip' | Sort-Object LastWriteTime -Descending | Select-Object -First 1 -ExpandProperty FullName"') do set ZIP_PATH=%%i
@@ -47,5 +52,5 @@ if not exist "%LATEST_PATH%" (
   exit /b 1
 )
 
-gh release create "%TAG%" "%ZIP_PATH%" "%HASH_PATH%" "%MANIFEST_PATH%" "%LATEST_PATH%" --title "%TAG%" --notes "TodoApp Windows release %TAG%"
+"%GH%" release create "%TAG%" "%ZIP_PATH%" "%HASH_PATH%" "%MANIFEST_PATH%" "%LATEST_PATH%" --title "%TAG%" --notes "TodoApp Windows release %TAG%"
 exit /b %ERRORLEVEL%
