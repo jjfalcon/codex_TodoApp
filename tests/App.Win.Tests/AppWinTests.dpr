@@ -8,6 +8,7 @@ uses
   AboutFormTests in 'AboutFormTests.pas',
   AppWinCsvTests in 'AppWinCsvTests.pas',
   AppWinCrudGridTests in 'AppWinCrudGridTests.pas',
+  AppWinUpdateCheckerTests in 'AppWinUpdateCheckerTests.pas',
   CrudFormTests in 'CrudFormTests.pas',
   LocalizationAuditTests in 'LocalizationAuditTests.pas',
   LoginFormTests in 'LoginFormTests.pas',
@@ -15,6 +16,7 @@ uses
   AppWinLocalization in '..\..\src\App.Win\AppWinLocalization.pas',
   AppWinCsv in '..\..\src\App.Win\AppWinCsv.pas',
   AppWinCrudGrid in '..\..\src\App.Win\AppWinCrudGrid.pas',
+  AppWinUpdateChecker in '..\..\src\App.Win\AppWinUpdateChecker.pas',
   CrudDetailForm in '..\..\src\App.Win\CrudDetailForm.pas',
   CrudForm in '..\..\src\App.Win\CrudForm.pas',
   CrudPreviewForm in '..\..\src\App.Win\CrudPreviewForm.pas',
@@ -27,6 +29,7 @@ uses
   AppCoreLocalization in '..\..\src\App.Core\AppCoreLocalization.pas',
   AppCorePreferences in '..\..\src\App.Core\AppCorePreferences.pas',
   AppCoreRepositoryFactory in '..\..\src\App.Core\AppCoreRepositoryFactory.pas',
+  AppCoreUpdate in '..\..\src\App.Core\AppCoreUpdate.pas',
   AppCoreUser in '..\..\src\App.Core\AppCoreUser.pas',
   AppCoreUserRepository in '..\..\src\App.Core\AppCoreUserRepository.pas',
   AppCoreUserService in '..\..\src\App.Core\AppCoreUserService.pas';
@@ -41,6 +44,7 @@ begin
     RunAboutFormTests(Failures);
     RunAppWinCsvTests(Failures);
     RunAppWinCrudGridTests(Failures);
+    RunAppWinUpdateCheckerTests(Failures);
     RunCrudFormTests(Failures);
     RunLoginFormTests(Failures);
     RunPreferencesFormTests(Failures);

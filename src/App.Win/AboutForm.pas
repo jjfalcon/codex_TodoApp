@@ -13,6 +13,15 @@ uses
   AppCoreAbout;
 
 type
+  TAboutUpdateCheckResult = record
+    MessageText: string;
+  end;
+
+  IAboutUpdateChecker = interface
+    ['{D87B5C78-2638-44EF-B930-026667F64968}']
+    function CheckForUpdate: TAboutUpdateCheckResult;
+  end;
+
   TFrmAbout = class(TForm)
     LblTitle: TLabel;
     LblAppName: TLabel;
@@ -26,16 +35,21 @@ type
     LblArch: TLabel;
     LblBuildDate: TLabel;
     LblDbPath: TLabel;
+    LblUpdateStatus: TLabel;
+    BtnCheckUpdate: TButton;
     BtnAccept: TButton;
     procedure BtnAcceptClick(Sender: TObject);
+    procedure BtnCheckUpdateClick(Sender: TObject);
   private
     FService: IAboutService;
     FLocalization: ILocalizationService;
+    FUpdateChecker: IAboutUpdateChecker;
     function LocalizedText(const AKey, ADefaultValue: string;
       AStrict: Boolean): string;
     procedure LoadAboutInfo;
   public
     procedure ApplyLocalization(const ALocalization: ILocalizationService; AStrict: Boolean = True);
+    procedure ConfigureUpdateChecker(const AUpdateChecker: IAboutUpdateChecker);
     constructor Create(AOwner: TComponent); override;
   end;
 
@@ -59,6 +73,12 @@ begin
   inherited Create(AOwner);
   FService := TAboutService.Create;
   LoadAboutInfo;
+end;
+
+procedure TFrmAbout.ConfigureUpdateChecker(
+  const AUpdateChecker: IAboutUpdateChecker);
+begin
+  FUpdateChecker := AUpdateChecker;
 end;
 
 function TFrmAbout.LocalizedText(const AKey, ADefaultValue: string;
@@ -98,6 +118,26 @@ end;
 procedure TFrmAbout.BtnAcceptClick(Sender: TObject);
 begin
   ModalResult := mrOk;
+end;
+
+procedure TFrmAbout.BtnCheckUpdateClick(Sender: TObject);
+var
+  LResult: TAboutUpdateCheckResult;
+begin
+  if FUpdateChecker = nil then
+  begin
+    LblUpdateStatus.Caption := LocalizedText('About.UpdateNotConfigured',
+      'Updater is not configured.', False);
+    Exit;
+  end;
+
+  try
+    LResult := FUpdateChecker.CheckForUpdate;
+    LblUpdateStatus.Caption := LResult.MessageText;
+  except
+    on E: Exception do
+      LblUpdateStatus.Caption := E.Message;
+  end;
 end;
 
 end.

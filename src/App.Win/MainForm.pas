@@ -83,6 +83,7 @@ implementation
 
 uses
   AboutForm,
+  AppWinUpdateChecker,
   CrudForm,
   PreferencesForm,
   AppCoreUserCrudProvider,
@@ -121,6 +122,8 @@ begin
   LForm := TFrmAbout.Create(Self);
   try
     LForm.ApplyLocalization(FLocalization, False);
+    LForm.ConfigureUpdateChecker(TAboutUpdateChecker.Create(
+      ExtractFilePath(Application.ExeName) + 'app.config'));
     LForm.ShowModal;
   finally
     LForm.Free;

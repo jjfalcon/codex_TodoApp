@@ -54,16 +54,26 @@ El script:
 
 ## Configuracion
 
-`app.default.config` incluye valores seguros:
+`app.default.config` incluye la URL estable de GitHub Releases:
 
 ```ini
 [Updates]
-Enabled=false
-ManifestUrl=
+Enabled=true
+ManifestUrl=https://github.com/jjfalcon/codex_TodoApp/releases/latest/download/latest.json
 DownloadDir=updates
 ```
 
-Mientras `Enabled=false` o no exista `ManifestUrl`, la aplicacion no debe consultar actualizaciones.
+Mientras `Enabled=false` o no exista `ManifestUrl`, la aplicacion no consulta actualizaciones.
+
+Si el `app.config` local no contiene seccion `[Updates]`, la comprobacion desde la UI usa `app.default.config` como fallback. Esto permite mantener preferencias locales fuera de la configuracion base sin dejar el boton sin updater.
+
+## Boton en Acerca de
+
+El formulario `Acerca de` incluye el boton `Buscar actualizacion`.
+
+Al pulsarlo, la ventana usa el checker configurado desde `FMain`, lee `[Updates]` en `app.config`, consulta el manifest, descarga el ZIP candidato en `DownloadDir` y valida su SHA-256.
+
+El resultado se muestra en una sola linea dentro del propio formulario. El flujo no instala, reemplaza ni ejecuta archivos descargados.
 
 ## Publicacion real
 
@@ -84,4 +94,10 @@ El updater manual se valido contra:
 
 ```text
 https://github.com/jjfalcon/codex_TodoApp/releases/download/v1.0.0.54/latest.json
+```
+
+La aplicacion queda configurada contra la URL estable:
+
+```text
+https://github.com/jjfalcon/codex_TodoApp/releases/latest/download/latest.json
 ```

@@ -3,7 +3,7 @@ object FrmAbout: TFrmAbout
   Top = 0
   BorderStyle = bsDialog
   Caption = 'Acerca de'
-  ClientHeight = 340
+  ClientHeight = 380
   ClientWidth = 420
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -111,13 +111,29 @@ object FrmAbout: TFrmAbout
     Height = 13
     Caption = 'Base de datos: No disponible'
   end
-  object BtnAccept: TButton
-    Left = 172
+  object LblUpdateStatus: TLabel
+    Left = 20
     Top = 308
+    Width = 380
+    Height = 13
+    Caption = ''
+  end
+  object BtnCheckUpdate: TButton
+    Left = 20
+    Top = 348
+    Width = 130
+    Height = 23
+    Caption = 'Buscar actualizacion'
+    TabOrder = 0
+    OnClick = BtnCheckUpdateClick
+  end
+  object BtnAccept: TButton
+    Left = 325
+    Top = 348
     Width = 75
     Height = 23
     Caption = 'Aceptar'
-    TabOrder = 0
+    TabOrder = 1
     OnClick = BtnAcceptClick
   end
 end

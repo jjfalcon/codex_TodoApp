@@ -30,6 +30,12 @@ type
     procedure AddText(const AKey, AValue: string);
   end;
 
+  TFakeAboutUpdateChecker = class(TInterfacedObject, IAboutUpdateChecker)
+  public
+    ResultText: string;
+    function CheckForUpdate: TAboutUpdateCheckResult;
+  end;
+
 constructor TFakeLocalizationService.Create(const ALanguage: string);
 begin
   inherited Create;
@@ -84,6 +90,11 @@ begin
   FLanguage := ALanguage;
 end;
 
+function TFakeAboutUpdateChecker.CheckForUpdate: TAboutUpdateCheckResult;
+begin
+  Result.MessageText := ResultText;
+end;
+
 procedure AssertEquals(const AExpected, AActual: string; const AMessage: string);
 begin
   if AExpected <> AActual then
@@ -124,6 +135,8 @@ begin
   Result.AddText('FrmAbout.LblCopyright.Caption', 'Copyright translated');
   Result.AddText('FrmAbout.LblTechHeader.Caption', 'Technical translated');
   Result.AddText('FrmAbout.BtnAccept.Caption', 'OK translated');
+  Result.AddText('FrmAbout.BtnCheckUpdate.Caption', 'Check update translated');
+  Result.AddText('FrmAbout.LblUpdateStatus.Caption', '');
   Result.AddText('About.VersionPrefix', 'Version translated: ');
   Result.AddText('About.ExecutableVersionPrefix', 'Executable translated: ');
   Result.AddText('About.CommitPrefix', 'Commit translated: ');
@@ -139,6 +152,8 @@ begin
   Result.AddText('FrmAbout.Caption', 'Acerca de');
   Result.AddText('FrmAbout.LblTechHeader.Caption', 'Informacion tecnica');
   Result.AddText('FrmAbout.BtnAccept.Caption', 'Aceptar');
+  Result.AddText('FrmAbout.BtnCheckUpdate.Caption', 'Buscar actualizacion');
+  Result.AddText('FrmAbout.LblUpdateStatus.Caption', '');
   Result.AddText('About.VersionPrefix', 'Version: ');
   Result.AddText('About.ExecutableVersionPrefix', 'Version del ejecutable: ');
   Result.AddText('About.CommitPrefix', 'Commit GitHub: ');
@@ -162,6 +177,8 @@ begin
     AssertEquals('Technical translated', LForm.LblTechHeader.Caption,
       'Technical header should use active language.');
     AssertEquals('OK translated', LForm.BtnAccept.Caption, 'Accept button should use active language.');
+    AssertEquals('Check update translated', LForm.BtnCheckUpdate.Caption,
+      'Check update button should use active language.');
     AssertEquals('Application translated', LForm.LblAppName.Caption,
       'Application label should use language file value.');
     AssertEquals('Description translated', LForm.LblDescription.Caption,
@@ -201,6 +218,8 @@ begin
       'Technical header should return to Spanish.');
     AssertEquals('Aceptar', LForm.BtnAccept.Caption,
       'Accept button should return to Spanish.');
+    AssertEquals('Buscar actualizacion', LForm.BtnCheckUpdate.Caption,
+      'Check update button should return to Spanish.');
     AssertStartsWith('Version del ejecutable: ', LForm.LblExecVersion.Caption,
       'Executable version label should return to Spanish.');
     AssertStartsWith('Commit GitHub: ', LForm.LblCommit.Caption,
@@ -234,6 +253,8 @@ begin
       'Description label should come from real language file.');
     AssertEquals('Technical information', LForm.LblTechHeader.Caption,
       'Technical header should come from real language file.');
+    AssertEquals('Check for update', LForm.BtnCheckUpdate.Caption,
+      'Check update button should come from real language file.');
     AssertStartsWith('Executable version: ', LForm.LblExecVersion.Caption,
       'Executable version prefix should come from real language file.');
     AssertStartsWith('GitHub commit: ', LForm.LblCommit.Caption,
@@ -247,11 +268,48 @@ begin
   end;
 end;
 
+procedure AboutFormShowsMessageWhenUpdateCheckerIsMissing;
+var
+  LForm: TFrmAbout;
+begin
+  LForm := TFrmAbout.Create(nil);
+  try
+    LForm.BtnCheckUpdateClick(nil);
+
+    AssertEquals('Updater is not configured.', LForm.LblUpdateStatus.Caption,
+      'Missing update checker should show a clear message.');
+  finally
+    LForm.Free;
+  end;
+end;
+
+procedure AboutFormShowsUpdateCheckerResult;
+var
+  LForm: TFrmAbout;
+  LChecker: TFakeAboutUpdateChecker;
+begin
+  LChecker := TFakeAboutUpdateChecker.Create;
+  LChecker.ResultText := 'Update available and verified.';
+
+  LForm := TFrmAbout.Create(nil);
+  try
+    LForm.ConfigureUpdateChecker(LChecker);
+    LForm.BtnCheckUpdateClick(nil);
+
+    AssertEquals('Update available and verified.', LForm.LblUpdateStatus.Caption,
+      'Update checker result should be shown on the form.');
+  finally
+    LForm.Free;
+  end;
+end;
+
 procedure RunAboutFormTests(var AFailures: Integer);
 begin
   RunTest('AboutForm_loads_english_dynamic_texts', AboutFormLoadsEnglishDynamicTexts, AFailures);
   RunTest('AboutForm_reloads_spanish_after_english', AboutFormReloadsSpanishAfterEnglish, AFailures);
   RunTest('AboutForm_loads_real_csv_english_texts', AboutFormLoadsRealCsvEnglishTexts, AFailures);
+  RunTest('AboutForm_shows_message_when_update_checker_is_missing', AboutFormShowsMessageWhenUpdateCheckerIsMissing, AFailures);
+  RunTest('AboutForm_shows_update_checker_result', AboutFormShowsUpdateCheckerResult, AFailures);
 end;
 
 end.

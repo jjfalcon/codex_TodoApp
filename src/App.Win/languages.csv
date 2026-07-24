@@ -23,6 +23,8 @@ FrmAbout.LblOS.Caption;Sistema operativo: Windows;Operating system: Windows
 FrmAbout.LblArch.Caption;Arquitectura: No disponible;Architecture: Not available
 FrmAbout.LblBuildDate.Caption;Fecha de compilacion: No disponible;Build date: Not available
 FrmAbout.LblDbPath.Caption;Base de datos: No disponible;Database: Not available
+FrmAbout.BtnCheckUpdate.Caption;Buscar actualizacion;Check for update
+FrmAbout.LblUpdateStatus.Caption;;
 FrmAbout.BtnAccept.Caption;Aceptar;OK
 FrmPreferences.Caption;Preferencias;Preferences
 FrmPreferences.LblTitle.Caption;Preferencias;Preferences
@@ -59,6 +61,7 @@ About.OperatingSystemPrefix;Sistema operativo: ;Operating system:
 About.ArchitecturePrefix;Arquitectura: ;Architecture: 
 About.BuildDatePrefix;Fecha de compilacion: ;Build date: 
 About.DatabasePrefix;Base de datos: ;Database: 
+About.UpdateNotConfigured;Actualizador no configurado.;Updater is not configured.
 Crud.FilterDialog.Caption;Filtro;Filter
 Crud.DeleteConfirm.Message;Esta seguro de que desea eliminar este registro?;Are you sure you want to delete this record?
 Crud.ExportCsvDialog.Title;Exportar CSV;Export CSV

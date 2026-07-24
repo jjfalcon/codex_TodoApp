@@ -6,6 +6,20 @@
 
 ## Realizadas
 
+### Boton Buscar actualizacion en Acerca de
+
+- Se agrego el boton `Buscar actualizacion` al formulario `Acerca de`.
+- El formulario muestra el resultado del chequeo en `LblUpdateStatus` en una sola linea y sin iniciar instalacion automatica.
+- Se agrego `IAboutUpdateChecker` para inyectar la comprobacion y mantener la UI testeable.
+- `FMain` conecta el formulario con `TAboutUpdateChecker`, que lee `[Updates]` desde `app.config`.
+- Si el `app.config` local no tiene seccion `[Updates]`, el checker usa `app.default.config` como fallback.
+- El checker descarga `latest.json`, resuelve paquetes relativos, descarga el ZIP candidato y valida SHA-256.
+- `app.default.config` apunta por defecto a `https://github.com/jjfalcon/codex_TodoApp/releases/latest/download/latest.json`.
+- Si no hay updater configurado, el formulario informa `Actualizador no configurado.` en una sola linea.
+- Se agregaron claves de localizacion ES/EN para el boton y el estado.
+- Se cubrio con tests App.Win la localizacion del boton, estado sin checker y resultado inyectado.
+- Verificacion: `run-all-tests.bat` termina con `All requested checks passed`.
+
 ### Publicacion de release en GitHub
 
 - Se genero la release local `TodoApp-1.0.0.54-0ec2256.zip`.
