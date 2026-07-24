@@ -42,6 +42,8 @@ El runner:
 - Verifica que la tarea se guarda en `tasks.json`.
 - Marca la tarea como completada desde el detalle.
 - Verifica que `tasks.json` conserva el estado `completed`.
+- Exporta el grid de `Tareas` a CSV desde el boton `CSV`.
+- Verifica que el CSV contiene la tarea creada y usa separador `;`.
 - Emite diagnosticos con listado de ventanas, clases y controles si falla.
 - Guarda una captura de pantalla en `tests\App.Win.E2E\runtime\diagnostics\failure.png` si falla.
 

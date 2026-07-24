@@ -6,6 +6,16 @@
 
 ## Realizadas
 
+### Ampliacion E2E de exportacion CSV
+
+- Se amplio `tests\App.Win.E2E\smoke_login.au3` para cubrir la exportacion CSV desde `TSK`.
+- El smoke crea y completa una tarea, exporta el grid visible y guarda el fichero en el runtime aislado.
+- Se verifica que el CSV contiene la tarea creada.
+- Se verifica que el CSV usa `;` como separador.
+- Se endurecieron los clics del flujo VCL con fallback por handle/foco.
+- Se agregaron diagnosticos del dialogo CSV cuando falla una asercion E2E.
+- Verificacion: `tests\App.Win.E2E\run-smoke-login.bat` termina con `Smoke login, task CRUD and CSV export flow passed.`.
+
 ### Config base para release y E2E
 
 - Se agrego `src\App.Win\app.default.config` con valores base versionados.

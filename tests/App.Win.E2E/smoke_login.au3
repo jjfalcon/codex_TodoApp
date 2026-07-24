@@ -15,6 +15,7 @@ Global $MainTitle = "[CLASS:TFrmMain]"
 Global $DetailTitle = "[CLASS:TFrmCrudDetail]"
 Global $TaskTitle = "E2E task " & @YEAR & @MON & @MDAY & @HOUR & @MIN & @SEC
 Global $TasksFile = $WorkingDir & "\tasks.json"
+Global $CsvFile = $WorkingDir & "\tasks-export.csv"
 Global $Pid = Run('"' & $AppExe & '"', $WorkingDir, @SW_SHOW)
 
 If $Pid = 0 Then
@@ -89,6 +90,19 @@ Func DumpDiagnostics($Reason)
         If $GridHandle <> "" Then ConsoleWrite("Grid " & $I & ": " & $GridHandle & @CRLF)
     Next
 
+    Global $CsvDialogTitle = "[TITLE:Exportar CSV]"
+    If Not WinExists($CsvDialogTitle) Then $CsvDialogTitle = "[TITLE:Export CSV]"
+    If WinExists($CsvDialogTitle) Then
+        For $I = 1 To 8
+            Global $DialogButtonText = ControlGetText($CsvDialogTitle, "", "[CLASS:Button; INSTANCE:" & $I & "]")
+            If @error = 0 Then ConsoleWrite("CSV dialog button " & $I & ": " & $DialogButtonText & @CRLF)
+        Next
+        For $I = 1 To 4
+            Global $DialogEditText = ControlGetText($CsvDialogTitle, "", "[CLASS:Edit; INSTANCE:" & $I & "]")
+            If @error = 0 Then ConsoleWrite("CSV dialog edit " & $I & ": " & $DialogEditText & @CRLF)
+        Next
+    EndIf
+
     For $I = 1 To 4
         Global $LoginButtonText = ControlGetText($LoginTitle, "", "[CLASS:TButton; INSTANCE:" & $I & "]")
         If $LoginButtonText <> "" Then ConsoleWrite("Login button " & $I & ": " & $LoginButtonText & @CRLF)
@@ -122,6 +136,30 @@ Func WaitForControl($Title, $Control, $TimeoutSeconds)
     Return False
 EndFunc
 
+Func ClickControl($Title, $Control)
+    If ControlClick($Title, "", $Control) Then Return True
+
+    Global $Handle = ControlGetHandle($Title, "", $Control)
+    If $Handle = "" Then Return False
+
+    If ControlClick($Title, "", $Handle) Then Return True
+    If Not ControlFocus($Title, "", $Handle) Then Return False
+    Send("{SPACE}")
+    Return True
+EndFunc
+
+Func ClickDialogButton($Title, $Control)
+    If ControlClick($Title, "", $Control) Then Return True
+
+    Global $ControlPos = ControlGetPos($Title, "", $Control)
+    Global $WindowPos = WinGetPos($Title)
+    If (Not IsArray($ControlPos)) Or (Not IsArray($WindowPos)) Then Return False
+
+    MouseClick("left", $WindowPos[0] + $ControlPos[0] + Int($ControlPos[2] / 2), _
+        $WindowPos[1] + $ControlPos[1] + Int($ControlPos[3] / 2), 1, 0)
+    Return True
+EndFunc
+
 Func FindLoginButton()
     For $I = 1 To 4
         Global $Text = ControlGetText($LoginTitle, "", "[CLASS:TButton; INSTANCE:" & $I & "]")
@@ -151,6 +189,43 @@ Func WaitForFileText($FileName, $Text, $TimeoutSeconds)
         Sleep(100)
     WEnd
     Return False
+EndFunc
+
+Func SaveCsvDialog($FileName)
+    Global $DialogTitle = "[TITLE:Exportar CSV]"
+    If Not WinWait($DialogTitle, "", 5) Then $DialogTitle = "[TITLE:Export CSV]"
+    If Not WinWait($DialogTitle, "", 5) Then Return False
+
+    WinActivate($DialogTitle)
+    Global $LastSlash = StringInStr($FileName, "\", 0, -1)
+    Global $DialogFileName = $FileName
+    If $LastSlash > 0 Then $DialogFileName = StringTrimLeft($FileName, $LastSlash)
+
+    ClipPut($DialogFileName)
+    Send("!n")
+    Sleep(100)
+    Send("^a")
+    Send("^v")
+    Sleep(100)
+    If ControlGetText($DialogTitle, "", "[CLASS:Edit; INSTANCE:1]") = "" Then _
+        ControlSetText($DialogTitle, "", "[CLASS:Edit; INSTANCE:1]", $DialogFileName)
+
+    ClickDialogButton($DialogTitle, "[CLASS:Button; INSTANCE:2]")
+    Sleep(250)
+    If WinExists($DialogTitle) Then Send("!g")
+    Sleep(250)
+    If WinExists($DialogTitle) Then Send("{ENTER}")
+    WinWaitClose($DialogTitle, "", 5)
+    Return Not WinExists($DialogTitle)
+EndFunc
+
+Func CloseMessageIfOpen()
+    Global $MessageTitle = "[TITLE:Delphi TDD App]"
+    If WinWait($MessageTitle, "", 1) Then
+        WinActivate($MessageTitle)
+        Send("{ENTER}")
+        WinWaitClose($MessageTitle, "", 3)
+    EndIf
 EndFunc
 
 If Not WinWait($LoginTitle, "", 10) Then
@@ -195,7 +270,10 @@ Global $TskButton = FindButton($MainTitle, "Tareas", "Tasks", "")
 If $TskButton = "" Then _
     Fail(16, "Could not find TSK button.")
 
-ControlClick($MainTitle, "", $TskButton)
+WinActivate($MainTitle)
+If Not ClickControl($MainTitle, $TskButton) Then _
+    Fail(16, "Could not click TSK button.")
+Sleep(250)
 
 If Not WaitForControl($MainTitle, "[CLASS:TDBGrid; INSTANCE:1]", 5) Then _
     Fail(17, "TSK grid was not shown.")
@@ -204,7 +282,7 @@ Global $NewButton = FindButton($MainTitle, "Nuevo", "New", "")
 If $NewButton = "" Then _
     Fail(18, "Could not find New task button.")
 
-If Not ControlClick($MainTitle, "", $NewButton) Then _
+If Not ClickControl($MainTitle, $NewButton) Then _
     Fail(18, "Could not click New task.")
 
 If Not WinWait($DetailTitle, "", 5) Then _
@@ -218,7 +296,7 @@ Global $SaveButton = FindButton($DetailTitle, "Guardar", "Save", "")
 If $SaveButton = "" Then _
     Fail(21, "Could not find Save button for create.")
 
-If Not ControlClick($DetailTitle, "", $SaveButton) Then _
+If Not ClickControl($DetailTitle, $SaveButton) Then _
     Fail(21, "Could not save new task.")
 
 If Not WaitForFileText($TasksFile, $TaskTitle, 5) Then _
@@ -234,16 +312,36 @@ $SaveButton = FindButton($DetailTitle, "Guardar", "Save", "")
 If $SaveButton = "" Then _
     Fail(24, "Could not find Save button for edit.")
 
-If Not ControlClick($DetailTitle, "", $SaveButton) Then _
+If Not ClickControl($DetailTitle, $SaveButton) Then _
     Fail(24, "Could not save completed task.")
 
 If Not WaitForFileText($TasksFile, '"status": "completed"', 5) Then _
     Fail(25, "Completed task was not persisted.")
+
+Global $CsvButton = FindButton($MainTitle, "CSV", "CSV", "")
+If $CsvButton = "" Then _
+    Fail(26, "Could not find CSV export button.")
+
+If FileExists($CsvFile) Then FileDelete($CsvFile)
+
+If Not ClickControl($MainTitle, $CsvButton) Then _
+    Fail(26, "Could not click CSV export button.")
+
+If Not SaveCsvDialog($CsvFile) Then _
+    Fail(27, "Could not save CSV export.")
+
+If Not WaitForFileText($CsvFile, $TaskTitle, 5) Then _
+    Fail(28, "CSV export did not contain created task.")
+
+If Not WaitForFileText($CsvFile, ";", 5) Then _
+    Fail(29, "CSV export did not use semicolon separator.")
+
+CloseMessageIfOpen()
 
 WinClose($MainTitle)
 If Not ProcessWaitClose($Pid, 5) Then
     ProcessClose($Pid)
 EndIf
 
-ConsoleWrite("Smoke login and task CRUD flow passed." & @CRLF)
+ConsoleWrite("Smoke login, task CRUD and CSV export flow passed." & @CRLF)
 Exit 0
