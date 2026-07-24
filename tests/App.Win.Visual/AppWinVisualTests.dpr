@@ -14,6 +14,7 @@ uses
   AppCoreLocalization in '..\..\src\App.Core\AppCoreLocalization.pas',
   AppCorePreferences in '..\..\src\App.Core\AppCorePreferences.pas',
   AppCoreRepositoryFactory in '..\..\src\App.Core\AppCoreRepositoryFactory.pas',
+  AppCoreSqliteRepository in '..\..\src\App.Core\AppCoreSqliteRepository.pas',
   AppCoreUser in '..\..\src\App.Core\AppCoreUser.pas',
   AppCoreUserRepository in '..\..\src\App.Core\AppCoreUserRepository.pas',
   AppCoreUserService in '..\..\src\App.Core\AppCoreUserService.pas';

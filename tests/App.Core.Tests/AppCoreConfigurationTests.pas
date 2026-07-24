@@ -49,6 +49,33 @@ begin
     AssertEquals('false', LowerCase(BoolToStr(LConfig.UpdatesEnabled, True)), 'Updates should be disabled by default.');
     AssertEquals('', LConfig.UpdateManifestUrl, 'Default update manifest URL should be empty.');
     AssertEquals('updates', LConfig.UpdateDownloadDir, 'Default update download dir should be updates.');
+    AssertEquals('todoapp.db', LConfig.DatabaseFile, 'Default database file should be todoapp.db.');
+  finally
+    LConfig.Free;
+  end;
+  DeleteFile(LTestConfigFile);
+end;
+
+procedure ReadsDatabaseFile;
+var
+  LConfig: TAppConfiguration;
+  LFile: TStringList;
+begin
+  DeleteFile(LTestConfigFile);
+  LFile := TStringList.Create;
+  try
+    LFile.Add('[Persistence]');
+    LFile.Add('Backend=sqlite');
+    LFile.Add('DatabaseFile=local\todo.db');
+    LFile.SaveToFile(LTestConfigFile);
+  finally
+    LFile.Free;
+  end;
+
+  LConfig := TAppConfiguration.Create(LTestConfigFile);
+  try
+    AssertEquals('sqlite', LConfig.Backend, 'Should read sqlite backend.');
+    AssertEquals('local\todo.db', LConfig.DatabaseFile, 'Should read database file.');
   finally
     LConfig.Free;
   end;
@@ -186,6 +213,7 @@ begin
   RunTest('Defaults_when_file_does_not_exist', DefaultsWhenFileDoesNotExist, AFailures);
   RunTest('Reads_json_backend', ReadsJsonBackend, AFailures);
   RunTest('Reads_dataPath', ReadsDataPath, AFailures);
+  RunTest('Reads_database_file', ReadsDatabaseFile, AFailures);
   RunTest('Reads_connectionString', ReadsConnectionString, AFailures);
   RunTest('Reads_localization_settings', ReadsLocalizationSettings, AFailures);
   RunTest('Reads_update_settings', ReadsUpdateSettings, AFailures);

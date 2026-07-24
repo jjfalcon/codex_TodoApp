@@ -15,6 +15,7 @@ uses
   AppCorePreferencesFileRepositoryTests in 'AppCorePreferencesFileRepositoryTests.pas',
   AppCorePreferencesServiceTests in 'AppCorePreferencesServiceTests.pas',
   AppCoreRepositoryFactoryTests in 'AppCoreRepositoryFactoryTests.pas',
+  AppCoreSqliteRepositoryTests in 'AppCoreSqliteRepositoryTests.pas',
   AppCoreTaskServiceTests in 'AppCoreTaskServiceTests.pas',
   AppCoreUpdateTests in 'AppCoreUpdateTests.pas',
   AppCoreUserServiceTests in 'AppCoreUserServiceTests.pas',
@@ -31,6 +32,7 @@ uses
   AppCorePreferences in '..\..\src\App.Core\AppCorePreferences.pas',
   AppCorePreferencesFileRepository in '..\..\src\App.Core\AppCorePreferencesFileRepository.pas',
   AppCoreRepositoryFactory in '..\..\src\App.Core\AppCoreRepositoryFactory.pas',
+  AppCoreSqliteRepository in '..\..\src\App.Core\AppCoreSqliteRepository.pas',
   AppCoreTaskFileRepository in '..\..\src\App.Core\AppCoreTaskFileRepository.pas',
   AppCoreTaskCrudProvider in '..\..\src\App.Core\AppCoreTaskCrudProvider.pas',
   AppCoreTaskItem in '..\..\src\App.Core\AppCoreTaskItem.pas',
@@ -60,6 +62,7 @@ begin
     RunIniTextTests(Failures);
     RunLocalizationTests(Failures);
     RunRepositoryFactoryTests(Failures);
+    RunSqliteRepositoryTests(Failures);
     RunPreferencesFileRepositoryTests(Failures);
     RunPreferencesServiceTests(Failures);
     RunUpdateTests(Failures);

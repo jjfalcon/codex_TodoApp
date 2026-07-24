@@ -11,6 +11,7 @@ type
   private
     FBackend: string;
     FDataPath: string;
+    FDatabaseFile: string;
     FConnectionString: string;
     FLanguage: string;
     FLanguageFile: string;
@@ -21,6 +22,7 @@ type
     constructor Create(const AFileName: string);
     property Backend: string read FBackend;
     property DataPath: string read FDataPath;
+    property DatabaseFile: string read FDatabaseFile;
     property ConnectionString: string read FConnectionString;
     property Language: string read FLanguage;
     property LanguageFile: string read FLanguageFile;
@@ -53,6 +55,7 @@ begin
   inherited Create;
   FBackend := 'json';
   FDataPath := '.';
+  FDatabaseFile := 'todoapp.db';
   FConnectionString := '';
   FLanguage := 'es';
   FLanguageFile := 'languages.csv';
@@ -68,6 +71,7 @@ begin
   try
     FBackend := LowerCase(LIni.ReadString('Persistence', 'Backend', 'json'));
     FDataPath := LIni.ReadString('Persistence', 'DataPath', '.');
+    FDatabaseFile := LIni.ReadString('Persistence', 'DatabaseFile', 'todoapp.db');
     FConnectionString := LIni.ReadString('Persistence', 'ConnectionString', '');
     FLanguage := LowerCase(LIni.ReadString('Localization', 'Language', 'es'));
     FLanguageFile := LIni.ReadString('Localization', 'File', 'languages.csv');

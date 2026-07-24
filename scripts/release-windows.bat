@@ -29,6 +29,14 @@ set ZIP_PATH=%RELEASE_ROOT%\%PACKAGE_NAME%.zip
 set HASH_PATH=%RELEASE_ROOT%\%PACKAGE_NAME%.sha256
 set MANIFEST_PATH=%RELEASE_ROOT%\%PACKAGE_NAME%.json
 set LATEST_PATH=%RELEASE_ROOT%\latest.json
+set SQLITE_DLL=
+
+for /f "delims=" %%i in ('where sqlite3.dll 2^>nul') do if not defined SQLITE_DLL set SQLITE_DLL=%%i
+
+if "%SQLITE_DLL%"=="" (
+  echo sqlite3.dll was not found in PATH. Install or expose SQLite runtime before building a release.
+  exit /b 1
+)
 
 call "%ROOT%\scripts\build-windows.bat"
 if errorlevel 1 exit /b 1
@@ -46,11 +54,14 @@ if errorlevel 1 exit /b 1
 copy /Y "%APP_DIR%\app.default.config" "%PACKAGE_DIR%\app.config" >nul
 if errorlevel 1 exit /b 1
 
+copy /Y "%SQLITE_DLL%" "%PACKAGE_DIR%\sqlite3.dll" >nul
+if errorlevel 1 exit /b 1
+
 if exist "%ZIP_PATH%" del "%ZIP_PATH%"
 powershell -NoProfile -ExecutionPolicy Bypass -Command "Compress-Archive -Path '%PACKAGE_DIR%\*' -DestinationPath '%ZIP_PATH%' -Force"
 if errorlevel 1 exit /b 1
 
-powershell -NoProfile -ExecutionPolicy Bypass -Command "Add-Type -AssemblyName System.IO.Compression.FileSystem; $zip = [System.IO.Compression.ZipFile]::OpenRead('%ZIP_PATH%'); try { $names = @($zip.Entries | ForEach-Object { $_.FullName }); foreach ($required in @('WindowsApp.exe','languages.csv','app.config')) { if ($names -notcontains $required) { Write-Host ('Missing release entry: ' + $required); exit 1 } } } finally { $zip.Dispose() }"
+powershell -NoProfile -ExecutionPolicy Bypass -Command "Add-Type -AssemblyName System.IO.Compression.FileSystem; $zip = [System.IO.Compression.ZipFile]::OpenRead('%ZIP_PATH%'); try { $names = @($zip.Entries | ForEach-Object { $_.FullName }); foreach ($required in @('WindowsApp.exe','languages.csv','app.config','sqlite3.dll')) { if ($names -notcontains $required) { Write-Host ('Missing release entry: ' + $required); exit 1 } } } finally { $zip.Dispose() }"
 if errorlevel 1 exit /b 1
 
 for /f "tokens=1" %%i in ('certutil -hashfile "%ZIP_PATH%" SHA256 ^| findstr /R /V "hash CertUtil"') do set SHA256=%%i

@@ -61,7 +61,7 @@ Para generar un paquete ZIP trazable con hash SHA-256 y manifests de version:
 scripts\release-windows.bat
 ```
 
-El script deja los artefactos en `releases\`, usa `src\App.Win\app.default.config` como `app.config` base para no publicar preferencias locales, genera `latest.json` para el futuro updater y valida que el ZIP contenga los ficheros obligatorios con hash SHA-256 coherente.
+El script deja los artefactos en `releases\`, usa `src\App.Win\app.default.config` como `app.config` base para no publicar preferencias locales, incluye `sqlite3.dll`, genera `latest.json` para el futuro updater y valida que el ZIP contenga los ficheros obligatorios con hash SHA-256 coherente.
 
 Para ejecutar el smoke E2E contra el ultimo ZIP generado:
 
@@ -84,6 +84,22 @@ scripts\check-update.bat releases\latest.json 1.0.0.52 updates
 ```
 
 El script descarga o copia el ZIP candidato y valida su SHA-256, pero no modifica la instalacion actual. El flujo esta documentado en `docs\UPDATER.md`.
+
+## Persistencia
+
+La persistencia se elige en `app.config` desde `[Persistence]`.
+
+```ini
+[Persistence]
+Backend=json
+DataPath=.
+DatabaseFile=todoapp.db
+```
+
+- `Backend=json`: usa `tasks.json` y `users.json`.
+- `Backend=sqlite`: usa SQLite local en `DatabaseFile`.
+- Las preferencias de aplicacion, como `LastUsername`, siguen en `app.config`.
+- Las preferencias de usuario se guardan con el usuario, en `PreferencesText`.
 
 ## Niveles de test
 

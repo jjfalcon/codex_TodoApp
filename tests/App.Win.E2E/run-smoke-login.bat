@@ -29,6 +29,7 @@ mkdir "%DIAGNOSTICS%"
 copy /Y "%APP_DIR%\WindowsApp.exe" "%RUNTIME%\WindowsApp.exe" >nul
 copy /Y "%APP_DIR%\app.default.config" "%RUNTIME%\app.config" >nul
 copy /Y "%APP_DIR%\languages.csv" "%RUNTIME%\languages.csv" >nul
+for /f "delims=" %%i in ('where sqlite3.dll 2^>nul') do if not exist "%RUNTIME%\sqlite3.dll" copy /Y "%%i" "%RUNTIME%\sqlite3.dll" >nul
 
 "%AUTOIT%" "%~dp0smoke_login.au3" "%RUNTIME%\WindowsApp.exe" "%RUNTIME%" "%DIAGNOSTICS%"
 set E2E_RESULT=%ERRORLEVEL%

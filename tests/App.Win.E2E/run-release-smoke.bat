@@ -49,6 +49,11 @@ if not exist "%RUNTIME%\languages.csv" (
   exit /b 1
 )
 
+if not exist "%RUNTIME%\sqlite3.dll" (
+  echo sqlite3.dll was not found in release ZIP.
+  exit /b 1
+)
+
 "%AUTOIT%" "%~dp0smoke_login.au3" "%RUNTIME%\WindowsApp.exe" "%RUNTIME%" "%DIAGNOSTICS%"
 set E2E_RESULT=%ERRORLEVEL%
 if not "%E2E_RESULT%"=="0" exit /b %E2E_RESULT%

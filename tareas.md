@@ -2,9 +2,20 @@
 
 ## Pendientes
 
-- Ampliar E2E para abrir `Acerca de`, pulsar `Buscar actualizacion` y verificar un resultado funcional del updater.
+- Cifrar la base SQLite local completa con contraseña, evaluando SQLCipher y la gestion segura de la clave.
 
 ## Realizadas
+
+### Persistencia SQLite local seleccionable
+
+- Se agrego `Backend=sqlite` como opcion de persistencia de dominio.
+- Se agrego `DatabaseFile=todoapp.db` en `[Persistence]`.
+- Se implementaron repositorios SQLite para tareas y usuarios.
+- El ZIP de release incluye y valida `sqlite3.dll`.
+- Se valido el ZIP con `tests\App.Win.E2E\run-release-smoke.bat`.
+- Las preferencias de aplicacion se mantienen en `app.config`.
+- Las preferencias de usuario siguen dentro de `User.PreferencesText`.
+- No hay migracion desde JSON.
 
 ### Preferencias personales dentro del repositorio de usuarios
 

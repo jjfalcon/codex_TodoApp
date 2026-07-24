@@ -33,7 +33,7 @@ El runner:
 
 - Compila `src\App.Win\WindowsApp.dpr`.
 - Crea `tests\App.Win.E2E\runtime\`.
-- Copia `WindowsApp.exe`, `app.default.config` como `app.config` y `languages.csv` al runtime.
+- Copia `WindowsApp.exe`, `app.default.config` como `app.config`, `languages.csv` y `sqlite3.dll` al runtime.
 - Ejecuta `smoke_login.au3` con AutoIt.
 - Usa credenciales `admin` / `admin`.
 - Verifica que aparece la ventana principal.
@@ -58,7 +58,7 @@ cd tests\App.Win.E2E
 run-release-smoke.bat
 ```
 
-El runner descomprime el ultimo ZIP de `releases\` en `runtime-release`, valida que contiene `WindowsApp.exe`, `app.config` y `languages.csv`, y ejecuta el mismo smoke contra el ejecutable empaquetado.
+El runner descomprime el ultimo ZIP de `releases\` en `runtime-release`, valida que contiene `WindowsApp.exe`, `app.config`, `languages.csv` y `sqlite3.dll`, y ejecuta el mismo smoke contra el ejecutable empaquetado.
 
 ## Notas
 

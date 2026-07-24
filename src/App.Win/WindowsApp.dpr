@@ -29,6 +29,7 @@ uses
   AppCoreJsonUtils in '..\App.Core\AppCoreJsonUtils.pas',
   AppCorePreferences in '..\App.Core\AppCorePreferences.pas',
   AppCoreRepositoryFactory in '..\App.Core\AppCoreRepositoryFactory.pas',
+  AppCoreSqliteRepository in '..\App.Core\AppCoreSqliteRepository.pas',
   AppCoreTaskFileRepository in '..\App.Core\AppCoreTaskFileRepository.pas',
   AppCoreTaskCrudProvider in '..\App.Core\AppCoreTaskCrudProvider.pas',
   AppCoreTaskItem in '..\App.Core\AppCoreTaskItem.pas',
@@ -86,8 +87,12 @@ begin
   try
     if LConfig.Backend = 'json' then
       LFactory := TJsonRepositoryFactory.Create(LConfig.DataPath)
+    else if LConfig.Backend = 'sqlite' then
+      LFactory := TSqliteRepositoryFactory.Create(LConfig.DataPath,
+        LConfig.DatabaseFile)
     else
-      LFactory := TJsonRepositoryFactory.Create(LConfig.DataPath);
+      raise Exception.Create('Backend de persistencia no soportado: ' +
+        LConfig.Backend);
     LLocalization := TCsvLocalizationService.Create(
       ExtractFilePath(Application.ExeName) + LConfig.LanguageFile,
       LConfig.Language,
