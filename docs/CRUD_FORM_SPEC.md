@@ -29,6 +29,7 @@ La UI no accede directamente a tablas ni ficheros de datos. Toda regla de negoci
 - El boton `Buscar` abre un formulario no modal. La busqueda no filtra filas: resalta en amarillo las celdas visibles que contienen el texto buscado.
 - El boton `Preview` abre una vista previa generica imprimible de la tabla actual.
 - El preview imprime exactamente lo visible en pantalla: columnas visibles, captions actuales y filas ya cargadas en el grid. No reconsulta repositorios ni proveedores.
+- El boton `CSV` exporta exactamente el mismo snapshot visible, usando `;` como separador.
 - El click en cabecera cambia el campo de orden y alterna ascendente/descendente. La cabecera muestra `^` para ascendente, `v` para descendente y nada si no hay orden.
 - La cabecera muestra `*` cuando hay un filtro activo sobre ese campo.
 - Nuevo, editar y borrar delegan siempre en el proveedor.
@@ -68,7 +69,7 @@ No se generan ficheros `usr-grid.layout`.
 
 ## Tareas TSK
 
-`TSK` es una opcion de `FMain` que convive con la pantalla clasica `Tareas` y reutiliza `TFrmCrud` con `TTaskCrudProvider` y `emDetail`.
+`TSK` es la opcion de tareas de `FMain` y reutiliza `TFrmCrud` con `TTaskCrudProvider` y `emDetail`.
 
 El proveedor adapta `ITaskService`, por lo que la UI no accede a repositorios ni contiene reglas de negocio. El schema expone:
 
@@ -81,4 +82,4 @@ El layout se persiste con la clave `TSK` en la seccion `Grid.TSK`.
 ## Verificacion
 
 - `tests\App.Core.Tests`: cubre schema, busqueda, orden, filtros, update del provider de usuarios y layout en secciones `Grid.*`.
-- `tests\App.Win.Tests`: cubre modos de edicion, columnas generadas, escritura de detalle, persistencia de layout/filtros, indicadores de cabecera, paso de filtros, busqueda de celdas sin filtrar filas y snapshot de preview exacto del grid visible.
+- `tests\App.Win.Tests`: cubre modos de edicion, columnas generadas, escritura de detalle, persistencia de layout/filtros, indicadores de cabecera, paso de filtros, busqueda de celdas sin filtrar filas, snapshot de preview exacto del grid visible y exportacion CSV.

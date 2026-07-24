@@ -6,11 +6,13 @@ uses
   SysUtils,
   Forms,
   AboutFormTests in 'AboutFormTests.pas',
+  AppWinCsvTests in 'AppWinCsvTests.pas',
   CrudFormTests in 'CrudFormTests.pas',
   LocalizationAuditTests in 'LocalizationAuditTests.pas',
   LoginFormTests in 'LoginFormTests.pas',
   PreferencesFormTests in 'PreferencesFormTests.pas',
   AppWinLocalization in '..\..\src\App.Win\AppWinLocalization.pas',
+  AppWinCsv in '..\..\src\App.Win\AppWinCsv.pas',
   CrudDetailForm in '..\..\src\App.Win\CrudDetailForm.pas',
   CrudForm in '..\..\src\App.Win\CrudForm.pas',
   CrudPreviewForm in '..\..\src\App.Win\CrudPreviewForm.pas',
@@ -35,6 +37,7 @@ begin
   try
     Application.Initialize;
     RunAboutFormTests(Failures);
+    RunAppWinCsvTests(Failures);
     RunCrudFormTests(Failures);
     RunLoginFormTests(Failures);
     RunPreferencesFormTests(Failures);

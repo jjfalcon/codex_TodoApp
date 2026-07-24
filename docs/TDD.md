@@ -113,7 +113,7 @@ cd tests\App.Win.Tests
 run-tests.bat
 ```
 
-Esta auditoria valida `languages.csv` contra los formularios declarados como localizados (`FrmLogin`, `FrmMain`, `FrmTasks`, `FrmUsers` y `FrmAbout`). Produccion mantiene aplicacion tolerante de textos, pero tests fallan ante CSV ausente, columnas obligatorias ausentes, claves a componentes/propiedades inexistentes o captions traducibles sin clave.
+Esta auditoria valida `languages.csv` contra los formularios declarados como localizados (`FrmLogin`, `FrmMain`, `FrmPreferences`, `FrmCrud`, `FrmCrudDetail`, `FrmCrudSearch`, `FrmCrudPreview` y `FrmAbout`). Produccion mantiene aplicacion tolerante de textos, pero tests fallan ante CSV ausente, columnas obligatorias ausentes, claves a componentes/propiedades inexistentes o captions traducibles sin clave.
 
 ## Mutation testing
 
@@ -128,7 +128,7 @@ El runner aplica patches de `tests\App.Core.Tests\mutations\`, fuerza recompilac
 
 ## E2E
 
-El smoke E2E actual valida el arranque de la app VCL y el login:
+El smoke E2E actual valida el arranque de la app VCL, login y el CRUD de tareas `TSK`:
 
 ```bat
 cd tests\App.Win.E2E

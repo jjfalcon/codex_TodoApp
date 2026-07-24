@@ -6,6 +6,16 @@
 
 ## Realizadas
 
+### Refactorizacion de arquitectura minima
+
+- Se agrego `docs\ARCHITECTURE.md` con las reglas simples de capas y ubicacion de codigo.
+- Se elimino la aceptacion de opciones legacy `Tasks` y `Users` en `TPreferencesService`.
+- `FrmPreferences` muestra solo opciones vivas de pantalla inicial: `Dashboard`, `TSK` y `USR`.
+- Se agrego `src\App.Win\AppWinCsv.pas` para sacar el formateo CSV puro fuera de `CrudForm`.
+- `TFrmCrud.CreateCsvText` conserva el snapshot visible del grid y delega el formato en `AppWinCsv`.
+- Se agrego `tests\App.Win.Tests\AppWinCsvTests.pas`.
+- Se actualizaron docs vivas de CRUD, E2E, monitoring, testing y TDD para reflejar `TSK`/`USR` y el E2E actual.
+
 ### Separador punto y coma en languages.csv
 
 - Se migro `src\App.Win\languages.csv` para usar `;` como separador.

@@ -82,9 +82,8 @@ begin
   CmbLanguage.Items.Add('es');
   CmbLanguage.Items.Add('en');
   CmbLastMainOption.Items.Add('Dashboard');
-  CmbLastMainOption.Items.Add('Tasks');
   CmbLastMainOption.Items.Add('TSK');
-  CmbLastMainOption.Items.Add('Users');
+  CmbLastMainOption.Items.Add('USR');
   SelectComboValue(CmbLanguage, '', 'es');
   SelectComboValue(CmbLastMainOption, '', 'Dashboard');
   LblMessage.Caption := '';

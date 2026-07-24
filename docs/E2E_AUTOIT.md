@@ -37,11 +37,11 @@ El runner:
 - Ejecuta `smoke_login.au3` con AutoIt.
 - Usa credenciales `admin` / `admin`.
 - Verifica que aparece la ventana principal.
-- Abre la pantalla `Tareas`.
-- Crea una tarea con titulo unico.
-- Verifica que aparece como pendiente con prefijo `[ ]`.
-- Completa la tarea.
-- Verifica que aparece como completada con prefijo `[x]`.
+- Abre `Tareas`, implementada mediante el CRUD generico `TSK`.
+- Crea una tarea con titulo unico desde el formulario de detalle.
+- Verifica que la tarea se guarda en `tasks.json`.
+- Marca la tarea como completada desde el detalle.
+- Verifica que `tasks.json` conserva el estado `completed`.
 - Emite diagnosticos con listado de ventanas, clases y controles si falla.
 - Guarda una captura de pantalla en `tests\App.Win.E2E\runtime\diagnostics\failure.png` si falla.
 

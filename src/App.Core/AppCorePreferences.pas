@@ -92,8 +92,7 @@ end;
 
 procedure TPreferencesService.ValidateMainOption(const AOption: string);
 begin
-  if (AOption <> 'Dashboard') and (AOption <> 'Tasks') and (AOption <> 'TSK') and
-    (AOption <> 'Users') and (AOption <> 'USR') then
+  if (AOption <> 'Dashboard') and (AOption <> 'TSK') and (AOption <> 'USR') then
     raise EPreferencesValidationError.Create('Opcion principal no valida.');
 end;
 

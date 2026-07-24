@@ -100,6 +100,7 @@ implementation
 uses
   CrudDetailForm,
   CrudSearchForm,
+  AppWinCsv,
   AppWinLocalization;
 
 procedure TFrmCrud.ApplyLocalization(const ALocalization: ILocalizationService;
@@ -374,48 +375,35 @@ begin
   end;
 end;
 
-function CsvEscape(const AValue: string): string;
-begin
-  Result := StringReplace(AValue, '"', '""', [rfReplaceAll]);
-  if (Pos(';', Result) > 0) or (Pos('"', AValue) > 0) or
-    (Pos(#13, Result) > 0) or (Pos(#10, Result) > 0) then
-    Result := '"' + Result + '"';
-end;
-
 function TFrmCrud.CreateCsvText: string;
 var
   LData: TCrudPreviewData;
-  LLines: TStringList;
-  LLine: string;
+  LHeaders: TStringList;
+  LRows: TList;
+  LRow: TStringList;
   I: Integer;
   J: Integer;
 begin
   LData := CreatePreviewData;
-  LLines := TStringList.Create;
+  LHeaders := TStringList.Create;
+  LRows := TList.Create;
   try
-    LLine := '';
     for I := 0 to LData.ColumnCount - 1 do
-    begin
-      if I > 0 then
-        LLine := LLine + ';';
-      LLine := LLine + CsvEscape(LData.ColumnCaption(I));
-    end;
-    LLines.Add(LLine);
+      LHeaders.Add(LData.ColumnCaption(I));
 
     for I := 0 to LData.RowCount - 1 do
     begin
-      LLine := '';
+      LRow := TStringList.Create;
       for J := 0 to LData.ColumnCount - 1 do
-      begin
-        if J > 0 then
-          LLine := LLine + ';';
-        LLine := LLine + CsvEscape(LData.Cell(I, J));
-      end;
-      LLines.Add(LLine);
+        LRow.Add(LData.Cell(I, J));
+      LRows.Add(LRow);
     end;
-    Result := LLines.Text;
+    Result := CsvTextFromRows(LHeaders, LRows);
   finally
-    LLines.Free;
+    for I := 0 to LRows.Count - 1 do
+      TObject(LRows[I]).Free;
+    LRows.Free;
+    LHeaders.Free;
     LData.Free;
   end;
 end;

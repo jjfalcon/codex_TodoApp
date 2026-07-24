@@ -28,7 +28,6 @@ Ejemplos:
 ```text
 2026-07-23T10:24:01 INFO App.Start Application started
 2026-07-23T10:24:01 TIMING Auth.Login durationMs=16 result=ok username=admin
-2026-07-23T10:24:02 TIMING Task.Create durationMs=0 result=ok
 ```
 
 ## Eventos iniciales
@@ -37,9 +36,6 @@ Ejemplos:
 - `App.Stop`: cierre de la aplicacion.
 - `App.UnhandledException`: excepcion no controlada en VCL.
 - `Auth.Login`: intento de login con duracion.
-- `Navigation.Tasks`: apertura de la pantalla de tareas.
-- `Task.Create`: alta de tarea con duracion.
-- `Task.Complete`: completado de tarea con duracion.
 
 ## Privacidad
 
@@ -59,5 +55,5 @@ El E2E comprueba que se genera `logs\application.log` y que contiene:
 
 - `INFO App.Start`
 - `TIMING Auth.Login`
-- `TIMING Task.Create`
-- `TIMING Task.Complete`
+
+Las operaciones de tareas se validan en el E2E mediante persistencia en `tasks.json`.

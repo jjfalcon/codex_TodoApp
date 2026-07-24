@@ -39,14 +39,14 @@ var
   LService: TPreferencesService;
   LPreferences: TUserPreferences;
 begin
-  LRepo := TInMemoryLoginPreferencesRepository.Create;
+    LRepo := TInMemoryLoginPreferencesRepository.Create;
   LService := TPreferencesService.Create(LRepo);
   try
-    LService.SavePreferences('en', 'Tasks');
+    LService.SavePreferences('en', 'TSK');
     LPreferences := LService.GetPreferences;
 
     AssertEquals('en', LPreferences.ActiveLanguage, 'Language should be saved.');
-    AssertEquals('Tasks', LPreferences.LastMainOption, 'Last main option should be saved.');
+    AssertEquals('TSK', LPreferences.LastMainOption, 'Last main option should be saved.');
   finally
     LService.Free;
   end;
@@ -102,13 +102,40 @@ begin
   LRepo.SetLastUsername('admin');
   LService := TPreferencesService.Create(LRepo);
   try
-    LService.SavePreferences('es', 'Users');
+    LService.SavePreferences('es', 'USR');
     LPreferences := LService.GetPreferences;
 
     AssertEquals('admin', LPreferences.LastUsername, 'Saving editable preferences should keep last username.');
   finally
     LService.Free;
   end;
+end;
+
+procedure SavePreferencesRejectsLegacyMainOptions;
+var
+  LRepo: ILoginPreferencesRepository;
+  LService: TPreferencesService;
+begin
+  LRepo := TInMemoryLoginPreferencesRepository.Create;
+  LService := TPreferencesService.Create(LRepo);
+  try
+    try
+      LService.SavePreferences('es', 'Tasks');
+    except
+      on E: EPreferencesValidationError do
+      begin
+        try
+          LService.SavePreferences('es', 'Users');
+        except
+          on E2: EPreferencesValidationError do
+            Exit;
+        end;
+      end;
+    end;
+  finally
+    LService.Free;
+  end;
+  raise Exception.Create('Expected legacy main options to be rejected.');
 end;
 
 procedure SavePreferencesAcceptsTskMainOption;
@@ -133,6 +160,7 @@ begin
   RunTest('PreferencesService_saves_editable_values', SavePreferencesStoresEditableValues, AFailures);
   RunTest('PreferencesService_rejects_invalid_language', SavePreferencesRejectsInvalidLanguage, AFailures);
   RunTest('PreferencesService_rejects_invalid_main_option', SavePreferencesRejectsInvalidMainOption, AFailures);
+  RunTest('PreferencesService_rejects_legacy_main_options', SavePreferencesRejectsLegacyMainOptions, AFailures);
   RunTest('PreferencesService_keeps_last_username', SavePreferencesKeepsLastUsername, AFailures);
   RunTest('PreferencesService_accepts_tsk_main_option', SavePreferencesAcceptsTskMainOption, AFailures);
 end;

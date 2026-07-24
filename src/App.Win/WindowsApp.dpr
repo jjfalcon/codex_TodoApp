@@ -5,6 +5,7 @@ uses
   Forms,
   SysUtils,
   AboutForm in 'AboutForm.pas' {FrmAbout},
+  AppWinCsv in 'AppWinCsv.pas',
   CrudDetailForm in 'CrudDetailForm.pas' {FrmCrudDetail},
   CrudForm in 'CrudForm.pas' {FrmCrud},
   CrudPreviewForm in 'CrudPreviewForm.pas' {FrmCrudPreview},

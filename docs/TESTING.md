@@ -219,7 +219,7 @@ Que valida:
 
 Estado actual:
 
-- `FrmLogin`, `FrmMain`, `FrmTasks`, `FrmUsers` y `FrmAbout` auditados contra `languages.csv`.
+- `FrmLogin`, `FrmMain`, `FrmPreferences`, `FrmCrud`, `FrmCrudDetail`, `FrmCrudSearch`, `FrmCrudPreview` y `FrmAbout` auditados contra `languages.csv`.
 - `FrmAbout` combina datos de version, sistema y base de datos con prefijos leidos desde claves `About.*` del fichero de idioma; se cubre con `AboutFormTests`.
 - Al localizar nuevos formularios, agregar su instancia a la auditoria y ampliar el CSV.
 
@@ -344,11 +344,11 @@ Que cubre ahora:
 - Abre la aplicacion VCL.
 - Hace login con `admin` / `admin`.
 - Verifica que aparece la ventana principal.
-- Abre `Tareas`.
-- Crea una tarea.
-- Verifica el prefijo pendiente `[ ]`.
-- Completa la tarea.
-- Verifica el prefijo completado `[x]`.
+- Abre `Tareas`, que carga el CRUD generico `TSK`.
+- Crea una tarea desde el detalle.
+- Verifica que se guarda en `tasks.json`.
+- Completa la tarea desde el detalle.
+- Verifica el estado `completed` en `tasks.json`.
 - Emite diagnosticos con ventanas, clases y controles cuando falla.
 - Guarda captura de pantalla del fallo en `tests\App.Win.E2E\runtime\diagnostics\failure.png`.
 
@@ -362,7 +362,7 @@ run-smoke-login.bat
 Uso esperado:
 
 - Smoke de integracion UI Windows.
-- Validar que la app arranca, el login funciona y la pantalla `Tareas` esta conectada al nucleo.
+- Validar que la app arranca, el login funciona y `TSK` esta conectado al nucleo.
 - Detectar roturas de wiring entre UI, servicios y persistencia de tareas.
 
 ## Politica recomendada

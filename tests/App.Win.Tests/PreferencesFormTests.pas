@@ -72,7 +72,7 @@ begin
   LRepo := TInMemoryLoginPreferencesRepository.Create;
   LRepo.SetLastUsername('admin');
   LRepo.SetActiveLanguage('en');
-  LRepo.SetLastMainOption('Tasks');
+  LRepo.SetLastMainOption('TSK');
   LService := TPreferencesService.Create(LRepo);
   LForm := TFrmPreferences.Create(nil);
   try
@@ -80,7 +80,7 @@ begin
 
     AssertEquals('admin', LForm.EdtLastUsername.Text, 'Form should show last username.');
     AssertEquals('en', LForm.CmbLanguage.Text, 'Form should show active language.');
-    AssertEquals('Tasks', LForm.CmbLastMainOption.Text, 'Form should show last main option.');
+    AssertEquals('TSK', LForm.CmbLastMainOption.Text, 'Form should show last main option.');
     AssertTrue(LForm.EdtLastUsername.ReadOnly, 'Last username should be read-only.');
   finally
     LForm.Free;
@@ -99,11 +99,11 @@ begin
   try
     LForm.Configure(LService);
     LForm.CmbLanguage.Text := 'en';
-    LForm.CmbLastMainOption.Text := 'Users';
+    LForm.CmbLastMainOption.Text := 'USR';
     LForm.BtnSaveClick(nil);
 
     AssertEquals('en', LRepo.ActiveLanguage, 'Form should save language.');
-    AssertEquals('Users', LRepo.LastMainOption, 'Form should save last main option.');
+    AssertEquals('USR', LRepo.LastMainOption, 'Form should save last main option.');
   finally
     LForm.Free;
   end;

@@ -10,6 +10,7 @@ Esta preparada para compilar con Delphi 7, usando un runner de pruebas propio pa
 - `tests/App.Core.Tests`: pruebas del nucleo ejecutables por consola.
 - `tests/App.Win.E2E`: smoke tests E2E de la aplicacion VCL.
 - `docs/TDD.md`: forma de trabajo recomendada.
+- `docs/ARCHITECTURE.md`: arquitectura minima y reglas de ubicacion de codigo.
 - `docs/TESTING.md`: niveles de test consensuados del proyecto.
 - `docs/MONITORING.md`: monitorizacion local, timings y diagnostico.
 - `docs/USER_PREFERENCES_SPEC.md`: preferencias locales de usuario.
@@ -46,7 +47,7 @@ La taxonomia de verificacion del proyecto esta documentada en `docs/TESTING.md`:
 
 - `unitTest`: runner propio de consola para `src\App.Core`.
 - `coverageTest`: cobertura con DelphiCodeCoverage.
-- `mutationTest`: runner propio de mutaciones `M001`-`M011`.
+- `mutationTest`: runner propio de mutaciones `M001`-`M017`.
 - `e2eTest`: smoke E2E con AutoIt para la app VCL.
 
 La funcionalidad inicial es una lista de tareas sencilla. Es deliberadamente pequena: sirve como patron para CRUD, validaciones, repositorios, servicios, pruebas y conexion con la interfaz.
