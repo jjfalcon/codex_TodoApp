@@ -6,6 +6,18 @@
 
 ## Realizadas
 
+### Script de release local
+
+- Se agrego `scripts\release-windows.bat`.
+- El script genera version trazable desde Git con formato `1.0.0.<commit-count>` y commit corto.
+- Compila `WindowsApp.dpr` usando `scripts\build-windows.bat`.
+- Empaqueta `WindowsApp.exe`, `languages.csv` y un `app.config` base sin preferencias locales.
+- Genera un ZIP en `releases\` con nombre `TodoApp-<version>-<commit>.zip`.
+- Calcula SHA-256 del ZIP y genera fichero `.sha256`.
+- Genera manifest JSON con version, commit, fecha, paquete y hash.
+- Se agrego `releases\` a `.gitignore`.
+- Se documento el uso en `README.md`.
+
 ### Mejoras de sostenibilidad pendientes
 
 - Se actualizo `docs\USER_PREFERENCES_SPEC.md` para usar `Dashboard`, `TSK` y `USR` como valores internos vigentes.

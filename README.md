@@ -53,6 +53,16 @@ Para incluir mutation testing cuando el arbol Git este limpio:
 run-all-tests.bat mutation
 ```
 
+## Release local
+
+Para generar un paquete ZIP trazable con hash SHA-256:
+
+```bat
+scripts\release-windows.bat
+```
+
+El script deja los artefactos en `releases\` y genera un `app.config` base para no publicar preferencias locales.
+
 ## Niveles de test
 
 La taxonomia de verificacion del proyecto esta documentada en `docs/TESTING.md`:
