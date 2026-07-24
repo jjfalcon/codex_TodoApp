@@ -15,6 +15,7 @@ uses
   AppCorePreferencesServiceTests in 'AppCorePreferencesServiceTests.pas',
   AppCoreRepositoryFactoryTests in 'AppCoreRepositoryFactoryTests.pas',
   AppCoreTaskServiceTests in 'AppCoreTaskServiceTests.pas',
+  AppCoreUpdateTests in 'AppCoreUpdateTests.pas',
   AppCoreUserServiceTests in 'AppCoreUserServiceTests.pas',
   AppCoreAbout in '..\..\src\App.Core\AppCoreAbout.pas',
   AppCoreBuildInfo in '..\..\src\App.Core\AppCoreBuildInfo.pas',
@@ -33,6 +34,7 @@ uses
   AppCoreTaskItem in '..\..\src\App.Core\AppCoreTaskItem.pas',
   AppCoreTaskRepository in '..\..\src\App.Core\AppCoreTaskRepository.pas',
   AppCoreTaskService in '..\..\src\App.Core\AppCoreTaskService.pas',
+  AppCoreUpdate in '..\..\src\App.Core\AppCoreUpdate.pas',
   AppCoreUser in '..\..\src\App.Core\AppCoreUser.pas',
   AppCoreUserCrudProvider in '..\..\src\App.Core\AppCoreUserCrudProvider.pas',
   AppCoreUserFileRepository in '..\..\src\App.Core\AppCoreUserFileRepository.pas',
@@ -56,6 +58,7 @@ begin
     RunRepositoryFactoryTests(Failures);
     RunPreferencesFileRepositoryTests(Failures);
     RunPreferencesServiceTests(Failures);
+    RunUpdateTests(Failures);
 
     if Failures = 0 then
       Writeln('All tests passed.')

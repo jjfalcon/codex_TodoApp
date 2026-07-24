@@ -46,6 +46,9 @@ begin
     AssertEquals('', LConfig.ConnectionString, 'Default connectionString should be "".');
     AssertEquals('es', LConfig.Language, 'Default language should be es.');
     AssertEquals('languages.csv', LConfig.LanguageFile, 'Default language file should be languages.csv.');
+    AssertEquals('false', LowerCase(BoolToStr(LConfig.UpdatesEnabled, True)), 'Updates should be disabled by default.');
+    AssertEquals('', LConfig.UpdateManifestUrl, 'Default update manifest URL should be empty.');
+    AssertEquals('updates', LConfig.UpdateDownloadDir, 'Default update download dir should be updates.');
   finally
     LConfig.Free;
   end;
@@ -150,6 +153,34 @@ begin
   DeleteFile(LTestConfigFile);
 end;
 
+procedure ReadsUpdateSettings;
+var
+  LConfig: TAppConfiguration;
+  LFile: TStringList;
+begin
+  DeleteFile(LTestConfigFile);
+  LFile := TStringList.Create;
+  try
+    LFile.Add('[Updates]');
+    LFile.Add('Enabled=true');
+    LFile.Add('ManifestUrl=https://example.test/latest.json');
+    LFile.Add('DownloadDir=downloaded-updates');
+    LFile.SaveToFile(LTestConfigFile);
+  finally
+    LFile.Free;
+  end;
+
+  LConfig := TAppConfiguration.Create(LTestConfigFile);
+  try
+    AssertEquals('true', LowerCase(BoolToStr(LConfig.UpdatesEnabled, True)), 'Should read update enabled flag.');
+    AssertEquals('https://example.test/latest.json', LConfig.UpdateManifestUrl, 'Should read update manifest URL.');
+    AssertEquals('downloaded-updates', LConfig.UpdateDownloadDir, 'Should read update download dir.');
+  finally
+    LConfig.Free;
+  end;
+  DeleteFile(LTestConfigFile);
+end;
+
 procedure RunConfigurationTests(var AFailures: Integer);
 begin
   RunTest('Defaults_when_file_does_not_exist', DefaultsWhenFileDoesNotExist, AFailures);
@@ -157,6 +188,7 @@ begin
   RunTest('Reads_dataPath', ReadsDataPath, AFailures);
   RunTest('Reads_connectionString', ReadsConnectionString, AFailures);
   RunTest('Reads_localization_settings', ReadsLocalizationSettings, AFailures);
+  RunTest('Reads_update_settings', ReadsUpdateSettings, AFailures);
 end;
 
 end.

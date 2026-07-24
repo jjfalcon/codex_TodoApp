@@ -77,6 +77,14 @@ scripts\publish-github-release.bat v1.0.0
 
 Requiere `gh` instalado y autenticado.
 
+Para comprobar manualmente una actualizacion contra un manifest publicado o local:
+
+```bat
+scripts\check-update.bat releases\latest.json 1.0.0.52 updates
+```
+
+El script descarga o copia el ZIP candidato y valida su SHA-256, pero no modifica la instalacion actual. El flujo esta documentado en `docs\UPDATER.md`.
+
 ## Niveles de test
 
 La taxonomia de verificacion del proyecto esta documentada en `docs/TESTING.md`:

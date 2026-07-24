@@ -6,6 +6,21 @@
 
 ## Realizadas
 
+### Updater manual desde manifest de release
+
+- Se agrego `src\App.Core\AppCoreUpdate.pas` con servicio testeable para comparar version, descargar candidato y validar SHA-256 mediante interfaces.
+- Se agregaron pruebas Core para version igual/inferior, version superior, hash correcto, hash incorrecto y manifest invalido.
+- Se agrego configuracion `[Updates]` en `app.default.config` con valores seguros por defecto.
+- `TAppConfiguration` lee `Updates.Enabled`, `Updates.ManifestUrl` y `Updates.DownloadDir`.
+- Se agrego `scripts\check-update.ps1` y wrapper `scripts\check-update.bat`.
+- El script manual lee `latest.json`, resuelve paquete relativo, descarga o copia el ZIP y valida SHA-256 sin instalar nada.
+- Se documento el flujo en `docs\UPDATER.md` y `README.md`.
+- Verificacion: `tests\App.Core.Tests\coverage.bat` termina con `All tests passed` y cobertura Core `94%`.
+- Verificacion: `scripts\check-update.bat releases\latest.json 1.0.0.52 updates-test` termina con `Update available and verified`.
+- Verificacion: `run-all-tests.bat` termina con `All requested checks passed`.
+- Verificacion: `scripts\release-windows.bat` termina con `Release validation passed`.
+- Verificacion: `tests\App.Win.E2E\run-release-smoke.bat` termina con `Release smoke passed`.
+
 ### Ampliacion E2E de exportacion CSV
 
 - Se amplio `tests\App.Win.E2E\smoke_login.au3` para cubrir la exportacion CSV desde `TSK`.
