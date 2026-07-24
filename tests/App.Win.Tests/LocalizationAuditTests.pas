@@ -19,8 +19,6 @@ uses
   CrudPreviewForm,
   CrudSearchForm,
   MainForm,
-  TaskForm,
-  UserForm,
   PreferencesForm,
   LoginForm,
   AppCoreLocalization,
@@ -204,30 +202,6 @@ var
   LForm: TFrmMain;
 begin
   LForm := TFrmMain.Create(nil);
-  try
-    AuditLocalizationCsvForForm(LanguagesCsvPath, 'es', 'en', LForm);
-  finally
-    LForm.Free;
-  end;
-end;
-
-procedure LocalizationAuditAcceptsTaskFormCsv;
-var
-  LForm: TFrmTasks;
-begin
-  LForm := TFrmTasks.Create(nil);
-  try
-    AuditLocalizationCsvForForm(LanguagesCsvPath, 'es', 'en', LForm);
-  finally
-    LForm.Free;
-  end;
-end;
-
-procedure LocalizationAuditAcceptsUserFormCsv;
-var
-  LForm: TFrmUsers;
-begin
-  LForm := TFrmUsers.Create(nil);
   try
     AuditLocalizationCsvForForm(LanguagesCsvPath, 'es', 'en', LForm);
   finally
@@ -453,8 +427,6 @@ procedure RunLocalizationAuditTests(var AFailures: Integer);
 begin
   RunTest('LocalizationAudit_accepts_login_form_csv', LocalizationAuditAcceptsLoginFormCsv, AFailures);
   RunTest('LocalizationAudit_accepts_main_form_csv', LocalizationAuditAcceptsMainFormCsv, AFailures);
-  RunTest('LocalizationAudit_accepts_task_form_csv', LocalizationAuditAcceptsTaskFormCsv, AFailures);
-  RunTest('LocalizationAudit_accepts_user_form_csv', LocalizationAuditAcceptsUserFormCsv, AFailures);
   RunTest('LocalizationAudit_accepts_about_form_csv', LocalizationAuditAcceptsAboutFormCsv, AFailures);
   RunTest('LocalizationAudit_accepts_preferences_form_csv', LocalizationAuditAcceptsPreferencesFormCsv, AFailures);
   RunTest('LocalizationAudit_accepts_crud_form_csv', LocalizationAuditAcceptsCrudFormCsv, AFailures);

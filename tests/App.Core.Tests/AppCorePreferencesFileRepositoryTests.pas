@@ -173,7 +173,7 @@ begin
   try
     LRepo.SetLastUsername('admin');
     LRepo.SetActiveLanguage('en');
-    LRepo.SetLastMainOption('Usuarios');
+    LRepo.SetLastMainOption('USR');
   finally
     LRepo.Free;
   end;
@@ -189,7 +189,7 @@ begin
   try
     AssertEquals('admin', LRepo.LastUsername, 'Updating language should keep username.');
     AssertEquals('es', LRepo.ActiveLanguage, 'Language should update.');
-    AssertEquals('Usuarios', LRepo.LastMainOption, 'Updating language should keep last main option.');
+    AssertEquals('USR', LRepo.LastMainOption, 'Updating language should keep last main option.');
   finally
     LRepo.Free;
   end;

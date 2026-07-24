@@ -7,6 +7,35 @@
 
 ## Realizadas
 
+### Eliminacion de pantalla Usuarios (dejando solo USR)
+
+- Se elimino `noUsers` del enum `TNavigationOption` en `MainForm.pas`.
+- Se elimino el boton `BtnUsers` del sidebar y del DFM.
+- Se elimino el caso `noUsers` de `LoadOption`, `NavigationOptionToPreference` y `PreferenceToNavigationOption`.
+- Se elimino la referencia a `noUsers` en la guardia de permisos de admin.
+- Se elimino `UserForm` de la clausula `uses` de `MainForm.pas` y de `WindowsApp.dpr`.
+- Se elimino `FrmMain.BtnUsers.Caption` y las 14 claves `FrmUsers.*` de `languages.csv`.
+- Se elimino el test `LocalizationAudit_accepts_user_form_csv` de `LocalizationAuditTests.pas`.
+- Se corrigio el test `Saves_preferences_without_dropping_existing_values` para usar `'USR'` en vez del valor obsoleto `'Usuarios'`.
+- Se elimino `UserForm.pas` y `UserForm.dfm`.
+- Solo queda la pantalla USR con `TFrmCrud` + `TUserCrudProvider`.
+- Verificacion: `AppCoreTests.exe` termina con `All tests passed`.
+- Verificacion: `tests\App.Win.Tests\run-tests.bat` termina con `All tests passed`.
+
+### Eliminacion de pantalla Tareas (dejando solo TSK)
+
+- Se elimino `noTasks` del enum `TNavigationOption` en `MainForm.pas`.
+- Se elimino el boton `BtnTasks` del sidebar y del DFM.
+- Se elimino el caso `noTasks` de `LoadOption`, `NavigationOptionToPreference` y `PreferenceToNavigationOption`.
+- Se elimino `TaskForm` de la clausula `uses` de `MainForm.pas` y de `WindowsApp.dpr`.
+- Se elimino `FrmMain.BtnTasks.Caption` y las 7 claves `FrmTasks.*` de `languages.csv`.
+- Se elimino el test `LocalizationAudit_accepts_task_form_csv` de `LocalizationAuditTests.pas`.
+- Se elimino `TaskForm.pas` y `TaskForm.dfm`.
+- Solo queda la pantalla TSK con `TFrmCrud` + `TTaskCrudProvider`.
+- Los metodos `CompleteTask`, `ListPendingTasks` y `SearchTasks` se mantienen en `ITaskService` como parte de la API del nucleo.
+- Verificacion: `AppCoreTests.exe` termina con `All tests passed`.
+- Verificacion: `tests\App.Win.Tests\run-tests.bat` termina con `All tests passed`.
+
 ### Opcion Main TSK con CRUD generico de tareas
 
 - Se agrego `src\App.Core\AppCoreTaskCrudProvider.pas` como adaptador de tareas sobre `ITaskService`.
@@ -136,16 +165,14 @@
 - Se falla si una clave apunta a una propiedad publicada inexistente.
 - Se detectan captions traducibles del formulario auditado que no aparecen en el CSV.
 - La app mantiene aplicacion tolerante de localizacion en produccion; los tests usan modo estricto.
-- Estado actual: `FrmLogin`, `FrmMain`, `FrmTasks`, `FrmUsers` y `FrmAbout` auditados contra `languages.csv`.
+- Estado actual: `FrmLogin`, `FrmMain` y `FrmAbout` auditados contra `languages.csv`.
 - Verificacion: `tests\App.Win.Tests\run-tests.bat` termina con `All tests passed`.
 
 ### Traduccion del resto de pantallas
 
-- Se amplio `src\App.Win\languages.csv` con textos de `FrmMain`, `FrmTasks` y `FrmUsers`.
+- Se amplio `src\App.Win\languages.csv` con textos de `FrmMain`.
 - `WindowsApp.dpr` conserva el servicio de localizacion creado al arrancar y lo pasa a la ventana principal.
 - `FrmMain` aplica localizacion a sus botones de navegacion y propaga el servicio a las pantallas embebidas.
-- `FrmTasks` y `FrmUsers` exponen `ApplyLocalization` y aplican sus captions desde el CSV.
-- `FrmUsers` traduce las opciones de rol en ingles al aplicar idioma `en`.
 - `FrmAbout` traduce sus captions desde claves `FrmAbout.*` de `languages.csv`.
 - `FrmAbout` traduce sus prefijos dinamicos desde claves `About.*` de `languages.csv` y solo concatena valores de runtime.
 - `FrmAbout` se repinta al cambiar entre `en` y `es` sin conservar textos del idioma anterior.

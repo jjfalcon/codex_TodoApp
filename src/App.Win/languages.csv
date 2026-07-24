@@ -6,33 +6,10 @@ FrmLogin.BtnLogin.Caption,Entrar,Sign in
 FrmLogin.BtnCancel.Caption,Cancelar,Cancel
 FrmMain.Caption,Delphi TDD App - FMain,Delphi TDD App - FMain
 FrmMain.BtnDashboard.Caption,Dashboard,Dashboard
-FrmMain.BtnTasks.Caption,Tareas,Tasks
-FrmMain.BtnTsk.Caption,TSK,TSK
-FrmMain.BtnUsers.Caption,Usuarios,Users
-FrmMain.BtnUsr.Caption,USR,USR
+FrmMain.BtnTsk.Caption,Tareas,Tasks
+FrmMain.BtnUsr.Caption,Usuarios,Users
 FrmMain.BtnPreferences.Caption,Preferencias,Preferences
 FrmMain.BtnAbout.Caption,Acerca de,About
-FrmTasks.Caption,Tareas,Tasks
-FrmTasks.BtnAdd.Caption,A�adir,Add
-FrmTasks.BtnSearch.Caption,Buscar,Search
-FrmTasks.BtnComplete.Caption,Completar,Complete
-FrmTasks.BtnDelete.Caption,Eliminar,Delete
-FrmTasks.BtnRefresh.Caption,Refrescar,Refresh
-FrmTasks.BtnPending.Caption,Pendientes,Pending
-FrmUsers.Caption,Usuarios,Users
-FrmUsers.LblUsername.Caption,Usuario,Username
-FrmUsers.LblDisplayName.Caption,Nombre visible,Display name
-FrmUsers.LblEmail.Caption,Email,Email
-FrmUsers.LblPassword.Caption,Contrase�a,Password
-FrmUsers.BtnSearch.Caption,Buscar,Search
-FrmUsers.ChkShowDeleted.Caption,Mostrar eliminados,Show deleted
-FrmUsers.ChkActive.Caption,Activo,Active
-FrmUsers.ChkLocked.Caption,Bloqueado,Locked
-FrmUsers.BtnNew.Caption,Crear,Create
-FrmUsers.BtnSave.Caption,Guardar,Save
-FrmUsers.BtnPassword.Caption,Cambiar contrase�a,Change password
-FrmUsers.BtnUnlock.Caption,Desbloquear,Unlock
-FrmUsers.BtnDelete.Caption,Eliminar,Delete
 FrmAbout.Caption,Acerca de,About
 FrmAbout.LblTitle.Caption,Delphi TDD App,Delphi TDD App
 FrmAbout.LblAppName.Caption,Aplicacion Windows,Windows application
@@ -76,7 +53,7 @@ FrmCrudSearch.Caption,Buscar,Search
 FrmCrudSearch.BtnClear.Caption,Limpiar,Clear
 About.VersionPrefix,Version: ,Version: 
 About.ExecutableVersionPrefix,Version del ejecutable: ,Executable version: 
-About.CommitPrefix,"Commit GitHub: ","GitHub commit: "
+"About.CommitPrefix,""Commit GitHub: "",""GitHub commit: """
 About.OperatingSystemPrefix,Sistema operativo: ,Operating system: 
 About.ArchitecturePrefix,Arquitectura: ,Architecture: 
 About.BuildDatePrefix,Fecha de compilacion: ,Build date: 

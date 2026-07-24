@@ -12,8 +12,7 @@ uses
   LoginForm in 'LoginForm.pas' {FrmLogin},
   MainForm in 'MainForm.pas' {FrmMain},
   PreferencesForm in 'PreferencesForm.pas' {FrmPreferences},
-  TaskForm in 'TaskForm.pas' {FrmTasks},
-  UserForm in 'UserForm.pas' {FrmUsers},
+
   AppCoreAbout in '..\App.Core\AppCoreAbout.pas',
   AppCoreBuildInfo in '..\App.Core\AppCoreBuildInfo.pas',
   AppCoreDiagnostics in '..\App.Core\AppCoreDiagnostics.pas',
