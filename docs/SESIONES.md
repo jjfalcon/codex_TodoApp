@@ -363,3 +363,71 @@ Commits relevantes:
 - Crear form CRUD de tabla generica.
 
 ---
+
+## 12. Sesion 12 - 2026-07-24: CRUD generico, preview QuickReport y selector editMode
+
+Commits relevantes:
+
+- `d98a67f` Agregar CRUD generico de usuarios
+- `dab4612` Agregar preview y selector editMode al CRUD
+- `0a2f6a1` Documentar preview generico
+
+### CRUD generico
+
+- Se completo `TFrmCrud` como formulario VCL generico basado en `ICrudProvider`.
+- Se integro la opcion administrativa `USR` en `FMain` usando `TFrmCrud`, `TUserCrudProvider` y modo `emDetail`.
+- Se agregaron filtros por columna con `Ctrl+click` sobre cabeceras.
+- Se agregaron indicadores visuales en cabecera para orden (`^`/`v`) y filtro (`*`).
+- Se agrego busqueda no modal que resalta celdas coincidentes sin filtrar filas.
+- Se agrego persistencia de layout, filtros y orden en secciones `Grid.<clave>` de `app.config`.
+- Se elimino el boton `Filtrar` y se renombro `Refrescar` a `Reset`.
+
+### Preview e impresion
+
+- Se agrego boton `Preview` al CRUD generico.
+- Se agrego `src\App.Win\CrudPreviewForm.pas` y `src\App.Win\CrudPreviewForm.dfm`.
+- `TFrmCrud.CreatePreviewData` toma un snapshot exacto del grid visible.
+- El snapshot incluye columnas visibles, captions actuales, anchos actuales y filas cargadas en `ClientDataSet`.
+- El preview no reconsulta repositorios ni proveedores.
+- El informe se genera dinamicamente con QuickReport.
+- El dialogo permite ajustar orientacion, titulo, fecha y numero de pagina.
+- Se corrigio el truncado de textos eliminando el uso de `FitText`.
+
+### Selector editMode
+
+- Se agrego selector `editMode` visible en `CrudForm`.
+- Las opciones disponibles son `Sin edicion`, `Grid` y `Detalle`.
+- El cambio de modo actualiza dinamicamente `Grid.ReadOnly`, `BtnNew.Enabled` y `BtnDelete.Enabled`.
+- Se agregaron claves de localizacion para el label y las opciones del selector.
+
+### Documentacion
+
+- Se documento el CRUD generico en `docs\CRUD_FORM_SPEC.md`.
+- Se agrego `docs\PREVIEW_SPEC.md` con la especificacion funcional del preview.
+- Se agrego `docs\PREVIEW_TECH.md` con el diseno tecnico.
+- Se agrego `docs\PREVIEW_MANUAL.md` con el manual de usuario.
+
+### Tests y verificacion
+
+- Se agregaron tests de modos de edicion, columnas generadas, layout, filtros, busqueda, detalle y preview.
+- Se agrego auditoria de localizacion para `FrmCrudPreview`.
+- `tests\App.Win.Tests\run-tests.bat`: `All tests passed`.
+- `tests\App.Core.Tests\AppCoreTests.exe`: `All tests passed`.
+- `tests\App.Core.Tests\coverage.bat`: cobertura Core superior al umbral.
+- `tests\App.Core.Tests\mutation.bat`: mutantes probados sin supervivientes.
+- `tests\App.Win.E2E\run-smoke-login.bat`: `Smoke login and task CRUD flow passed`.
+- `dcc32 "-U..\App.Core" -B WindowsApp.dpr`: compila correctamente.
+
+### GitHub
+
+- Commit `d98a67f` subido a `origin/master`.
+- Commit `dab4612` subido a `origin/master`.
+- Commit `0a2f6a1` subido a `origin/master`.
+
+### Pendientes actuales
+
+- Agregar exportacion a fichero CSV desde `CrudForm`, usando el estado visible actual del grid.
+- Agregar update automatico/manual del programa desde servidor usando GitHub, fichero de ultima version y hash de verificacion.
+- Implementar opcion Main `TSK` usando `CrudForm` generico para tareas.
+
+---

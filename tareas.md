@@ -2,6 +2,10 @@
 
 ## Pendientes
 
+- Agregar exportacion a fichero CSV desde `CrudForm`, usando el estado visible actual del grid.
+- Agregar update automatico/manual del programa desde servidor usando GitHub: consultar fichero de ultima version, descargar paquete publicado, validar hash del fichero descargado y aplicar actualizacion solo si la verificacion es correcta.
+- Implementar opcion Main `TSK` usando `CrudForm` generico para tareas.
+
 ## Realizadas
 
 ### Preview e impresion de tabla generica
