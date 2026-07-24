@@ -6,6 +6,41 @@
 
 ## Realizadas
 
+### Config base para release y E2E
+
+- Se agrego `src\App.Win\app.default.config` con valores base versionados.
+- `scripts\release-windows.bat` usa `app.default.config` como `app.config` del paquete.
+- `tests\App.Win.E2E\run-smoke-login.bat` usa `app.default.config` para preparar el runtime aislado.
+- Se documento la diferencia entre config base versionada y preferencias locales en `README.md`, `docs\E2E_AUTOIT.md` y `docs\USER_PREFERENCES_SPEC.md`.
+
+### Manifest latest para updater
+
+- `scripts\release-windows.bat` genera `latest.json` junto al manifest versionado.
+- `latest.json` incluye version, commit, fecha, paquete y SHA-256.
+- Se documento `latest.json` en `README.md` como base del futuro updater.
+
+### Release verificable
+
+- `scripts\release-windows.bat` valida que el ZIP generado contiene `WindowsApp.exe`, `languages.csv` y `app.config`.
+- El script recalcula SHA-256 y falla si no coincide con el hash declarado.
+- Se documento la validacion de release en `README.md`.
+
+### E2E contra ZIP de release
+
+- Se agrego `tests\App.Win.E2E\run-release-smoke.bat`.
+- El runner descomprime el ZIP de release en `runtime-release`.
+- Valida que el paquete contiene `WindowsApp.exe`, `app.config` y `languages.csv`.
+- Ejecuta `smoke_login.au3` contra el ejecutable empaquetado.
+- Se documento el flujo en `README.md` y `docs\E2E_AUTOIT.md`.
+
+### Publicacion preparada en GitHub Releases
+
+- Se agrego `scripts\publish-github-release.bat`.
+- El script publica ZIP, `.sha256`, manifest versionado y `latest.json` mediante GitHub CLI.
+- El script valida que `gh` exista y que los artefactos de release esten generados.
+- Se documento el uso en `README.md`.
+- Estado local: `gh` no esta instalado en este entorno, por lo que no se ha publicado una release real.
+
 ### Reduccion incremental de CrudForm
 
 - Se agrego `src\App.Win\AppWinCrudGrid.pas` para reglas puras de grid del CRUD.

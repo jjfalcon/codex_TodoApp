@@ -27,7 +27,7 @@ mkdir "%RUNTIME%"
 mkdir "%DIAGNOSTICS%"
 
 copy /Y "%APP_DIR%\WindowsApp.exe" "%RUNTIME%\WindowsApp.exe" >nul
-copy /Y "%APP_DIR%\app.config" "%RUNTIME%\app.config" >nul
+copy /Y "%APP_DIR%\app.default.config" "%RUNTIME%\app.config" >nul
 copy /Y "%APP_DIR%\languages.csv" "%RUNTIME%\languages.csv" >nul
 
 "%AUTOIT%" "%~dp0smoke_login.au3" "%RUNTIME%\WindowsApp.exe" "%RUNTIME%" "%DIAGNOSTICS%"

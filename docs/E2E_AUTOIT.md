@@ -33,7 +33,7 @@ El runner:
 
 - Compila `src\App.Win\WindowsApp.dpr`.
 - Crea `tests\App.Win.E2E\runtime\`.
-- Copia `WindowsApp.exe` y `app.config` al runtime.
+- Copia `WindowsApp.exe`, `app.default.config` como `app.config` y `languages.csv` al runtime.
 - Ejecuta `smoke_login.au3` con AutoIt.
 - Usa credenciales `admin` / `admin`.
 - Verifica que aparece la ventana principal.
@@ -47,9 +47,21 @@ El runner:
 
 El test devuelve `0` si pasa y un codigo distinto de cero si falla.
 
+## Smoke test contra release
+
+Despues de generar un ZIP con `scripts\release-windows.bat`, se puede validar el paquete:
+
+```bat
+cd tests\App.Win.E2E
+run-release-smoke.bat
+```
+
+El runner descomprime el ultimo ZIP de `releases\` en `runtime-release`, valida que contiene `WindowsApp.exe`, `app.config` y `languages.csv`, y ejecuta el mismo smoke contra el ejecutable empaquetado.
+
 ## Notas
 
 - El runtime esta ignorado por Git.
+- `runtime-release` esta ignorado por Git.
 - El ZIP de descarga `autoit-v3.zip` esta ignorado por Git.
 - El login crea el administrador por defecto si no existe `users.json`.
 - El test usa un runtime aislado para que `users.json`, `tasks.json` y `app.config` no contaminen el entorno de desarrollo.

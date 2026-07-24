@@ -28,6 +28,7 @@ tests/App.Core.Tests/mutation-*.log
 tests/App.Core.Tests/mutation-report.txt
 tests/App.Core.Tests/test_app_config.ini
 tests/App.Win.E2E/runtime/
+tests/App.Win.E2E/runtime-release/
 Win32/
 Win64/
 Debug/

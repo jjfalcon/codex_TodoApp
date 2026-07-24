@@ -55,13 +55,27 @@ run-all-tests.bat mutation
 
 ## Release local
 
-Para generar un paquete ZIP trazable con hash SHA-256:
+Para generar un paquete ZIP trazable con hash SHA-256 y manifests de version:
 
 ```bat
 scripts\release-windows.bat
 ```
 
-El script deja los artefactos en `releases\` y genera un `app.config` base para no publicar preferencias locales.
+El script deja los artefactos en `releases\`, usa `src\App.Win\app.default.config` como `app.config` base para no publicar preferencias locales, genera `latest.json` para el futuro updater y valida que el ZIP contenga los ficheros obligatorios con hash SHA-256 coherente.
+
+Para ejecutar el smoke E2E contra el ultimo ZIP generado:
+
+```bat
+tests\App.Win.E2E\run-release-smoke.bat
+```
+
+Para publicar los artefactos con GitHub CLI:
+
+```bat
+scripts\publish-github-release.bat v1.0.0
+```
+
+Requiere `gh` instalado y autenticado.
 
 ## Niveles de test
 

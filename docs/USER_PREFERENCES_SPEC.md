@@ -21,6 +21,7 @@ Recordar preferencias locales de uso para mejorar el arranque de la aplicacion s
 ## Persistencia
 
 Las preferencias se guardan en `app.config`, junto al ejecutable, mediante `TFileLoginPreferencesRepository`.
+El fichero `src\App.Win\app.default.config` contiene los valores base versionados para release y E2E; `app.config` puede acumular preferencias locales durante la ejecucion.
 
 Formato actual:
 
