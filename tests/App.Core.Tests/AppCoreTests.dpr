@@ -29,6 +29,7 @@ uses
   AppCorePreferencesFileRepository in '..\..\src\App.Core\AppCorePreferencesFileRepository.pas',
   AppCoreRepositoryFactory in '..\..\src\App.Core\AppCoreRepositoryFactory.pas',
   AppCoreTaskFileRepository in '..\..\src\App.Core\AppCoreTaskFileRepository.pas',
+  AppCoreTaskCrudProvider in '..\..\src\App.Core\AppCoreTaskCrudProvider.pas',
   AppCoreTaskItem in '..\..\src\App.Core\AppCoreTaskItem.pas',
   AppCoreTaskRepository in '..\..\src\App.Core\AppCoreTaskRepository.pas',
   AppCoreTaskService in '..\..\src\App.Core\AppCoreTaskService.pas',

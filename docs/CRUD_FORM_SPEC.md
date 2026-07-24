@@ -66,6 +66,18 @@ No se generan ficheros `usr-grid.layout`.
 
 `FMain` crea el servicio de usuarios despues de embeber `TFrmCrud`; esto evita que `ClearContent` libere el servicio antes de que el provider cargue los datos.
 
+## Tareas TSK
+
+`TSK` es una opcion de `FMain` que convive con la pantalla clasica `Tareas` y reutiliza `TFrmCrud` con `TTaskCrudProvider` y `emDetail`.
+
+El proveedor adapta `ITaskService`, por lo que la UI no accede a repositorios ni contiene reglas de negocio. El schema expone:
+
+- `title`: visible, editable y requerido.
+- `completed`: visible, editable y representado como booleano para checkbox en el detalle.
+- `createdAt`: visible y de solo lectura.
+
+El layout se persiste con la clave `TSK` en la seccion `Grid.TSK`.
+
 ## Verificacion
 
 - `tests\App.Core.Tests`: cubre schema, busqueda, orden, filtros, update del provider de usuarios y layout en secciones `Grid.*`.

@@ -146,6 +146,29 @@ begin
   AssertEquals(0, Length(LService.ListTasks), 'Task should be removed.');
 end;
 
+procedure UpdateTaskChangesTitleAndCompletedState;
+var
+  LClock: IClock;
+  LRepository: ITaskRepository;
+  LService: ITaskService;
+  LTask: TTaskItem;
+begin
+  LClock := TFixedClock.Create(EncodeDate(2026, 4, 30));
+  LRepository := TInMemoryTaskRepository.Create;
+  LService := TTaskService.Create(LRepository, LClock);
+
+  LTask := LService.CreateTask('Old title');
+  LTask := LService.UpdateTask(LTask.Id, '  New title  ', True);
+
+  AssertEquals('New title', LTask.Title, 'Update should trim and persist title.');
+  AssertTrue(LTask.IsCompleted, 'Update should mark task completed.');
+  AssertTrue(LTask.CompletedAt = LClock.Now, 'Completed date should come from clock.');
+
+  LTask := LService.UpdateTask(LTask.Id, 'New title', False);
+  AssertEquals(Ord(tsPending), Ord(LTask.Status), 'Update should allow returning task to pending.');
+  AssertTrue(LTask.CompletedAt = 0, 'Pending task should clear completed date.');
+end;
+
 procedure SearchTasksReturnsMatchingTitles;
 var
   LClock: IClock;
@@ -266,6 +289,7 @@ begin
   RunTest('CreateTaskRejectsEmptyTitle', CreateTaskRejectsEmptyTitle, AFailures);
   RunTest('CompleteTaskMarksTaskAsCompleted', CompleteTaskMarksTaskAsCompleted, AFailures);
   RunTest('DeleteTaskRemovesTask', DeleteTaskRemovesTask, AFailures);
+  RunTest('UpdateTaskChangesTitleAndCompletedState', UpdateTaskChangesTitleAndCompletedState, AFailures);
   RunTest('SearchTasksReturnsMatchingTitles', SearchTasksReturnsMatchingTitles, AFailures);
   RunTest('ListPendingTasksReturnsOnlyPendingTasks', ListPendingTasksReturnsOnlyPendingTasks, AFailures);
   RunTest('FileRepositoryPersistsCreatedTasks', FileRepositoryPersistsCreatedTasks, AFailures);

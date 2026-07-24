@@ -16,6 +16,7 @@ type
     ['{99B372AE-BC7E-47AF-91AE-9A0DA9B451C2}']
     function CreateTask(const ATitle: string): TTaskItem;
     function CompleteTask(const AId: string): TTaskItem;
+    function UpdateTask(const AId, ATitle: string; ACompleted: Boolean): TTaskItem;
     procedure DeleteTask(const AId: string);
     function ListTasks: TTaskItemArray;
     function ListPendingTasks: TTaskItemArray;
@@ -35,6 +36,7 @@ type
 
     function CreateTask(const ATitle: string): TTaskItem;
     function CompleteTask(const AId: string): TTaskItem;
+    function UpdateTask(const AId, ATitle: string; ACompleted: Boolean): TTaskItem;
     procedure DeleteTask(const AId: string);
     function ListTasks: TTaskItemArray;
     function ListPendingTasks: TTaskItemArray;
@@ -63,6 +65,26 @@ begin
   Result := RequireTask(AId);
   Result.Status := tsCompleted;
   Result.CompletedAt := FClock.Now;
+  FRepository.Save(Result);
+end;
+
+function TTaskService.UpdateTask(const AId, ATitle: string;
+  ACompleted: Boolean): TTaskItem;
+begin
+  EnsureTitleIsValid(ATitle);
+  Result := RequireTask(AId);
+  Result.Title := Trim(ATitle);
+  if ACompleted then
+  begin
+    Result.Status := tsCompleted;
+    if Result.CompletedAt = 0 then
+      Result.CompletedAt := FClock.Now;
+  end
+  else
+  begin
+    Result.Status := tsPending;
+    Result.CompletedAt := 0;
+  end;
   FRepository.Save(Result);
 end;
 

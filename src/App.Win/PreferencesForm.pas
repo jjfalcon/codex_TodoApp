@@ -83,6 +83,7 @@ begin
   CmbLanguage.Items.Add('en');
   CmbLastMainOption.Items.Add('Dashboard');
   CmbLastMainOption.Items.Add('Tasks');
+  CmbLastMainOption.Items.Add('TSK');
   CmbLastMainOption.Items.Add('Users');
   SelectComboValue(CmbLanguage, '', 'es');
   SelectComboValue(CmbLastMainOption, '', 'Dashboard');

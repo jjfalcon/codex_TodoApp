@@ -221,6 +221,36 @@ begin
   end;
 end;
 
+procedure CrudDetailUsesCheckboxForBooleanFields;
+var
+  LForm: TFrmCrudDetail;
+  LSchema: TCrudSchema;
+  LRecord: TCrudRecord;
+  I: Integer;
+  LCheck: TCheckBox;
+begin
+  LSchema := TCrudSchema.Create;
+  LRecord := TCrudRecord.Create;
+  LForm := TFrmCrudDetail.Create(nil);
+  try
+    LSchema.AddField(TCrudFieldDef.Create('completed', 'Completed', cftBoolean, True, True, False, 80));
+    LRecord.SetValue('completed', 'false');
+    LForm.Configure(LSchema, LRecord);
+    LCheck := nil;
+    for I := 0 to LForm.ControlCount - 1 do
+      if LForm.Controls[I] is TCheckBox then
+        LCheck := TCheckBox(LForm.Controls[I]);
+    AssertTrue(LCheck <> nil, 'Boolean field should use checkbox in detail form.');
+    LCheck.Checked := True;
+    LForm.BtnSaveClick(nil);
+    AssertEquals('true', LRecord.Value('completed'), 'Checkbox should write boolean text value.');
+  finally
+    LForm.Free;
+    LRecord.Free;
+    LSchema.Free;
+  end;
+end;
+
 procedure CrudFormShowsSortAndFilterIndicators;
 var
   LForm: TFrmCrud;
@@ -502,6 +532,7 @@ begin
   RunTest('CrudForm_passes_column_filters_to_provider', CrudFormPassesColumnFiltersToProvider, AFailures);
   RunTest('CrudForm_search_matches_cells_without_filtering', CrudFormSearchMatchesCellsWithoutFiltering, AFailures);
   RunTest('CrudDetail_writes_editable_fields', CrudDetailWritesEditableFields, AFailures);
+  RunTest('CrudDetail_uses_checkbox_for_boolean_fields', CrudDetailUsesCheckboxForBooleanFields, AFailures);
   RunTest('CrudForm_shows_sort_and_filter_indicators', CrudFormShowsSortAndFilterIndicators, AFailures);
   RunTest('CrudForm_persists_column_filters', CrudFormPersistsColumnFilters, AFailures);
   RunTest('CrudForm_localizes_static_texts_and_column_captions', CrudFormLocalizesStaticTextsAndColumnCaptions, AFailures);

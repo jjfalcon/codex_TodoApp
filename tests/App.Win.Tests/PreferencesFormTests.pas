@@ -135,11 +135,30 @@ begin
   end;
 end;
 
+procedure PreferencesFormLoadsTskMainOption;
+var
+  LRepo: ILoginPreferencesRepository;
+  LService: TPreferencesService;
+  LForm: TFrmPreferences;
+begin
+  LRepo := TInMemoryLoginPreferencesRepository.Create;
+  LRepo.SetLastMainOption('TSK');
+  LService := TPreferencesService.Create(LRepo);
+  LForm := TFrmPreferences.Create(nil);
+  try
+    LForm.Configure(LService);
+    AssertEquals('TSK', LForm.CmbLastMainOption.Text, 'Form should allow TSK as startup screen.');
+  finally
+    LForm.Free;
+  end;
+end;
+
 procedure RunPreferencesFormTests(var AFailures: Integer);
 begin
   RunTest('PreferencesForm_loads_current_values', PreferencesFormLoadsCurrentValues, AFailures);
   RunTest('PreferencesForm_saves_values', PreferencesFormSavesValues, AFailures);
   RunTest('PreferencesForm_notifies_saved_language', PreferencesFormNotifiesSavedLanguage, AFailures);
+  RunTest('PreferencesForm_loads_tsk_main_option', PreferencesFormLoadsTskMainOption, AFailures);
 end;
 
 end.

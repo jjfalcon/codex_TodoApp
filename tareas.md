@@ -4,9 +4,19 @@
 
 - Agregar exportacion a fichero CSV desde `CrudForm`, usando el estado visible actual del grid.
 - Agregar update automatico/manual del programa desde servidor usando GitHub: consultar fichero de ultima version, descargar paquete publicado, validar hash del fichero descargado y aplicar actualizacion solo si la verificacion es correcta.
-- Implementar opcion Main `TSK` usando `CrudForm` generico para tareas.
 
 ## Realizadas
+
+### Opcion Main TSK con CRUD generico de tareas
+
+- Se agrego `src\App.Core\AppCoreTaskCrudProvider.pas` como adaptador de tareas sobre `ITaskService`.
+- Se agrego `ITaskService.UpdateTask` para actualizar titulo y estado completado desde el nucleo.
+- El schema `TSK` expone `title`, `completed` y `createdAt`; `completed` usa checkbox en detalle y `createdAt` es solo lectura.
+- Se agrego boton `TSK` en `FMain`, conviviendo con la pantalla clasica `Tareas`.
+- `TSK` abre `TFrmCrud` en modo `emDetail` con layout key `TSK`.
+- Se agrego `TSK` como opcion valida de pantalla inicial en preferencias.
+- Se agregaron claves de localizacion para `FrmMain.BtnTsk` y captions `Crud.TSK.*`.
+- Verificacion: `AppCoreTests.exe` y `tests\App.Win.Tests\run-tests.bat` terminan con `All tests passed`.
 
 ### Preview e impresion de tabla generica
 

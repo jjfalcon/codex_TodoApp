@@ -17,17 +17,19 @@ uses
   AppCoreLocalization,
   AppCorePreferences,
   AppCoreRepositoryFactory,
+  AppCoreTaskService,
   AppCoreUser,
   AppCoreUserRepository,
   AppCoreUserService;
 
 type
-  TNavigationOption = (noDashboard, noTasks, noUsers, noUsr, noPreferences);
+  TNavigationOption = (noDashboard, noTasks, noTsk, noUsers, noUsr, noPreferences);
 
   TFrmMain = class(TForm)
     PnlSidebar: TPanel;
     BtnDashboard: TButton;
     BtnTasks: TButton;
+    BtnTsk: TButton;
     BtnUsers: TButton;
     BtnUsr: TButton;
     BtnPreferences: TButton;
@@ -37,6 +39,7 @@ type
     procedure FormDestroy(Sender: TObject);
     procedure BtnDashboardClick(Sender: TObject);
     procedure BtnTasksClick(Sender: TObject);
+    procedure BtnTskClick(Sender: TObject);
     procedure BtnUsersClick(Sender: TObject);
     procedure BtnUsrClick(Sender: TObject);
     procedure BtnPreferencesClick(Sender: TObject);
@@ -89,6 +92,7 @@ uses
   TaskForm,
   UserForm,
   AppCoreUserCrudProvider,
+  AppCoreTaskCrudProvider,
   AppWinLocalization;
 
 procedure TFrmMain.ApplyLocalization;
@@ -104,6 +108,11 @@ end;
 procedure TFrmMain.BtnTasksClick(Sender: TObject);
 begin
   LoadOption(noTasks);
+end;
+
+procedure TFrmMain.BtnTskClick(Sender: TObject);
+begin
+  LoadOption(noTsk);
 end;
 
 procedure TFrmMain.BtnUsersClick(Sender: TObject);
@@ -230,6 +239,14 @@ begin
         TFrmTasks(FCurrentForm).ConfigureDiagnostics(FDiagnostics);
         TFrmTasks(FCurrentForm).Configure(FFactory);
       end;
+    noTsk:
+      begin
+        EmbedForm(TFrmCrud.Create(Self));
+        TFrmCrud(FCurrentForm).ApplyLocalization(FLocalization, False);
+        TFrmCrud(FCurrentForm).Configure(TTaskCrudProvider.Create(
+          TTaskService.Create(FFactory.CreateTaskRepository, FClock)), emDetail,
+          FPreferences as ICrudGridLayoutRepository, 'TSK');
+      end;
     noUsers:
       begin
         EmbedForm(TFrmUsers.Create(Self));
@@ -264,6 +281,8 @@ begin
   case AOption of
     noTasks:
       Result := 'Tasks';
+    noTsk:
+      Result := 'TSK';
     noUsers:
       Result := 'Users';
     noUsr:
@@ -277,6 +296,8 @@ function TFrmMain.PreferenceToNavigationOption(const AValue: string): TNavigatio
 begin
   if AValue = 'Tasks' then
     Result := noTasks
+  else if AValue = 'TSK' then
+    Result := noTsk
   else if (AValue = 'Users') and (FUserRole = urAdmin) then
     Result := noUsers
   else if (AValue = 'USR') and (FUserRole = urAdmin) then
@@ -303,12 +324,14 @@ procedure TFrmMain.SetActiveButton(AOption: TNavigationOption);
 begin
   BtnDashboard.Font.Style := [];
   BtnTasks.Font.Style := [];
+  BtnTsk.Font.Style := [];
   BtnUsers.Font.Style := [];
   BtnUsr.Font.Style := [];
   BtnPreferences.Font.Style := [];
 
   BtnDashboard.Enabled := True;
   BtnTasks.Enabled := True;
+  BtnTsk.Enabled := True;
   BtnUsers.Enabled := FUserRole = urAdmin;
   BtnUsr.Enabled := FUserRole = urAdmin;
   BtnPreferences.Enabled := True;
@@ -318,6 +341,8 @@ begin
       BtnDashboard.Font.Style := [fsBold];
     noTasks:
       BtnTasks.Font.Style := [fsBold];
+    noTsk:
+      BtnTsk.Font.Style := [fsBold];
     noUsers:
       BtnUsers.Font.Style := [fsBold];
     noUsr:

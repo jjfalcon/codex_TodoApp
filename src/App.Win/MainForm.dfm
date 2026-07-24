@@ -44,20 +44,29 @@ object FrmMain: TFrmMain
     end
     object BtnUsers: TButton
       Left = 12
-      Top = 96
-      Width = 124
-      Height = 32
-      Caption = 'Usuarios'
-      TabOrder = 2
-      OnClick = BtnUsersClick
-    end
-    object BtnUsr: TButton
-      Left = 12
       Top = 136
       Width = 124
       Height = 32
-      Caption = 'USR'
+      Caption = 'Usuarios'
       TabOrder = 3
+      OnClick = BtnUsersClick
+    end
+    object BtnTsk: TButton
+      Left = 12
+      Top = 96
+      Width = 124
+      Height = 32
+      Caption = 'TSK'
+      TabOrder = 2
+      OnClick = BtnTskClick
+    end
+    object BtnUsr: TButton
+      Left = 12
+      Top = 176
+      Width = 124
+      Height = 32
+      Caption = 'USR'
+      TabOrder = 4
       OnClick = BtnUsrClick
     end
     object BtnPreferences: TButton
@@ -67,7 +76,7 @@ object FrmMain: TFrmMain
       Height = 32
       Anchors = [akLeft, akBottom]
       Caption = 'Preferencias'
-      TabOrder = 4
+      TabOrder = 5
       OnClick = BtnPreferencesClick
     end
     object BtnAbout: TButton
@@ -77,7 +86,7 @@ object FrmMain: TFrmMain
       Height = 32
       Anchors = [akLeft, akBottom]
       Caption = 'Acerca de'
-      TabOrder = 5
+      TabOrder = 6
       OnClick = BtnAboutClick
     end
   end

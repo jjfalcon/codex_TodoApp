@@ -111,12 +111,30 @@ begin
   end;
 end;
 
+procedure SavePreferencesAcceptsTskMainOption;
+var
+  LRepo: ILoginPreferencesRepository;
+  LService: TPreferencesService;
+  LPreferences: TUserPreferences;
+begin
+  LRepo := TInMemoryLoginPreferencesRepository.Create;
+  LService := TPreferencesService.Create(LRepo);
+  try
+    LService.SavePreferences('es', 'TSK');
+    LPreferences := LService.GetPreferences;
+    AssertEquals('TSK', LPreferences.LastMainOption, 'TSK should be a valid main option.');
+  finally
+    LService.Free;
+  end;
+end;
+
 procedure RunPreferencesServiceTests(var AFailures: Integer);
 begin
   RunTest('PreferencesService_saves_editable_values', SavePreferencesStoresEditableValues, AFailures);
   RunTest('PreferencesService_rejects_invalid_language', SavePreferencesRejectsInvalidLanguage, AFailures);
   RunTest('PreferencesService_rejects_invalid_main_option', SavePreferencesRejectsInvalidMainOption, AFailures);
   RunTest('PreferencesService_keeps_last_username', SavePreferencesKeepsLastUsername, AFailures);
+  RunTest('PreferencesService_accepts_tsk_main_option', SavePreferencesAcceptsTskMainOption, AFailures);
 end;
 
 end.

@@ -7,6 +7,7 @@ FrmLogin.BtnCancel.Caption,Cancelar,Cancel
 FrmMain.Caption,Delphi TDD App - FMain,Delphi TDD App - FMain
 FrmMain.BtnDashboard.Caption,Dashboard,Dashboard
 FrmMain.BtnTasks.Caption,Tareas,Tasks
+FrmMain.BtnTsk.Caption,TSK,TSK
 FrmMain.BtnUsers.Caption,Usuarios,Users
 FrmMain.BtnUsr.Caption,USR,USR
 FrmMain.BtnPreferences.Caption,Preferencias,Preferences
@@ -92,3 +93,6 @@ Crud.USR.role.Caption,Rol,Role
 Crud.USR.active.Caption,Activo,Active
 Crud.USR.locked.Caption,Bloqueado,Locked
 Crud.USR.password.Caption,Contrase�a,Password
+Crud.TSK.title.Caption,Titulo,Title
+Crud.TSK.completed.Caption,Completada,Completed
+Crud.TSK.createdAt.Caption,Creada,Created

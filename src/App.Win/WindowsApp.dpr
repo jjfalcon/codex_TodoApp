@@ -27,6 +27,7 @@ uses
   AppCorePreferences in '..\App.Core\AppCorePreferences.pas',
   AppCoreRepositoryFactory in '..\App.Core\AppCoreRepositoryFactory.pas',
   AppCoreTaskFileRepository in '..\App.Core\AppCoreTaskFileRepository.pas',
+  AppCoreTaskCrudProvider in '..\App.Core\AppCoreTaskCrudProvider.pas',
   AppCoreTaskItem in '..\App.Core\AppCoreTaskItem.pas',
   AppCoreTaskRepository in '..\App.Core\AppCoreTaskRepository.pas',
   AppCoreTaskService in '..\App.Core\AppCoreTaskService.pas',

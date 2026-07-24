@@ -12,6 +12,10 @@ uses
   AppCoreAuth,
   AppCoreClock,
   AppCoreCrud,
+  AppCoreTaskCrudProvider,
+  AppCoreTaskItem,
+  AppCoreTaskRepository,
+  AppCoreTaskService,
   AppCoreUser,
   AppCoreUserCrudProvider,
   AppCoreUserRepository,
@@ -81,6 +85,14 @@ begin
   AddUser(ARepo, 'user', 'user', 'Usuario normal', 'user@example.com', urNormal);
   AService := TUserService.Create(ARepo, TFixedClock.Create, LHasher);
   AProvider := TUserCrudProvider.Create(AService, 'admin');
+end;
+
+procedure BuildTaskProvider(var ARepo: ITaskRepository;
+  var AService: ITaskService; var AProvider: ICrudProvider);
+begin
+  ARepo := TInMemoryTaskRepository.Create;
+  AService := TTaskService.Create(ARepo, TFixedClock.Create);
+  AProvider := TTaskCrudProvider.Create(AService);
 end;
 
 procedure UserCrudSchemaExposesFields;
@@ -213,6 +225,96 @@ begin
   end;
 end;
 
+procedure TaskCrudSchemaExposesFields;
+var
+  LRepo: ITaskRepository;
+  LService: ITaskService;
+  LProvider: ICrudProvider;
+  LSchema: TCrudSchema;
+begin
+  BuildTaskProvider(LRepo, LService, LProvider);
+  LSchema := LProvider.Schema;
+  try
+    AssertTrue(LSchema.FieldByName('title') <> nil, 'Task schema should include title.');
+    AssertTrue(LSchema.FieldByName('completed') <> nil, 'Task schema should include completed.');
+    AssertTrue(LSchema.FieldByName('createdAt') <> nil, 'Task schema should include createdAt.');
+    AssertEquals(4, LSchema.FieldCount, 'Task schema should expose expected field count.');
+    AssertEquals(Ord(cftBoolean), Ord(LSchema.FieldByName('completed').FieldType), 'Completed should be boolean.');
+    AssertTrue(not LSchema.FieldByName('createdAt').Editable, 'CreatedAt should be read-only.');
+  finally
+    LSchema.Free;
+  end;
+end;
+
+procedure TaskCrudCreatesUpdatesDeletesThroughService;
+var
+  LRepo: ITaskRepository;
+  LService: ITaskService;
+  LProvider: ICrudProvider;
+  LRecord: TCrudRecord;
+  LId: string;
+  LTasks: TTaskItemArray;
+begin
+  BuildTaskProvider(LRepo, LService, LProvider);
+  LRecord := TCrudRecord.Create;
+  try
+    LRecord.SetValue('title', 'Task from CRUD');
+    LId := LProvider.CreateRecord(LRecord);
+    LTasks := LService.ListTasks;
+    AssertEquals(1, Length(LTasks), 'Create should persist task.');
+    AssertEquals('Task from CRUD', LTasks[0].Title, 'Create should use title.');
+
+    LRecord.SetValue('title', 'Updated from CRUD');
+    LRecord.SetValue('completed', 'true');
+    LProvider.UpdateRecord(LId, LRecord);
+    LTasks := LService.ListTasks;
+    AssertEquals('Updated from CRUD', LTasks[0].Title, 'Update should persist title.');
+    AssertTrue(LTasks[0].IsCompleted, 'Update should persist completed state.');
+
+    LProvider.DeleteRecord(LId);
+    AssertEquals(0, Length(LService.ListTasks), 'Delete should remove task.');
+  finally
+    LRecord.Free;
+  end;
+end;
+
+procedure TaskCrudListsFiltersAndSorts;
+var
+  LRepo: ITaskRepository;
+  LService: ITaskService;
+  LProvider: ICrudProvider;
+  LFilters: TStringList;
+  LRecords: TList;
+  LTask: TTaskItem;
+begin
+  BuildTaskProvider(LRepo, LService, LProvider);
+  LTask := LService.CreateTask('Beta task');
+  LService.CreateTask('Alpha task');
+  LService.UpdateTask(LTask.Id, LTask.Title, True);
+
+  LFilters := TStringList.Create;
+  try
+    LFilters.Values['completed'] := 'true';
+    LRecords := LProvider.List('', 'title', True, LFilters);
+    try
+      AssertEquals(1, LRecords.Count, 'Filter should return completed task only.');
+      AssertEquals('Beta task', TCrudRecord(LRecords[0]).Value('title'), 'Filter should match completed task.');
+    finally
+      FreeCrudRecordList(LRecords);
+    end;
+
+    LFilters.Clear;
+    LRecords := LProvider.List('', 'title', True, LFilters);
+    try
+      AssertEquals('Alpha task', TCrudRecord(LRecords[0]).Value('title'), 'Sort should order by title.');
+    finally
+      FreeCrudRecordList(LRecords);
+    end;
+  finally
+    LFilters.Free;
+  end;
+end;
+
 procedure RunCrudTests(var AFailures: Integer);
 begin
   RunTest('Crud_user_schema_exposes_fields', UserCrudSchemaExposesFields, AFailures);
@@ -221,6 +323,9 @@ begin
   RunTest('Crud_user_creates_through_service', UserCrudCreatesThroughService, AFailures);
   RunTest('Crud_user_updates_through_service', UserCrudUpdatesThroughService, AFailures);
   RunTest('Crud_user_filters_by_column', UserCrudFiltersByColumn, AFailures);
+  RunTest('Crud_task_schema_exposes_fields', TaskCrudSchemaExposesFields, AFailures);
+  RunTest('Crud_task_creates_updates_deletes_through_service', TaskCrudCreatesUpdatesDeletesThroughService, AFailures);
+  RunTest('Crud_task_lists_filters_and_sorts', TaskCrudListsFiltersAndSorts, AFailures);
 end;
 
 end.
